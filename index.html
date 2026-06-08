@@ -26,6 +26,14 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 .logo-icon{width:36px;height:36px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:var(--navy)}
 .logo-name{font-size:18px;font-weight:700}.logo-sub{font-size:11px;opacity:.5;margin-top:1px}
 .topbar-actions{display:flex;align-items:center;gap:10px}
+.quick-btns{display:flex;align-items:center;gap:6px}
+.quick-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:var(--radius-sm);padding:7px 11px;font-size:12px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.15s;white-space:nowrap}
+.quick-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.4)}
+.quick-btn.qb-red{background:rgba(185,28,28,.35);border-color:rgba(220,38,38,.4)}.quick-btn.qb-red:hover{background:rgba(185,28,28,.6)}
+.quick-btn.qb-green{background:rgba(26,122,74,.35);border-color:rgba(34,160,96,.4)}.quick-btn.qb-green:hover{background:rgba(26,122,74,.6)}
+.quick-btn.qb-gold{background:rgba(184,133,30,.35);border-color:rgba(232,184,75,.4)}.quick-btn.qb-gold:hover{background:rgba(184,133,30,.6)}
+.quick-btn.qb-teal{background:rgba(15,118,110,.35);border-color:rgba(20,184,166,.4)}.quick-btn.qb-teal:hover{background:rgba(15,118,110,.6)}
+@media(max-width:960px){.quick-btns{display:none}}
 .save-status{font-size:11px;color:rgba(255,255,255,.6)}
 .export-btn{background:var(--gold);color:var(--navy);border:none;border-radius:var(--radius-sm);padding:9px 16px;font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s}
 .export-btn:hover{opacity:.85}.export-btn:disabled{opacity:.5;cursor:not-allowed}
@@ -258,6 +266,12 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
     <div class="logo-icon">ط</div>
     <div><div class="logo-name">طاقات</div><div class="logo-sub">النظام المالي المتكامل</div></div>
   </div>
+  <div class="quick-btns">
+    <button class="quick-btn qb-red" onclick="openOvl('ovl-expense')">💸 سند مصروفات</button>
+    <button class="quick-btn qb-green" onclick="openOvl('ovl-revenue')">💰 إيراد جديد</button>
+    <button class="quick-btn qb-gold" onclick="openOvl('ovl-receipt')">🧾 سند قبض</button>
+    <button class="quick-btn qb-teal" onclick="openOvl('ovl-payment')">📤 سند صرف</button>
+  </div>
   <div class="topbar-actions">
     <div class="save-status" id="saveStatus">✓ محفوظ</div>
     <div class="user-badge" onclick="goAdminPanel()" id="user-badge-btn">
@@ -336,6 +350,47 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
       </div>
     </div>
     <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-revenue')">إلغاء</button><button class="btn green sm" onclick="saveRevenue()">💾 حفظ</button></div>
+  </div>
+</div>
+
+<!-- Receipt Voucher Modal (سند قبض) -->
+<div class="overlay" id="ovl-receipt" onclick="if(event.target===this)closeOvl('ovl-receipt')">
+  <div class="modal">
+    <div class="modal-head"><h3>🧾 سند قبض</h3><button class="modal-close" onclick="closeOvl('ovl-receipt')">✕</button></div>
+    <div class="modal-body">
+      <div id="receipt_num_display" style="background:var(--gold-pale);border:1px solid #f0d98a;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;color:#b45309;margin-bottom:2px">رقم السند: —</div>
+      <div class="form-grid">
+        <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="rc_date"></div>
+        <div class="form-group"><label>طريقة الاستلام</label><select id="rc_meth"><option value="">اختر</option><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option><option>إلكتروني</option></select></div>
+        <div class="form-group form-full"><label>استُلم من <span class="req">*</span></label><input type="text" id="rc_from" placeholder="اسم الشخص أو الجهة..."></div>
+        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="rc_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>الحساب</label><select id="rc_acc"></select></div>
+        <div class="form-group form-full"><label>البيان / سبب الاستلام <span class="req">*</span></label><input type="text" id="rc_desc" placeholder="وصف..."></div>
+        <div class="form-group form-full"><label>ملاحظات</label><textarea id="rc_notes" placeholder="ملاحظات إضافية..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-receipt')">إلغاء</button><button class="btn gold sm" onclick="saveReceipt()">🧾 حفظ السند</button></div>
+  </div>
+</div>
+
+<!-- Payment Voucher Modal (سند صرف) -->
+<div class="overlay" id="ovl-payment" onclick="if(event.target===this)closeOvl('ovl-payment')">
+  <div class="modal">
+    <div class="modal-head"><h3>📤 سند صرف</h3><button class="modal-close" onclick="closeOvl('ovl-payment')">✕</button></div>
+    <div class="modal-body">
+      <div id="payment_num_display" style="background:var(--teal-pale);border:1px solid #99f6e4;border-radius:8px;padding:9px 14px;font-size:13px;font-weight:700;color:var(--teal);margin-bottom:2px">رقم السند: —</div>
+      <div class="form-grid">
+        <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="pv_date"></div>
+        <div class="form-group"><label>طريقة الدفع</label><select id="pv_meth"><option value="">اختر</option><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option><option>بطاقة</option></select></div>
+        <div class="form-group form-full"><label>صُرف لـ <span class="req">*</span></label><input type="text" id="pv_to" placeholder="اسم الشخص أو الجهة..."></div>
+        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="pv_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>الحساب</label><select id="pv_acc"></select></div>
+        <div class="form-group form-full"><label>البيان / سبب الصرف <span class="req">*</span></label><input type="text" id="pv_desc" placeholder="وصف..."></div>
+        <div class="form-group"><label>الموافق على الصرف</label><input type="text" id="pv_appr" placeholder="الاسم..."></div>
+        <div class="form-group form-full"><label>ملاحظات</label><textarea id="pv_notes" placeholder="ملاحظات إضافية..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-payment')">إلغاء</button><button class="btn teal sm" onclick="savePayment()">📤 حفظ السند</button></div>
   </div>
 </div>
 
@@ -1345,9 +1400,22 @@ function renderSummary(){
 // ══════════════════════════════════════════════
 // MODALS
 // ══════════════════════════════════════════════
+function peekVoucherNum(type){
+  const key=type==='receipt'?'rcCount':'pvCount';
+  const n=(DB.get(key)||0)+1;
+  return (type==='receipt'?'RV-':'PV-')+String(n).padStart(4,'0');
+}
+function nextVoucherNum(type){
+  const key=type==='receipt'?'rcCount':'pvCount';
+  const n=(DB.get(key)||0)+1;
+  DB.set(key,n);
+  return (type==='receipt'?'RV-':'PV-')+String(n).padStart(4,'0');
+}
 function openOvl(id){
   fillAccDrops();
   if(id==='ovl-employee') fillEmpAccountDrop();
+  if(id==='ovl-receipt'){const el=document.getElementById('receipt_num_display');if(el)el.textContent='رقم السند: '+peekVoucherNum('receipt');}
+  if(id==='ovl-payment'){const el=document.getElementById('payment_num_display');if(el)el.textContent='رقم السند: '+peekVoucherNum('payment');}
   document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open'));
   document.getElementById(id).classList.add('open');
   const df=document.getElementById(id).querySelector('input[type=date]');
@@ -1404,7 +1472,7 @@ function closeOvl(id){
 function fillAccDrops(){
   const accs=DB.get('accounts');
   const opts=accs.map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
-  ['e_acc','r_acc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<option value="">-- اختر الحساب --</option>'+opts; });
+  ['e_acc','r_acc','rc_acc','pv_acc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<option value="">-- اختر الحساب --</option>'+opts; });
   const ap=document.getElementById('a_par'); if(ap) ap.innerHTML='<option value="">-- لا يوجد --</option>'+opts;
 }
 
@@ -1428,6 +1496,28 @@ function saveRevenue(){
   const rec={id:uid(),date,desc,accountId:accId,accountName:acc?acc.name:'',type:document.getElementById('r_type').value,client:document.getElementById('r_client').value.trim(),amount:amt,method:document.getElementById('r_meth').value,notes:document.getElementById('r_notes').value.trim()};
   const data=DB.get('revenues');data.push(rec);DB.set('revenues',data);
   closeOvl('ovl-revenue');toast(`✅ تم تسجيل الإيراد: ${fmt(amt)}`);renderPage(curPage);
+}
+function saveReceipt(){
+  const date=document.getElementById('rc_date').value,from=document.getElementById('rc_from').value.trim();
+  const desc=document.getElementById('rc_desc').value.trim(),amt=parseFloat(document.getElementById('rc_amt').value);
+  if(!date||!from||!desc||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
+  const num=nextVoucherNum('receipt');
+  const accId=document.getElementById('rc_acc').value;
+  const acc=DB.get('accounts').find(a=>a.id===accId);
+  const rec={id:uid(),num,date,from,desc,accountId:accId,accountName:acc?acc.name:'',method:document.getElementById('rc_meth').value,amount:amt,notes:document.getElementById('rc_notes').value.trim()};
+  const data=DB.get('receipts')||[];data.push(rec);DB.set('receipts',data);
+  closeOvl('ovl-receipt');toast(`✅ تم حفظ سند القبض ${num}: ${fmt(amt)}`);
+}
+function savePayment(){
+  const date=document.getElementById('pv_date').value,to=document.getElementById('pv_to').value.trim();
+  const desc=document.getElementById('pv_desc').value.trim(),amt=parseFloat(document.getElementById('pv_amt').value);
+  if(!date||!to||!desc||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
+  const num=nextVoucherNum('payment');
+  const accId=document.getElementById('pv_acc').value;
+  const acc=DB.get('accounts').find(a=>a.id===accId);
+  const rec={id:uid(),num,date,to,desc,accountId:accId,accountName:acc?acc.name:'',method:document.getElementById('pv_meth').value,amount:amt,approved:document.getElementById('pv_appr').value.trim(),notes:document.getElementById('pv_notes').value.trim()};
+  const data=DB.get('payments')||[];data.push(rec);DB.set('payments',data);
+  closeOvl('ovl-payment');toast(`✅ تم حفظ سند الصرف ${num}: ${fmt(amt)}`);
 }
 function saveAccount(){
   const code=document.getElementById('a_code').value.trim(),name=document.getElementById('a_name').value.trim(),type=document.getElementById('a_type').value;
