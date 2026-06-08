@@ -280,6 +280,55 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 .rb-super{background:#fef3c7;color:#92400e}
 .rb-admin{background:var(--blue-pale);color:var(--blue)}
 .rb-custom{background:var(--green-pale);color:var(--green)}
+
+/* ══ PRODUCTS ══ */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:20px}
+.prod-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--gray-100);transition:.2s}
+.prod-card:hover{border-color:var(--gold-light);box-shadow:0 4px 20px rgba(15,32,68,.12)}
+.prod-card.inactive{opacity:.55;border-style:dashed}
+.prod-card-head{background:linear-gradient(135deg,var(--navy),#1a3a6e);padding:12px 16px;color:#fff;display:flex;align-items:center;gap:10px}
+.prod-code{font-size:10px;background:rgba(255,255,255,.18);border-radius:4px;padding:2px 7px;font-weight:700}
+.prod-name{font-size:14px;font-weight:700;flex:1}
+.prod-cat-badge{font-size:10px;background:var(--gold-pale);color:#b45309;border:1px solid #f0d98a;border-radius:20px;padding:2px 9px;font-weight:600}
+.prod-card-body{padding:12px 16px}
+.prod-info-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--gray-100);font-size:12.5px}
+.prod-info-row:last-child{border-bottom:none}
+.prod-price{font-size:16px;font-weight:900;color:var(--green)}
+.prod-card-foot{padding:10px 16px;border-top:1px solid var(--gray-100);display:flex;gap:6px}
+/* ══ CASHIER / POS ══ */
+.pos-wrap{display:grid;grid-template-columns:1fr 390px;gap:16px;min-height:550px}
+@media(max-width:900px){.pos-wrap{grid-template-columns:1fr}}
+.pos-products{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.pos-prod-head{padding:12px 16px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px}
+.pos-search{flex:1;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:7px 12px;font-size:13px;font-family:Cairo,sans-serif;color:#fff;direction:rtl;outline:none}
+.pos-search::placeholder{color:rgba(255,255,255,.5)}
+.pos-prod-list{flex:1;overflow-y:auto;padding:12px;max-height:520px}
+.pos-prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.pos-prod-item{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:.15s;text-align:center}
+.pos-prod-item:hover{border-color:var(--gold);background:var(--gold-pale)}
+.pos-prod-item-name{font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.pos-prod-item-price{font-size:13px;font-weight:700;color:var(--green)}
+.pos-prod-item-unit{font-size:10px;color:var(--gray-500)}
+.pos-cart{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.pos-cart-head{padding:14px 16px;background:var(--gold);color:var(--navy);font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.pos-cart-items{flex:1;overflow-y:auto;padding:10px;min-height:200px;max-height:320px}
+.pos-cart-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--gray-100);font-size:13px}
+.pos-cart-item:last-child{border-bottom:none}
+.pos-cart-item-name{flex:1;font-weight:600;color:var(--navy);font-size:12px}
+.pos-qty-wrap{display:flex;align-items:center;gap:4px}
+.pos-qty-btn{background:var(--gray-200);border:none;border-radius:4px;width:26px;height:26px;cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.pos-qty-btn:hover{background:var(--navy);color:#fff}
+.pos-qty-input{width:42px;border:1.5px solid var(--gray-200);border-radius:4px;text-align:center;font-size:13px;padding:3px;direction:ltr}
+.pos-item-total{font-weight:700;color:var(--green);min-width:64px;text-align:left;font-size:12px}
+.pos-cart-foot{padding:12px 16px;border-top:2px solid var(--gray-200);background:var(--gray-50)}
+.pos-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pos-total-label{font-size:13px;font-weight:600;color:var(--gray-700)}
+.pos-total-val{font-size:22px;font-weight:900;color:var(--navy)}
+.pos-empty{text-align:center;padding:30px 20px;color:var(--gray-500)}
+.cat-chip{display:inline-flex;align-items:center;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;font-family:Cairo,sans-serif;cursor:pointer;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-700);transition:.15s;white-space:nowrap}
+.cat-chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cat-chip:hover:not(.active){border-color:var(--navy);color:var(--navy)}
+.quick-btn.qb-purple{background:rgba(109,40,217,.35);border-color:rgba(139,92,246,.4)}.quick-btn.qb-purple:hover{background:rgba(109,40,217,.6)}
 </style>
 </head>
 <body>
@@ -315,6 +364,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
     <div><div class="logo-name" id="topbar-company-name">طاقات</div><div class="logo-sub" id="topbar-company-sub">النظام المالي المتكامل</div></div>
   </div>
   <div class="quick-btns">
+    <button class="quick-btn qb-purple" onclick="showTab('cashier',document.querySelector('[data-page=cashier]'))">🛒 الكاشير</button>
     <button class="quick-btn qb-red" onclick="openOvl('ovl-expense')">💸 سند مصروفات</button>
     <button class="quick-btn qb-green" onclick="openOvl('ovl-revenue')">💰 إيراد جديد</button>
     <button class="quick-btn qb-gold" onclick="openOvl('ovl-receipt')">🧾 سند قبض</button>
@@ -340,16 +390,18 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 </div>
 
 <div class="nav-wrap">
-  <button class="tab-btn active" onclick="showTab('balances',this)">📊 الأرصدة</button>
-  <button class="tab-btn" onclick="showTab('accounts',this)">📒 الحسابات</button>
-  <button class="tab-btn" onclick="showTab('expenses',this)">💸 المصاريف</button>
-  <button class="tab-btn" onclick="showTab('revenues',this)">💰 الإيرادات</button>
-  <button class="tab-btn" onclick="showTab('assets',this)">🏗️ الأصول</button>
-  <button class="tab-btn" onclick="showTab('hr',this)">👥 إدارة الموظفين</button>
-  <button class="tab-btn" id="admin-tab" onclick="showTab('admin',this)">🔐 إدارة المستخدمين</button>
-  <button class="tab-btn" onclick="showTab('summary',this)">📋 الميزانية</button>
-  <button class="tab-btn" onclick="showTab('vouchers',this)">🧾 السندات</button>
-  <button class="tab-btn" onclick="showTab('settings',this)">⚙️ الإعدادات</button>
+  <button class="tab-btn active" onclick="showTab('balances',this)" data-page="balances">📊 الأرصدة</button>
+  <button class="tab-btn" onclick="showTab('accounts',this)" data-page="accounts">📒 الحسابات</button>
+  <button class="tab-btn" onclick="showTab('expenses',this)" data-page="expenses">💸 المصاريف</button>
+  <button class="tab-btn" onclick="showTab('revenues',this)" data-page="revenues">💰 الإيرادات</button>
+  <button class="tab-btn" onclick="showTab('assets',this)" data-page="assets">🏗️ الأصول</button>
+  <button class="tab-btn" onclick="showTab('hr',this)" data-page="hr">👥 إدارة الموظفين</button>
+  <button class="tab-btn" id="admin-tab" onclick="showTab('admin',this)" data-page="admin">🔐 إدارة المستخدمين</button>
+  <button class="tab-btn" onclick="showTab('summary',this)" data-page="summary">📋 الميزانية</button>
+  <button class="tab-btn" onclick="showTab('vouchers',this)" data-page="vouchers">🧾 السندات</button>
+  <button class="tab-btn" onclick="showTab('products',this)" data-page="products">📦 المنتجات</button>
+  <button class="tab-btn" onclick="showTab('cashier',this)" data-page="cashier">🛒 الكاشير</button>
+  <button class="tab-btn" onclick="showTab('settings',this)" data-page="settings">⚙️ الإعدادات</button>
 </div>
 
 <div class="page active" id="page-balances"></div>
@@ -362,6 +414,8 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 <div class="page" id="page-summary"></div>
 <div class="page" id="page-vouchers"></div>
 <div class="page" id="page-settings"></div>
+<div class="page" id="page-products"></div>
+<div class="page" id="page-cashier"></div>
 <div id="print-area"></div>
 
 <!-- ═══════════ MODALS ═══════════ -->
@@ -377,7 +431,9 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group form-full"><label>البيان <span class="req">*</span></label><input type="text" id="e_desc" placeholder="وصف المصروف..."></div>
         <div class="form-group"><label>الحساب <span class="req">*</span></label><select id="e_acc"></select></div>
         <div class="form-group"><label>الفئة</label><select id="e_cat"><option value="">اختر</option><option>رواتب</option><option>إيجار</option><option>مواصلات</option><option>مستلزمات</option><option>خدمات</option><option>صيانة</option><option>أخرى</option></select></div>
-        <div class="form-group"><label>المبلغ ($) <span class="req">*</span></label><input type="number" id="e_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>العملة</label><select id="e_curr" onchange="updateCurrHint('e')"><option value="USD">دولار (USD)</option><option value="ILS">شيكل (ILS)</option><option value="EUR">يورو (EUR)</option></select></div>
+        <div class="form-group"><label>المبلغ <span class="req">*</span></label><input type="number" id="e_amt" placeholder="0.00" min="0" step="0.01" oninput="updateCurrHint('e')"></div>
+        <div class="form-group form-full" id="e_curr_hint_wrap" style="display:none"><div class="curr-hint" id="e_curr_hint">—</div></div>
         <div class="form-group"><label>الموافق على الصرف</label><input type="text" id="e_appr" placeholder="الاسم..."></div>
         <div class="form-group form-full"><label>ملاحظات</label><textarea id="e_notes" placeholder="ملاحظات..."></textarea></div>
       </div>
@@ -397,7 +453,9 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group form-full"><label>المصدر / البيان <span class="req">*</span></label><input type="text" id="r_desc" placeholder="وصف الإيراد..."></div>
         <div class="form-group"><label>الحساب <span class="req">*</span></label><select id="r_acc"></select></div>
         <div class="form-group"><label>نوع الإيراد</label><select id="r_type"><option value="">اختر</option><option>إيرادات خدمات</option><option>إيرادات مبيعات</option><option>منح وتمويل</option><option>أخرى</option></select></div>
-        <div class="form-group"><label>المبلغ ($) <span class="req">*</span></label><input type="number" id="r_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>العملة</label><select id="r_curr" onchange="updateCurrHint('r')"><option value="USD">دولار (USD)</option><option value="ILS">شيكل (ILS)</option><option value="EUR">يورو (EUR)</option></select></div>
+        <div class="form-group"><label>المبلغ <span class="req">*</span></label><input type="number" id="r_amt" placeholder="0.00" min="0" step="0.01" oninput="updateCurrHint('r')"></div>
+        <div class="form-group form-full" id="r_curr_hint_wrap" style="display:none"><div class="curr-hint" id="r_curr_hint">—</div></div>
         <div class="form-group"><label>اسم العميل / الجهة</label><input type="text" id="r_client" placeholder="الاسم..."></div>
         <div class="form-group form-full"><label>ملاحظات</label><textarea id="r_notes" placeholder="ملاحظات..."></textarea></div>
       </div>
@@ -636,6 +694,41 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
   </div>
 </div>
 
+
+<!-- Product Modal -->
+<div class="overlay" id="ovl-product" onclick="if(event.target===this)closeOvl('ovl-product')">
+  <div class="modal">
+    <div class="modal-head"><h3 id="prod-modal-title">📦 إضافة منتج جديد</h3><button class="modal-close" onclick="closeOvl('ovl-product')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="prod_edit_id">
+      <div class="form-grid">
+        <div class="form-group"><label>كود المنتج</label><input type="text" id="prod_code" placeholder="مثال: P001"></div>
+        <div class="form-group"><label>الفئة <span class="req">*</span></label><select id="prod_cat"></select></div>
+        <div class="form-group form-full"><label>اسم المنتج <span class="req">*</span></label><input type="text" id="prod_name" placeholder="اسم المنتج..."></div>
+        <div class="form-group"><label>السعر <span class="req">*</span></label><input type="number" id="prod_price" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>العملة</label><select id="prod_curr"><option value="USD">دولار (USD)</option><option value="ILS">شيكل (ILS)</option><option value="EUR">يورو (EUR)</option></select></div>
+        <div class="form-group"><label>وحدة القياس</label><input type="text" id="prod_unit" placeholder="مثال: قطعة، كغ، لتر..."></div>
+        <div class="form-group form-full"><label>الوصف</label><textarea id="prod_desc" placeholder="وصف المنتج..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-product')">إلغاء</button><button class="btn navy sm" onclick="saveProduct()">💾 حفظ المنتج</button></div>
+  </div>
+</div>
+
+<!-- Product Category Modal -->
+<div class="overlay" id="ovl-prod-cat" onclick="if(event.target===this)closeOvl('ovl-prod-cat')">
+  <div class="modal" style="width:440px">
+    <div class="modal-head"><h3>📂 إدارة فئات المنتجات</h3><button class="modal-close" onclick="closeOvl('ovl-prod-cat')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <input type="text" id="new_cat_name" placeholder="اسم الفئة الجديدة..." style="flex:1;border:1.5px solid var(--gray-200);border-radius:8px;padding:9px 12px;font-size:13px;font-family:Cairo,sans-serif;direction:rtl;outline:none">
+        <button class="btn navy sm" onclick="addProdCategory()">➕ إضافة</button>
+      </div>
+      <div id="prod-cat-list" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto"></div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-prod-cat')">إغلاق</button></div>
+  </div>
+</div>
 </div><!-- end main-app -->
 
 <div class="toast-wrap" id="toastWrap"></div>
@@ -740,6 +833,8 @@ const PAGES_CONFIG = [
   {id:'summary',  label:'📋 الميزانية',  ops:['view']},
   {id:'vouchers', label:'🧾 السندات',    ops:['view','add','delete']},
   {id:'settings', label:'⚙️ الإعدادات', ops:['view']},
+  {id:'products', label:'📦 المنتجات',  ops:['view','add','edit','delete']},
+  {id:'cashier',  label:'🛒 الكاشير',    ops:['view','add']},
   {id:'admin',    label:'🔐 المستخدمون', ops:['view','add','edit','delete']},
 ];
 const OP_LABELS = {view:'عرض', add:'إضافة', edit:'تعديل', delete:'حذف'};
@@ -813,10 +908,8 @@ function doLogout(){
 }
 
 function buildNavVisibility(){
-  const tabMap = {balances:0,accounts:1,expenses:2,revenues:3,assets:4,hr:5,admin:6,summary:7};
-  document.querySelectorAll('.tab-btn').forEach((btn,i)=>{
-    const pages = ['balances','accounts','expenses','revenues','assets','hr','admin','summary'];
-    const page = pages[i];
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    const page=btn.getAttribute('data-page');
     if(page && !canView(page)) btn.style.display='none';
     else btn.style.display='';
   });
@@ -837,7 +930,7 @@ function init(){
   if(changed) DB.set('accounts',accs);
   applySettingsUI();
   // Navigate to first visible page
-  const pages=['balances','accounts','expenses','revenues','assets','hr','summary'];
+  const pages=['balances','accounts','expenses','revenues','assets','hr','summary','products','cashier'];
   const first = pages.find(p=>canView(p))||'balances';
   const btns = document.querySelectorAll('.tab-btn');
   const pageIdx = {balances:0,accounts:1,expenses:2,revenues:3,assets:4,hr:5,admin:6,summary:7};
@@ -1047,7 +1140,7 @@ function renderPage(page){
     if(pageEl) pageEl.innerHTML=`<div class="no-access"><div class="no-access-icon">🔒</div><div class="no-access-msg">ليس لديك صلاحية الوصول</div><div class="no-access-sub">تواصل مع مدير النظام</div></div>`;
     return;
   }
-  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary,vouchers:renderVouchers,settings:renderSettings})[page]?.();
+  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary,vouchers:renderVouchers,settings:renderSettings,products:renderProducts,cashier:renderCashier})[page]?.();
 }
 
 // ══════════════════════════════════════════════
@@ -1111,13 +1204,13 @@ function renderExpenses(){
   const sorted=[...exp].sort((a,b)=>b.date.localeCompare(a.date));
   const tot=sorted.reduce((s,e)=>s+N(e.amount),0);
   const rows=sorted.map((e,i)=>{ const acc=accs.find(a=>a.id===e.accountId);
-    return `<tr><td class="muted">${i+1}</td><td>${e.date}</td><td><strong>${e.desc}</strong>${e.notes?`<div class="muted">${e.notes}</div>`:''}</td><td class="muted">${acc?acc.name:e.accountName||'-'}</td><td>${e.category?`<span class="badge expense">${e.category}</span>`:'-'}</td><td class="muted">${e.payment||'-'}</td><td class="rt">${fmt(e.amount)}</td><td class="muted">${e.approved||'-'}</td><td>${canDo('expenses','delete')?`<button class="del-btn" onclick="delExpense('${e.id}')">🗑</button>`:''}</td></tr>`;
+    return `<tr><td class="muted">${i+1}</td><td>${e.date}</td><td><strong>${e.desc}</strong>${e.notes?`<div class="muted">${e.notes}</div>`:''}</td><td class="muted">${acc?acc.name:e.accountName||'-'}</td><td>${e.category?`<span class="badge expense">${e.category}</span>`:'-'}</td><td class="muted">${e.payment||'-'}</td><td class="rt">${e.currency&&e.currency!=='USD'&&e.origAmount?fmtCurr(e.origAmount,e.currency):fmt(e.amount)}</td><td class="muted">${e.currency&&e.currency!=='USD'?fmt(e.amount):'-'}</td><td class="muted">${e.approved||'-'}</td><td>${canDo('expenses','delete')?`<button class="del-btn" onclick="delExpense('${e.id}')">🗑</button>`:''}</td></tr>`;
   }).join('');
   document.getElementById('page-expenses').innerHTML=`
     <div class="sec-title"><h2>سجل المصاريف</h2></div>
     <div class="toolbar">${canDo('expenses','add')?`<button class="btn red" onclick="openOvl('ovl-expense')">➕ تسجيل مصروف جديد</button>`:''}</div>
     <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card red"><div class="stat-label">إجمالي المصاريف</div><div class="stat-value r">${fmt(tot)}</div></div><div class="stat-card"><div class="stat-label">عدد العمليات</div><div class="stat-value">${exp.length}</div></div></div>
-    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>البيان</th><th>الحساب</th><th>الفئة</th><th>طريقة الدفع</th><th>المبلغ ($)</th><th>الموافق على الصرف</th><th></th></tr></thead>
+    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>البيان</th><th>الحساب</th><th>الفئة</th><th>طريقة الدفع</th><th>المبلغ</th><th>بالدولار</th><th>الموافق على الصرف</th><th></th></tr></thead>
     <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد مصاريف مسجلة</td></tr>'}</tbody></table></div>`;
 }
 
@@ -1129,13 +1222,13 @@ function renderRevenues(){
   const sorted=[...rev].sort((a,b)=>b.date.localeCompare(a.date));
   const tR=sorted.reduce((s,r)=>s+N(r.amount),0),tE=exp.reduce((s,e)=>s+N(e.amount),0);
   const rows=sorted.map((r,i)=>{ const acc=accs.find(a=>a.id===r.accountId);
-    return `<tr><td class="muted">${i+1}</td><td>${r.date}</td><td><strong>${r.desc}</strong>${r.notes?`<div class="muted">${r.notes}</div>`:''}</td><td class="muted">${acc?acc.name:r.accountName||'-'}</td><td>${r.type?`<span class="badge revenue">${r.type}</span>`:'-'}</td><td class="muted">${r.client||'-'}</td><td class="gt">${fmt(r.amount)}</td><td class="muted">${r.method||'-'}</td><td>${canDo('revenues','delete')?`<button class="del-btn" onclick="delRevenue('${r.id}')">🗑</button>`:''}</td></tr>`;
+    return `<tr><td class="muted">${i+1}</td><td>${r.date}</td><td><strong>${r.desc}</strong>${r.notes?`<div class="muted">${r.notes}</div>`:''}</td><td class="muted">${acc?acc.name:r.accountName||'-'}</td><td>${r.type?`<span class="badge revenue">${r.type}</span>`:'-'}</td><td class="muted">${r.client||'-'}</td><td class="gt">${r.currency&&r.currency!=='USD'&&r.origAmount?fmtCurr(r.origAmount,r.currency):fmt(r.amount)}</td><td class="muted">${r.currency&&r.currency!=='USD'?fmt(r.amount):'-'}</td><td class="muted">${r.method||'-'}</td><td>${canDo('revenues','delete')?`<button class="del-btn" onclick="delRevenue('${r.id}')">🗑</button>`:''}</td></tr>`;
   }).join('');
   document.getElementById('page-revenues').innerHTML=`
     <div class="sec-title"><h2>سجل الإيرادات</h2></div>
     <div class="toolbar">${canDo('revenues','add')?`<button class="btn green" onclick="openOvl('ovl-revenue')">➕ تسجيل إيراد جديد</button>`:''}</div>
     <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card green"><div class="stat-label">إجمالي الإيرادات</div><div class="stat-value g">${fmt(tR)}</div></div><div class="stat-card gold"><div class="stat-label">صافي الربح</div><div class="stat-value ${tR-tE>=0?'g':'r'}">${fmt(tR-tE)}</div></div><div class="stat-card"><div class="stat-label">عدد العمليات</div><div class="stat-value">${rev.length}</div></div></div>
-    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>المصدر / البيان</th><th>الحساب</th><th>نوع الإيراد</th><th>العميل / الجهة</th><th>المبلغ ($)</th><th>طريقة الاستلام</th><th></th></tr></thead>
+    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>المصدر / البيان</th><th>الحساب</th><th>نوع الإيراد</th><th>العميل / الجهة</th><th>المبلغ</th><th>بالدولار</th><th>طريقة الاستلام</th><th></th></tr></thead>
     <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد إيرادات مسجلة</td></tr>'}</tbody></table></div>`;
 }
 
@@ -1869,7 +1962,13 @@ function closeOvl(id){
 function fillAccDrops(){
   const accs=DB.get('accounts');
   const opts=accs.map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
-  ['e_acc','r_acc','rc_acc','pv_acc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<option value="">-- اختر الحساب --</option>'+opts; });
+  const assetOpts=accs.filter(a=>a.type==='asset').map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
+  const expOpts=accs.filter(a=>a.type==='expense'||a.type==='asset').map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
+  const revOpts=accs.filter(a=>a.type==='revenue'||a.type==='asset').map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
+  const eaEl=document.getElementById('e_acc'); if(eaEl) eaEl.innerHTML='<option value="">-- اختر الحساب --</option>'+expOpts;
+  const raEl=document.getElementById('r_acc'); if(raEl) raEl.innerHTML='<option value="">-- اختر الحساب --</option>'+revOpts;
+  const rcEl=document.getElementById('rc_acc'); if(rcEl) rcEl.innerHTML='<option value="">الصندوق / البنك</option>'+assetOpts;
+  const pvEl=document.getElementById('pv_acc'); if(pvEl) pvEl.innerHTML='<option value="">الصندوق / البنك</option>'+assetOpts;
   const ap=document.getElementById('a_par'); if(ap) ap.innerHTML='<option value="">-- لا يوجد --</option>'+opts;
 }
 
@@ -1879,20 +1978,24 @@ function fillAccDrops(){
 function saveExpense(){
   const date=document.getElementById('e_date').value,desc=document.getElementById('e_desc').value.trim();
   const accId=document.getElementById('e_acc').value,amt=parseFloat(document.getElementById('e_amt').value);
+  const currency=document.getElementById('e_curr')?.value||'USD';
   if(!date||!desc||!accId||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
   const acc=DB.get('accounts').find(a=>a.id===accId);
-  const rec={id:uid(),date,desc,accountId:accId,accountName:acc?acc.name:'',category:document.getElementById('e_cat').value,payment:document.getElementById('e_pay').value,amount:amt,approved:document.getElementById('e_appr').value.trim(),notes:document.getElementById('e_notes').value.trim()};
+  const amountUSD=parseFloat(toUSD(amt,currency).toFixed(2));
+  const rec={id:uid(),date,desc,accountId:accId,accountName:acc?acc.name:'',category:document.getElementById('e_cat').value,payment:document.getElementById('e_pay').value,amount:amountUSD,origAmount:amt,currency,approved:document.getElementById('e_appr').value.trim(),notes:document.getElementById('e_notes').value.trim()};
   const data=DB.get('expenses');data.push(rec);DB.set('expenses',data);
-  closeOvl('ovl-expense');toast(`✅ تم تسجيل المصروف: ${fmt(amt)}`);renderPage(curPage);
+  closeOvl('ovl-expense');toast(`✅ تم تسجيل المصروف: ${fmtCurr(amt,currency)}`);renderPage(curPage);
 }
 function saveRevenue(){
   const date=document.getElementById('r_date').value,desc=document.getElementById('r_desc').value.trim();
   const accId=document.getElementById('r_acc').value,amt=parseFloat(document.getElementById('r_amt').value);
+  const currency=document.getElementById('r_curr')?.value||'USD';
   if(!date||!desc||!accId||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
   const acc=DB.get('accounts').find(a=>a.id===accId);
-  const rec={id:uid(),date,desc,accountId:accId,accountName:acc?acc.name:'',type:document.getElementById('r_type').value,client:document.getElementById('r_client').value.trim(),amount:amt,method:document.getElementById('r_meth').value,notes:document.getElementById('r_notes').value.trim()};
+  const amountUSD=parseFloat(toUSD(amt,currency).toFixed(2));
+  const rec={id:uid(),date,desc,accountId:accId,accountName:acc?acc.name:'',type:document.getElementById('r_type').value,client:document.getElementById('r_client').value.trim(),amount:amountUSD,origAmount:amt,currency,method:document.getElementById('r_meth').value,notes:document.getElementById('r_notes').value.trim()};
   const data=DB.get('revenues');data.push(rec);DB.set('revenues',data);
-  closeOvl('ovl-revenue');toast(`✅ تم تسجيل الإيراد: ${fmt(amt)}`);renderPage(curPage);
+  closeOvl('ovl-revenue');toast(`✅ تم تسجيل الإيراد: ${fmtCurr(amt,currency)}`);renderPage(curPage);
 }
 function saveReceipt(){
   const date=document.getElementById('rc_date').value,from=document.getElementById('rc_from').value.trim();
@@ -1956,6 +2059,266 @@ function delAsset(id){if(!confirm('حذف هذا الأصل؟'))return;DB.set('a
 // ══════════════════════════════════════════════
 // EXCEL EXPORT
 // ══════════════════════════════════════════════
+
+// ══════════════════════════════════════════════
+// PRODUCTS
+// ══════════════════════════════════════════════
+const DEFAULT_PROD_CATS = ['مواد غذائية','مشروبات','إلكترونيات','ملابس وأزياء','خدمات','أخرى'];
+
+function getProdCategories(){
+  const cats=DB.get('productCategories');
+  if(!cats||!Array.isArray(cats)||!cats.length){
+    const defaults=DEFAULT_PROD_CATS.map(n=>({id:uid(),name:n}));
+    DB.set('productCategories',defaults);
+    return defaults;
+  }
+  return cats;
+}
+
+function renderProducts(){
+  const prods=DB.get('products')||[];
+  const cats=getProdCategories();
+  const activeCount=prods.filter(p=>p.active).length;
+
+  const cards=prods.length===0
+    ? '<p style="color:var(--gray-500);padding:20px 0">لا توجد منتجات. أضف منتجاً جديداً.</p>'
+    : prods.map(p=>{
+        const cat=cats.find(c=>c.id===p.categoryId);
+        const priceDisplay=fmtCurr(p.price,p.currency||'USD');
+        const priceUSD=(p.currency&&p.currency!=='USD')?('= '+fmt(toUSD(p.price,p.currency||'USD'))):'';
+        return `<div class="prod-card ${p.active?'':'inactive'}">
+          <div class="prod-card-head">
+            <span class="prod-code">${p.code||'—'}</span>
+            <span class="prod-name">${p.name}</span>
+          </div>
+          <div class="prod-card-body">
+            <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">الفئة</span><span class="prod-cat-badge">${cat?cat.name:'—'}</span></div>
+            <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">السعر</span><span class="prod-price">${priceDisplay}${priceUSD?' <small style="color:var(--gray-500);font-weight:400">'+priceUSD+'</small>':''}</span></div>
+            <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">الوحدة</span><span style="font-weight:600">${p.unit||'-'}</span></div>
+            <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">الحالة</span><span class="badge ${p.active?'active-badge':'inactive-badge'}">${p.active?'نشط':'غير نشط'}</span></div>
+          </div>
+          <div class="prod-card-foot">
+            <button class="emp-action-btn" onclick="editProduct('${p.id}')">✏️ تعديل</button>
+            <button class="emp-action-btn ${p.active?'':'green-btn'}" onclick="toggleProductStatus('${p.id}')">${p.active?'⏸ تعطيل':'▶ تفعيل'}</button>
+            <button class="emp-action-btn red-btn" onclick="delProduct('${p.id}')">🗑</button>
+          </div>
+        </div>`;
+      }).join('');
+
+  document.getElementById('page-products').innerHTML=`
+    <div class="sec-title"><h2>إدارة المنتجات</h2><span class="pill">الكاشير</span></div>
+    <div class="stats-grid">
+      <div class="stat-card blue"><div class="stat-label">إجمالي المنتجات</div><div class="stat-value">${prods.length}</div></div>
+      <div class="stat-card green"><div class="stat-label">المنتجات النشطة</div><div class="stat-value g">${activeCount}</div></div>
+      <div class="stat-card gold"><div class="stat-label">عدد الفئات</div><div class="stat-value gold">${cats.length}</div></div>
+    </div>
+    <div class="toolbar">
+      ${canDo('products','add')?`<button class="btn navy" onclick="openAddProduct()">➕ إضافة منتج جديد</button>`:''}
+      <button class="btn ghost" onclick="openProdCatManager()">📂 إدارة الفئات</button>
+    </div>
+    <div class="prod-grid">${cards}</div>
+  `;
+}
+
+function openAddProduct(){
+  document.getElementById('prod-modal-title').textContent='📦 إضافة منتج جديد';
+  document.getElementById('prod_edit_id').value='';
+  ['prod_code','prod_name','prod_unit'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('prod_price').value='';
+  document.getElementById('prod_curr').value='USD';
+  document.getElementById('prod_desc').value='';
+  fillProdCatSelect();
+  openOvl('ovl-product');
+}
+
+function editProduct(id){
+  const p=(DB.get('products')||[]).find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('prod-modal-title').textContent='✏️ تعديل المنتج';
+  document.getElementById('prod_edit_id').value=id;
+  document.getElementById('prod_code').value=p.code||'';
+  document.getElementById('prod_name').value=p.name||'';
+  document.getElementById('prod_price').value=p.price||'';
+  document.getElementById('prod_unit').value=p.unit||'';
+  document.getElementById('prod_desc').value=p.description||'';
+  fillProdCatSelect(p.categoryId);
+  openOvl('ovl-product');
+  setTimeout(()=>{ const el=document.getElementById('prod_curr'); if(el) el.value=p.currency||'USD'; },60);
+}
+
+function fillProdCatSelect(selectedId=''){
+  const cats=getProdCategories();
+  const sel=document.getElementById('prod_cat');
+  if(!sel) return;
+  sel.innerHTML='<option value="">— اختر الفئة —</option>'+
+    cats.map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${c.name}</option>`).join('');
+}
+
+function saveProduct(){
+  const editId=document.getElementById('prod_edit_id').value;
+  const name=document.getElementById('prod_name').value.trim();
+  const price=parseFloat(document.getElementById('prod_price').value);
+  const catId=document.getElementById('prod_cat').value;
+  if(!name||!price||price<=0||!catId){toast('يرجى إدخال الاسم والسعر والفئة','err');return;}
+  const cats=getProdCategories();const cat=cats.find(c=>c.id===catId);
+  const prodData={id:editId||uid(),code:document.getElementById('prod_code').value.trim(),name,categoryId:catId,categoryName:cat?cat.name:'',price,currency:document.getElementById('prod_curr').value||'USD',unit:document.getElementById('prod_unit').value.trim(),description:document.getElementById('prod_desc').value.trim(),active:true};
+  const prods=DB.get('products')||[];
+  if(editId){const i=prods.findIndex(p=>p.id===editId);if(i>=0){prods[i]={...prods[i],...prodData};}else prods.push(prodData);toast(`✅ تم تحديث المنتج: ${name}`);}
+  else{prods.push(prodData);toast(`✅ تمت إضافة المنتج: ${name}`);}
+  DB.set('products',prods);closeOvl('ovl-product');renderPage(curPage);
+}
+
+function toggleProductStatus(id){const prods=DB.get('products')||[];const i=prods.findIndex(p=>p.id===id);if(i>=0){prods[i].active=!prods[i].active;DB.set('products',prods);renderPage(curPage);}}
+function delProduct(id){if(!confirm('حذف هذا المنتج؟'))return;DB.set('products',(DB.get('products')||[]).filter(p=>p.id!==id));toast('تم حذف المنتج','err');renderPage(curPage);}
+
+function openProdCatManager(){renderProdCatList();openOvl('ovl-prod-cat');}
+function renderProdCatList(){
+  const cats=getProdCategories();const list=document.getElementById('prod-cat-list');if(!list)return;
+  list.innerHTML=cats.map(c=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--gray-50);border-radius:8px;border:1px solid var(--gray-200)"><span style="flex:1;font-size:13px;font-weight:600;color:var(--navy)">${c.name}</span><button class="btn sm" style="background:var(--red-pale);color:var(--red);font-size:11px;padding:4px 10px" onclick="delProdCategory('${c.id}')">🗑 حذف</button></div>`).join('');
+}
+function addProdCategory(){
+  const name=document.getElementById('new_cat_name').value.trim();
+  if(!name){toast('يرجى إدخال اسم الفئة','err');return;}
+  const cats=getProdCategories();if(cats.find(c=>c.name===name)){toast('الفئة موجودة مسبقاً','err');return;}
+  cats.push({id:uid(),name});DB.set('productCategories',cats);document.getElementById('new_cat_name').value='';renderProdCatList();toast(`✅ تمت إضافة الفئة: ${name}`);
+}
+function delProdCategory(id){if(!confirm('حذف هذه الفئة؟'))return;DB.set('productCategories',getProdCategories().filter(c=>c.id!==id));renderProdCatList();toast('تم حذف الفئة','err');}
+
+// ══════════════════════════════════════════════
+// CASHIER / POS
+// ══════════════════════════════════════════════
+let CART=[];
+
+function renderCashier(){
+  const prods=(DB.get('products')||[]).filter(p=>p.active);
+  const cats=getProdCategories();
+  const accs=DB.get('accounts').filter(a=>a.type==='asset');
+
+  const catChips='<button class="cat-chip active" id="cat-chip-all" onclick="filterPosProducts(\'\',this)">الكل ('+prods.length+')</button>'+
+    cats.map(c=>`<button class="cat-chip" id="cat-chip-${c.id}" onclick="filterPosProducts('${c.id}',this)">${c.name} (${prods.filter(p=>p.categoryId===c.id).length})</button>`).join('');
+
+  const prodItems=prods.map(p=>`<div class="pos-prod-item" data-cat="${p.categoryId}" onclick="addToCart('${p.id}')">
+    <div class="pos-prod-item-name">${p.name}</div>
+    <div class="pos-prod-item-price">${fmtCurr(p.price,p.currency||'USD')}</div>
+    <div class="pos-prod-item-unit">${p.unit||'قطعة'}</div>
+  </div>`).join('');
+
+  const accOpts=accs.map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
+
+  document.getElementById('page-cashier').innerHTML=`
+    <div class="sec-title"><h2>🛒 شاشة الكاشير</h2><span class="pill">مبيعات مباشرة</span></div>
+    <div class="pos-wrap">
+      <div class="pos-products">
+        <div class="pos-prod-head">
+          <span style="font-size:15px;font-weight:700">المنتجات</span>
+          <input class="pos-search" id="pos-search" placeholder="🔍 بحث عن منتج..." oninput="searchPosProducts(this.value)">
+        </div>
+        <div style="display:flex;gap:8px;padding:10px 16px;overflow-x:auto;flex-wrap:wrap">${catChips}</div>
+        <div class="pos-prod-list">
+          <div class="pos-prod-grid" id="pos-prod-grid">${prodItems||'<p style="color:var(--gray-500);padding:20px">لا توجد منتجات. أضف من صفحة المنتجات.</p>'}</div>
+        </div>
+      </div>
+      <div class="pos-cart">
+        <div class="pos-cart-head">
+          <span>🛒 الفاتورة الحالية</span>
+          <button class="btn sm" style="background:rgba(255,255,255,.2);color:var(--navy);font-size:11px;padding:4px 10px;border:1px solid rgba(255,255,255,.3)" onclick="clearCart()">🗑 مسح</button>
+        </div>
+        <div class="pos-cart-items" id="pos-cart-items"><div class="pos-empty">أضف منتجات للبدء...</div></div>
+        <div class="pos-cart-foot">
+          <div class="pos-total-row">
+            <span class="pos-total-label">الإجمالي (USD)</span>
+            <span class="pos-total-val" id="pos-total">$ 0.00</span>
+          </div>
+          <div class="form-grid" style="margin-bottom:10px;gap:8px">
+            <div class="form-group">
+              <label style="font-size:11px;font-weight:600;color:var(--gray-700)">اسم الزبون</label>
+              <input type="text" id="pos-customer" placeholder="الزبون (اختياري)..." style="border:1.5px solid var(--gray-200);border-radius:8px;padding:7px 11px;font-size:12px;font-family:Cairo,sans-serif;direction:rtl;outline:none;width:100%">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px;font-weight:600;color:var(--gray-700)">حساب الاستلام</label>
+              <select id="pos-acc" style="border:1.5px solid var(--gray-200);border-radius:8px;padding:7px 11px;font-size:12px;font-family:Cairo,sans-serif;direction:rtl;outline:none;width:100%">
+                <option value="">— اختر —</option>${accOpts}
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px;font-weight:600;color:var(--gray-700)">طريقة الدفع</label>
+              <select id="pos-method" style="border:1.5px solid var(--gray-200);border-radius:8px;padding:7px 11px;font-size:12px;font-family:Cairo,sans-serif;direction:rtl;outline:none;width:100%">
+                <option>نقداً</option><option>بطاقة</option><option>تحويل بنكي</option><option>إلكتروني</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px;font-weight:600;color:var(--gray-700)">تاريخ البيع</label>
+              <input type="date" id="pos-date" value="${today()}" style="border:1.5px solid var(--gray-200);border-radius:8px;padding:7px 11px;font-size:12px;font-family:Cairo,sans-serif;direction:rtl;outline:none;width:100%">
+            </div>
+          </div>
+          <button class="btn green" style="width:100%;justify-content:center;font-size:14px;padding:12px" onclick="completeSale()">✅ إتمام البيع وحفظ الفاتورة</button>
+        </div>
+      </div>
+    </div>
+  `;
+  renderCartDisplay();
+}
+
+function addToCart(productId){
+  const prods=DB.get('products')||[];const p=prods.find(x=>x.id===productId);if(!p)return;
+  const existing=CART.find(c=>c.productId===productId);
+  if(existing){existing.qty+=1;existing.total=existing.qty*existing.priceUSD;}
+  else{const priceUSD=parseFloat(toUSD(p.price,p.currency||'USD').toFixed(2));CART.push({productId,productName:p.name,qty:1,price:p.price,currency:p.currency||'USD',priceUSD,total:priceUSD,unit:p.unit||'قطعة'});}
+  renderCartDisplay();
+}
+
+function updateCartQty(productId,delta){const item=CART.find(c=>c.productId===productId);if(!item)return;item.qty=Math.max(1,item.qty+delta);item.total=item.qty*item.priceUSD;renderCartDisplay();}
+function setCartQty(productId,val){const item=CART.find(c=>c.productId===productId);if(!item)return;item.qty=Math.max(1,parseInt(val)||1);item.total=item.qty*item.priceUSD;renderCartDisplay();}
+function removeFromCart(productId){CART=CART.filter(c=>c.productId!==productId);renderCartDisplay();}
+function clearCart(){CART=[];renderCartDisplay();}
+
+function renderCartDisplay(){
+  const itemsEl=document.getElementById('pos-cart-items');const totalEl=document.getElementById('pos-total');
+  if(!itemsEl)return;
+  if(!CART.length){itemsEl.innerHTML='<div class="pos-empty">أضف منتجات للبدء...</div>';if(totalEl)totalEl.textContent='$ 0.00';return;}
+  itemsEl.innerHTML=CART.map(item=>`<div class="pos-cart-item">
+    <div class="pos-cart-item-name">${item.productName}<div style="font-size:10px;color:var(--gray-500)">${fmtCurr(item.price,item.currency)} / ${item.unit}</div></div>
+    <div class="pos-qty-wrap">
+      <button class="pos-qty-btn" onclick="updateCartQty('${item.productId}',-1)">−</button>
+      <input class="pos-qty-input" type="number" value="${item.qty}" min="1" onchange="setCartQty('${item.productId}',this.value)">
+      <button class="pos-qty-btn" onclick="updateCartQty('${item.productId}',1)">+</button>
+    </div>
+    <div class="pos-item-total">${fmt(item.total)}</div>
+    <button class="del-btn" onclick="removeFromCart('${item.productId}')">✕</button>
+  </div>`).join('');
+  const grandTotal=CART.reduce((s,c)=>s+c.total,0);
+  if(totalEl)totalEl.textContent=fmt(grandTotal);
+}
+
+function filterPosProducts(catId,btn){
+  document.querySelectorAll('.cat-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('#pos-prod-grid .pos-prod-item').forEach(el=>{el.style.display=(!catId||el.dataset.cat===catId)?'':'none';});
+}
+
+function searchPosProducts(q){
+  q=(q||'').toLowerCase();
+  document.querySelectorAll('#pos-prod-grid .pos-prod-item').forEach(el=>{
+    const name=(el.querySelector('.pos-prod-item-name')?.textContent||'').toLowerCase();
+    el.style.display=name.includes(q)?'':'none';
+  });
+}
+
+function completeSale(){
+  if(!CART.length){toast('الفاتورة فارغة — أضف منتجات أولاً','err');return;}
+  const date=document.getElementById('pos-date')?.value||today();
+  const customer=document.getElementById('pos-customer')?.value.trim()||'عميل نقدي';
+  const accId=document.getElementById('pos-acc')?.value||'';
+  const method=document.getElementById('pos-method')?.value||'نقداً';
+  const acc=DB.get('accounts').find(a=>a.id===accId);
+  const totalUSD=CART.reduce((s,c)=>s+c.total,0);
+  const items=CART.map(c=>c.productName+' x'+c.qty).join('، ');
+  const revRec={id:uid(),date,desc:`مبيعات كاشير — ${customer}`,accountId:accId,accountName:acc?acc.name:'',type:'إيرادات مبيعات',client:customer,amount:parseFloat(totalUSD.toFixed(2)),origAmount:parseFloat(totalUSD.toFixed(2)),currency:'USD',method,notes:`فاتورة كاشير | ${CART.length} منتج | ${items}`,isSale:true,saleItems:JSON.parse(JSON.stringify(CART))};
+  const revenues=DB.get('revenues')||[];revenues.push(revRec);DB.set('revenues',revenues);
+  toast(`✅ تم حفظ الفاتورة: ${fmt(totalUSD)} لـ ${customer}`);
+  CART=[];renderCashier();
+}
+
+
 function exportExcel(){
   const btn=document.getElementById('exportBtn');
   btn.disabled=true; btn.textContent='جاري التصدير...';
