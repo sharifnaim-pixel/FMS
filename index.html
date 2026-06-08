@@ -1975,7 +1975,7 @@ function exportExcel(){
     const hs=(bg,fg,sz=10,bold=true)=>({font:{name:'Arial',bold,color:{rgb:fg||WHITE},sz},fill:{fgColor:{rgb:bg}},alignment:{horizontal:'right',vertical:'center',readingOrder:2,wrapText:true},border:bdr});
     const ds=(fg,bg,bold=false)=>({font:{name:'Arial',color:{rgb:fg||'1E293B'},sz:10,bold},fill:{fgColor:{rgb:bg||WHITE}},alignment:{horizontal:'right',vertical:'center',readingOrder:2},border:bdr});
     function txt(v,fg,bg,bold=false){return{v:v||'',t:'s',s:ds(fg,bg,bold)};}
-    function num(v,fg,bg,bold=false){return{v:N(v),t:'n',z:'#,##0.00 "\u20aa"',s:ds(fg||'1E293B',bg||WHITE,bold)};}
+    function num(v,fg,bg,bold=false){return{v:N(v),t:'n',z:'#,##0.00 "$"',s:ds(fg||'1E293B',bg||WHITE,bold)};}
     function addTitle(ws,title,sub,n){
       const r0=Array.from({length:n},(_,i)=>i===0?{v:title,t:'s',s:{font:{name:'Arial',bold:true,color:{rgb:WHITE},sz:14},fill:{fgColor:{rgb:NAVY}},alignment:{horizontal:'center',vertical:'center',readingOrder:2}}}:{v:'',t:'s',s:{fill:{fgColor:{rgb:NAVY}}}});
       const r1=Array.from({length:n},(_,i)=>i===0?{v:sub,t:'s',s:{font:{name:'Arial',color:{rgb:'64748B'},sz:9,italic:true},fill:{fgColor:{rgb:LBLUE}},alignment:{horizontal:'center',vertical:'center',readingOrder:2}}}:{v:'',t:'s',s:{fill:{fgColor:{rgb:LBLUE}}}});
@@ -2112,27 +2112,46 @@ function exportExcel(){
     wsPay['!cols']=[{wch:5},{wch:22},{wch:16},{wch:14},{wch:18},{wch:14},{wch:16},{wch:18}];
     XLSX.utils.book_append_sheet(wb,wsPay,'\u0642\u0633\u0627\u0626\u0645 \u0627\u0644\u0631\u0648\u0627\u062a\u0628');
 
-    // ── Sheet 10: النسخة الاحتياطية الكاملة (JSON) ──
+    // ══ Sheet 10: النسخة الاحتياطية الكاملة ══
     const wsBK=XLSX.utils.aoa_to_sheet([]);wsBK['!rtl']=true;
-    addTitle(wsBK,'\u0646\u0633\u062e\u0629 \u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629 \u0634\u0627\u0645\u0644\u0629',`تاريخ التصدير: ${new Date().toLocaleString('ar-SA')} | يُستخدم للاستيراد عبر زر الاستيراد في البرنامج`,2);
-    // Collect ALL taqat_ keys from localStorage
-    const allData={};
-    for(let i=0;i<localStorage.length;i++){
-      const k=localStorage.key(i);
-      if(k&&k.startsWith('taqat_')){
-        try{allData[k.replace('taqat_','')]=JSON.parse(localStorage.getItem(k));}
-        catch{allData[k.replace('taqat_','')]=localStorage.getItem(k);}
-      }
-    }
-    const jsonStr=JSON.stringify(allData,null,2);
-    // Split into rows of 1000 chars to fit in cells
-    wsBK['A3']={v:'⬇️ بيانات النسخة الاحتياطية — لا تعدّل هذه البيانات يدوياً',t:'s',s:{font:{name:'Arial',bold:true,color:{rgb:RED},sz:11},fill:{fgColor:{rgb:LRED}},alignment:{horizontal:'right',vertical:'center',readingOrder:2}}};
-    wsBK['A4']={v:jsonStr,t:'s',s:{font:{name:'Courier New',color:{rgb:'1E293B'},sz:9},fill:{fgColor:{rgb:LGRAY}},alignment:{horizontal:'left',vertical:'top',wrapText:true}}};
-    wsBK['!rows']=[{},{},{hpt:22},{hpt:Math.min(800,Math.ceil(jsonStr.length/80)*12)}];
-    wsBK['!cols']=[{wch:200}];
+    addTitle(wsBK,'نسخة احتياطية شاملة — طاقات',`تاريخ التصدير: ${new Date().toLocaleString('ar-SA')} | قابلة للاستيراد في أي نسخة من البرنامج`,3);
+    wsBK['A3']={v:'المفتاح',t:'s',s:hs(NAVY,WHITE,10)};
+    wsBK['B3']={v:'البيانات',t:'s',s:hs(NAVY,WHITE,10)};
+    wsBK['C3']={v:'جزء',t:'s',s:hs(NAVY,WHITE,10)};
+    if(!wsBK['!rows'])wsBK['!rows']=[];
+    wsBK['!rows'][0]={hpt:32};wsBK['!rows'][1]={hpt:18};wsBK['!rows'][2]={hpt:22};
     if(!wsBK['!merges'])wsBK['!merges']=[];
-    wsBK['!merges'].push({s:{r:0,c:0},e:{r:0,c:1}},{s:{r:1,c:0},e:{r:1,c:1}});
-    XLSX.utils.book_append_sheet(wb,wsBK,'\u0646\u0633\u062e\u0629 \u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629');
+    wsBK['!merges'].push({s:{r:0,c:0},e:{r:0,c:2}},{s:{r:1,c:0},e:{r:1,c:2}});
+    const EXPORT_KEYS=['الحسابات','مصاريف','إيرادات','أصول','موظفون','سلف','مكافآت','رواتب','accounts','expenses','revenues','assets','employees','advances','bonuses','payrolls','receipts','payments','settings','rcCount','pvCount','users'];
+    const extraKeys=[];
+    for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('taqat_')){const ky=k.replace('taqat_','');if(!EXPORT_KEYS.includes(ky))extraKeys.push(ky);}}
+    const allExportKeys=[...EXPORT_KEYS,...extraKeys];
+    const CHUNK=24000;
+    let bkRow=4;
+    allExportKeys.forEach((key,ki)=>{
+      const raw=localStorage.getItem('taqat_'+key);
+      if(raw===null||raw===undefined||raw==='') return;
+      const bg=ki%2===0?WHITE:LGRAY;
+      const kStyle=ds(NAVY,bg,true);const vStyle=ds('1E293B',bg);const nStyle=ds('64748B',bg);
+      if(raw.length<=CHUNK){
+        wsBK[`A${bkRow}`]={v:key,t:'s',s:kStyle};
+        wsBK[`B${bkRow}`]={v:raw,t:'s',s:vStyle};
+        wsBK[`C${bkRow}`]={v:'1/1',t:'s',s:nStyle};
+        wsBK['!rows'][bkRow-1]={hpt:18};bkRow++;
+      } else {
+        const total=Math.ceil(raw.length/CHUNK);
+        for(let ci=0;ci<total;ci++){
+          const chunkKey=`${key}__c${ci}`;
+          wsBK[`A${bkRow}`]={v:chunkKey,t:'s',s:kStyle};
+          wsBK[`B${bkRow}`]={v:raw.slice(ci*CHUNK,(ci+1)*CHUNK),t:'s',s:vStyle};
+          wsBK[`C${bkRow}`]={v:`${ci+1}/${total}`,t:'s',s:nStyle};
+          wsBK['!rows'][bkRow-1]={hpt:18};bkRow++;
+        }
+      }
+    });
+    wsBK['!ref']=`A1:C${bkRow-1}`;
+    wsBK['!cols']=[{wch:28},{wch:90},{wch:8}];
+    XLSX.utils.book_append_sheet(wb,wsBK,'نسخة احتياطية');
 
     const d=new Date();
     const fname=`\u0637\u0627\u0642\u0627\u062a_\u0627\u0644\u0646\u0638\u0627\u0645_\u0627\u0644\u0645\u0627\u0644\u064a_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.xlsx`;
@@ -2449,32 +2468,50 @@ function importExcel(event){
       const backupSheetName = wb.SheetNames.find(n => n.includes('\u0646\u0633\u062e\u0629') || n.includes('backup') || n.toLowerCase().includes('backup'));
 
       if(backupSheetName){
-        // Full JSON backup restore
         const ws = wb.Sheets[backupSheetName];
-        const jsonCell = ws['A4'];
-        if(!jsonCell || !jsonCell.v){
-          toast('\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0628\u064a\u0627\u0646\u0627\u062a \u0635\u0627\u0644\u062d\u0629 \u0641\u064a \u0627\u0644\u0645\u0644\u0641','err');
+        const a4 = ws['A4'];
+        let restored = 0;
+        if(a4 && a4.v && String(a4.v).length < 200 && ws['B4']){
+          // New key-value row format
+          const range = XLSX.utils.decode_range(ws['!ref']||'A1:C4');
+          const chunks = {};
+          for(let r=3; r<=range.e.r; r++){
+            const kCell = ws[`A${r+1}`];
+            const vCell = ws[`B${r+1}`];
+            if(!kCell||!kCell.v) continue;
+            const key = String(kCell.v);
+            const val = vCell ? String(vCell.v||'') : '';
+            const chunkMatch = key.match(/^(.+)__c(\d+)$/);
+            if(chunkMatch){
+              const baseKey = chunkMatch[1];
+              const idx = parseInt(chunkMatch[2]);
+              if(!chunks[baseKey]) chunks[baseKey]=[];
+              chunks[baseKey][idx] = val;
+            } else {
+              chunks[key] = [val];
+            }
+          }
+          const toRemove=[];
+          for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('taqat_'))toRemove.push(k);}
+          toRemove.forEach(k=>localStorage.removeItem(k));
+          Object.entries(chunks).forEach(([key,parts])=>{
+            try{localStorage.setItem('taqat_'+key, parts.join(''));restored++;}catch(e){ console.warn('Import key failed:',key,e); }
+          });
+        } else if(a4 && a4.v){
+          // Old single-cell JSON format (backward compat)
+          try{
+            const parsed = JSON.parse(a4.v);
+            const toRemove2=[];
+            for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('taqat_'))toRemove2.push(k);}
+            toRemove2.forEach(k=>localStorage.removeItem(k));
+            Object.entries(parsed).forEach(([k,v])=>{try{localStorage.setItem('taqat_'+k,JSON.stringify(v));restored++;}catch(e){}});
+          }catch(e){ toast('فشل تحليل ملف النسخة الاحتياطية','err'); return; }
+        } else {
+          toast('لم يتم العثور على بيانات صالحة في ورقة النسخة الاحتياطية','err');
           return;
         }
-        const parsed = JSON.parse(jsonCell.v);
-        let count = 0;
-        // Clear all taqat_ keys first
-        const keysToRemove = [];
-        for(let i=0;i<localStorage.length;i++){
-          const k=localStorage.key(i);
-          if(k && k.startsWith('taqat_')) keysToRemove.push(k);
-        }
-        keysToRemove.forEach(k=>localStorage.removeItem(k));
-        // Restore all keys
-        Object.entries(parsed).forEach(([k,v])=>{
-          try{
-            localStorage.setItem('taqat_'+k, JSON.stringify(v));
-            count++;
-          }catch(err){ console.warn('Failed to import key:', k, err); }
-        });
-        toast(`\u2705 \u062a\u0645 \u0627\u0633\u062a\u064a\u0631\u0627\u062f \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0628\u0646\u062c\u0627\u062d \u2014 ${count} \u0645\u062c\u0645\u0648\u0639\u0629 \u0628\u064a\u0627\u0646\u0627\u062a`);
+        toast(`\u2705 تم استيراد البيانات بنجاح — ${restored} مجموعة بيانات`);
         setTimeout(()=>renderPage(curPage), 500);
-
       } else {
         // Try to import sheet by sheet if no backup sheet found
         let imported = 0;
