@@ -34,6 +34,54 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 .quick-btn.qb-gold{background:rgba(184,133,30,.35);border-color:rgba(232,184,75,.4)}.quick-btn.qb-gold:hover{background:rgba(184,133,30,.6)}
 .quick-btn.qb-teal{background:rgba(15,118,110,.35);border-color:rgba(20,184,166,.4)}.quick-btn.qb-teal:hover{background:rgba(15,118,110,.6)}
 @media(max-width:960px){.quick-btns{display:none}}
+/* ══ SETTINGS ══ */
+.settings-wrap{max-width:780px;margin:0 auto}
+.settings-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 26px;margin-bottom:16px}
+.settings-card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--gray-100);display:flex;align-items:center;gap:8px}
+.rate-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100)}
+.rate-row:last-child{border-bottom:none}
+.rate-flag{font-size:20px;width:28px;text-align:center}
+.rate-label{font-size:13px;font-weight:600;color:var(--gray-700);flex:1}
+.rate-equiv{font-size:12px;color:var(--gray-500);min-width:130px}
+.rate-input{width:90px;border:1.5px solid var(--gray-200);border-radius:6px;padding:6px 10px;font-size:13px;font-family:'Cairo',sans-serif;text-align:left;direction:ltr;outline:none}
+.rate-input:focus{border-color:var(--navy)}
+.logo-upload-row{display:flex;align-items:center;gap:16px;margin-top:10px}
+.logo-preview-box{width:72px;height:72px;border-radius:12px;border:2px solid var(--gray-200);background:var(--gray-50);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:26px;font-weight:900;color:var(--navy)}
+.logo-preview-box img{width:100%;height:100%;object-fit:contain}
+/* ══ VOUCHERS PAGE ══ */
+.vouchers-tabs{display:flex;gap:6px;margin-bottom:18px}
+.vtab-btn{padding:9px 22px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;background:var(--gray-100);color:var(--gray-700);transition:.15s}
+.vtab-btn.active{background:var(--navy);color:#fff}
+/* ══ CURRENCY ══ */
+.curr-hint{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--blue-pale);border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--blue);margin-top:4px}
+/* ══ PRINT VOUCHER ══ */
+@media print{body>*{display:none}#print-area{display:block!important;position:static;padding:28px 36px}}
+#print-area{display:none;background:#fff;font-family:'Cairo',sans-serif;direction:rtl}
+.pv-wrap{max-width:640px;margin:0 auto}
+.pv-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-bottom:16px;border-bottom:3px double var(--navy)}
+.pv-logo-box{width:68px;height:68px;border-radius:10px;overflow:hidden;border:2px solid var(--gray-200);background:var(--gray-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px;font-weight:900;color:var(--navy)}
+.pv-logo-box img{width:100%;height:100%;object-fit:contain}
+.pv-company-center{text-align:center;flex:1;padding:0 12px}
+.pv-company-name{font-size:20px;font-weight:900;color:var(--navy)}
+.pv-company-sub{font-size:11px;color:var(--gray-500);margin-top:2px}
+.pv-num-box{background:var(--navy);color:#fff;border-radius:8px;padding:8px 14px;text-align:center;min-width:105px}
+.pv-num-lbl{font-size:10px;opacity:.65}
+.pv-num-val{font-size:15px;font-weight:900;margin-top:2px}
+.pv-type-bar{text-align:center;font-size:17px;font-weight:900;padding:9px;border-radius:var(--radius-sm);margin-bottom:16px}
+.pv-type-bar.gold{background:var(--gold);color:var(--navy)}
+.pv-type-bar.teal{background:var(--teal);color:#fff}
+.pv-tbl{width:100%;border-collapse:collapse;margin-bottom:16px}
+.pv-tbl td{padding:9px 12px;border:1px solid var(--gray-200);font-size:13px}
+.pv-tbl td:first-child{background:var(--gray-50);font-weight:600;color:var(--gray-700);width:33%}
+.pv-amt-box{background:var(--gold-pale);border:2px solid #f0d98a;border-radius:var(--radius-sm);padding:14px;text-align:center;margin-bottom:16px}
+.pv-amt-lbl{font-size:11px;color:var(--gray-500);font-weight:600}
+.pv-amt-val{font-size:28px;font-weight:900;color:var(--navy);margin-top:3px}
+.pv-amt-sub{font-size:12px;color:var(--gray-500);margin-top:3px}
+.pv-sigs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--gray-200)}
+.pv-sig{text-align:center;padding:10px 8px;border:1px solid var(--gray-200);border-radius:6px}
+.pv-sig-lbl{font-size:10px;color:var(--gray-500);font-weight:700}
+.pv-sig-line{border-top:1px dashed var(--gray-400);margin:28px 0 4px}
+.pv-footer{text-align:center;font-size:11px;color:var(--gray-500);margin-top:14px;padding-top:10px;border-top:1px solid var(--gray-100)}
 .save-status{font-size:11px;color:rgba(255,255,255,.6)}
 .export-btn{background:var(--gold);color:var(--navy);border:none;border-radius:var(--radius-sm);padding:9px 16px;font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s}
 .export-btn:hover{opacity:.85}.export-btn:disabled{opacity:.5;cursor:not-allowed}
@@ -240,8 +288,8 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 <div id="login-screen" style="display:flex;position:fixed;inset:0;background:#0b1a3b;z-index:9999;align-items:center;justify-content:center">
   <div class="login-box">
     <div class="login-logo">
-      <div class="login-logo-icon">ط</div>
-      <div class="login-logo-name">طاقات</div>
+      <div class="login-logo-icon" id="login-logo-icon">ط</div>
+      <div class="login-logo-name" id="login-logo-name">طاقات</div>
       <div class="login-logo-sub">النظام المالي المتكامل — تسجيل الدخول</div>
     </div>
     <div class="login-field">
@@ -263,8 +311,8 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 
 <div class="topbar">
   <div class="logo">
-    <div class="logo-icon">ط</div>
-    <div><div class="logo-name">طاقات</div><div class="logo-sub">النظام المالي المتكامل</div></div>
+    <div class="logo-icon" id="topbar-logo-box">ط</div>
+    <div><div class="logo-name" id="topbar-company-name">طاقات</div><div class="logo-sub" id="topbar-company-sub">النظام المالي المتكامل</div></div>
   </div>
   <div class="quick-btns">
     <button class="quick-btn qb-red" onclick="openOvl('ovl-expense')">💸 سند مصروفات</button>
@@ -300,6 +348,8 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
   <button class="tab-btn" onclick="showTab('hr',this)">👥 إدارة الموظفين</button>
   <button class="tab-btn" id="admin-tab" onclick="showTab('admin',this)">🔐 إدارة المستخدمين</button>
   <button class="tab-btn" onclick="showTab('summary',this)">📋 الميزانية</button>
+  <button class="tab-btn" onclick="showTab('vouchers',this)">🧾 السندات</button>
+  <button class="tab-btn" onclick="showTab('settings',this)">⚙️ الإعدادات</button>
 </div>
 
 <div class="page active" id="page-balances"></div>
@@ -310,6 +360,9 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 <div class="page" id="page-hr"></div>
 <div class="page" id="page-admin"></div>
 <div class="page" id="page-summary"></div>
+<div class="page" id="page-vouchers"></div>
+<div class="page" id="page-settings"></div>
+<div id="print-area"></div>
 
 <!-- ═══════════ MODALS ═══════════ -->
 
@@ -353,6 +406,21 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
   </div>
 </div>
 
+<!-- Print Preview Modal -->
+<div class="overlay" id="ovl-print-preview" onclick="if(event.target===this)closeOvl('ovl-print-preview')">
+  <div class="modal wide">
+    <div class="modal-head">
+      <h3 id="print-preview-title">🖨️ معاينة السند</h3>
+      <button class="modal-close" onclick="closeOvl('ovl-print-preview')">✕</button>
+    </div>
+    <div class="modal-body" id="print-preview-body" style="padding:16px 20px"></div>
+    <div class="modal-foot">
+      <button class="btn ghost sm" onclick="closeOvl('ovl-print-preview')">إغلاق</button>
+      <button class="btn navy sm" onclick="doPrint()">🖨️ طباعة</button>
+    </div>
+  </div>
+</div>
+
 <!-- Receipt Voucher Modal (سند قبض) -->
 <div class="overlay" id="ovl-receipt" onclick="if(event.target===this)closeOvl('ovl-receipt')">
   <div class="modal">
@@ -363,7 +431,9 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="rc_date"></div>
         <div class="form-group"><label>طريقة الاستلام</label><select id="rc_meth"><option value="">اختر</option><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option><option>إلكتروني</option></select></div>
         <div class="form-group form-full"><label>استُلم من <span class="req">*</span></label><input type="text" id="rc_from" placeholder="اسم الشخص أو الجهة..."></div>
-        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="rc_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>العملة</label><select id="rc_curr" onchange="updateCurrHint('rc')"><option value="USD">دولار (USD)</option><option value="ILS">شيكل (ILS)</option><option value="EUR">يورو (EUR)</option></select></div>
+        <div class="form-group"><label>المبلغ <span class="req">*</span></label><input type="number" id="rc_amt" placeholder="0.00" min="0" step="0.01" oninput="updateCurrHint('rc')"></div>
+        <div class="form-group form-full" id="rc_curr_hint_wrap" style="display:none"><div class="curr-hint" id="rc_curr_hint">—</div></div>
         <div class="form-group"><label>الحساب</label><select id="rc_acc"></select></div>
         <div class="form-group form-full"><label>البيان / سبب الاستلام <span class="req">*</span></label><input type="text" id="rc_desc" placeholder="وصف..."></div>
         <div class="form-group form-full"><label>ملاحظات</label><textarea id="rc_notes" placeholder="ملاحظات إضافية..."></textarea></div>
@@ -383,7 +453,9 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="pv_date"></div>
         <div class="form-group"><label>طريقة الدفع</label><select id="pv_meth"><option value="">اختر</option><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option><option>بطاقة</option></select></div>
         <div class="form-group form-full"><label>صُرف لـ <span class="req">*</span></label><input type="text" id="pv_to" placeholder="اسم الشخص أو الجهة..."></div>
-        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="pv_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>العملة</label><select id="pv_curr" onchange="updateCurrHint('pv')"><option value="USD">دولار (USD)</option><option value="ILS">شيكل (ILS)</option><option value="EUR">يورو (EUR)</option></select></div>
+        <div class="form-group"><label>المبلغ <span class="req">*</span></label><input type="number" id="pv_amt" placeholder="0.00" min="0" step="0.01" oninput="updateCurrHint('pv')"></div>
+        <div class="form-group form-full" id="pv_curr_hint_wrap" style="display:none"><div class="curr-hint" id="pv_curr_hint">—</div></div>
         <div class="form-group"><label>الحساب</label><select id="pv_acc"></select></div>
         <div class="form-group form-full"><label>البيان / سبب الصرف <span class="req">*</span></label><input type="text" id="pv_desc" placeholder="وصف..."></div>
         <div class="form-group"><label>الموافق على الصرف</label><input type="text" id="pv_appr" placeholder="الاسم..."></div>
@@ -639,6 +711,19 @@ const DEFAULTS = [
   {id:'a20',code:'5008',name:'مكافآت وعلاوات',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
 ];
 
+const CURRENCY_ACCOUNTS = [
+  {id:'a_usd',code:'1010',name:'البنك - حساب الدولار الأمريكي',type:'asset',category:'أصول متداولة',parent:'a2',currency:'USD',opening:0,notes:''},
+  {id:'a_ils',code:'1011',name:'البنك - حساب الشيكل الإسرائيلي',type:'asset',category:'أصول متداولة',parent:'a2',currency:'ILS',opening:0,notes:''},
+  {id:'a_eur',code:'1012',name:'البنك - حساب اليورو',type:'asset',category:'أصول متداولة',parent:'a2',currency:'EUR',opening:0,notes:''},
+];
+
+const DEFAULT_SETTINGS = {
+  companyName: 'طاقات',
+  companySubtitle: 'النظام المالي المتكامل',
+  logoUrl: '',
+  rates: { ILS: 3.70, EUR: 0.93 }
+};
+
 const MONTHS_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 
 // ══════════════════════════════════════════════
@@ -653,6 +738,8 @@ const PAGES_CONFIG = [
   {id:'assets',   label:'🏗️ الأصول',    ops:['view','add','delete']},
   {id:'hr',       label:'👥 الموظفون',   ops:['view','add','edit','delete']},
   {id:'summary',  label:'📋 الميزانية',  ops:['view']},
+  {id:'vouchers', label:'🧾 السندات',    ops:['view','add','delete']},
+  {id:'settings', label:'⚙️ الإعدادات', ops:['view']},
   {id:'admin',    label:'🔐 المستخدمون', ops:['view','add','edit','delete']},
 ];
 const OP_LABELS = {view:'عرض', add:'إضافة', edit:'تعديل', delete:'حذف'};
@@ -743,6 +830,12 @@ function goAdminPanel(){
 
 function init(){
   if(!DB.get('accounts').length) DB.set('accounts', DEFAULTS);
+  // migrate: add currency sub-accounts if missing
+  const accs=DB.get('accounts');
+  let changed=false;
+  CURRENCY_ACCOUNTS.forEach(ca=>{if(!accs.find(a=>a.id===ca.id||a.code===ca.code)){accs.push(ca);changed=true;}});
+  if(changed) DB.set('accounts',accs);
+  applySettingsUI();
   // Navigate to first visible page
   const pages=['balances','accounts','expenses','revenues','assets','hr','summary'];
   const first = pages.find(p=>canView(p))||'balances';
@@ -954,7 +1047,7 @@ function renderPage(page){
     if(pageEl) pageEl.innerHTML=`<div class="no-access"><div class="no-access-icon">🔒</div><div class="no-access-msg">ليس لديك صلاحية الوصول</div><div class="no-access-sub">تواصل مع مدير النظام</div></div>`;
     return;
   }
-  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary})[page]?.();
+  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary,vouchers:renderVouchers,settings:renderSettings})[page]?.();
 }
 
 // ══════════════════════════════════════════════
@@ -1437,6 +1530,273 @@ function renderSummary(){
 // ══════════════════════════════════════════════
 // MODALS
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// SETTINGS HELPERS
+// ══════════════════════════════════════════════
+function getSettings(){ return DB.getObj('settings', DEFAULT_SETTINGS); }
+function saveSettingsObj(s){ DB.setObj('settings', s); }
+const CURR_SYMBOLS = { USD:'$', ILS:'₪', EUR:'€' };
+const CURR_NAMES   = { USD:'دولار أمريكي', ILS:'شيكل', EUR:'يورو' };
+
+function toUSD(amount, currency){
+  const s = getSettings();
+  if(currency==='USD') return amount;
+  if(currency==='ILS') return amount / s.rates.ILS;
+  if(currency==='EUR') return amount / s.rates.EUR;
+  return amount;
+}
+function fmtCurr(amount, currency){
+  const sym = CURR_SYMBOLS[currency]||currency;
+  return sym+' '+Number(amount||0).toLocaleString('ar-SA',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function updateCurrHint(prefix){
+  const curr = document.getElementById(prefix+'_curr')?.value||'USD';
+  const amt  = parseFloat(document.getElementById(prefix+'_amt')?.value)||0;
+  const wrap = document.getElementById(prefix+'_curr_hint_wrap');
+  const hint = document.getElementById(prefix+'_curr_hint');
+  if(!wrap||!hint) return;
+  if(curr==='USD'||!amt){ wrap.style.display='none'; return; }
+  const usd = toUSD(amt, curr);
+  hint.textContent = `= ${fmtCurr(usd,'USD')} (بالدولار الأمريكي - العملة الأساسية)`;
+  wrap.style.display='';
+}
+function applySettingsUI(){
+  const s = getSettings();
+  const nameEl = document.getElementById('topbar-company-name');
+  const subEl  = document.getElementById('topbar-company-sub');
+  const logoEl = document.getElementById('topbar-logo-box');
+  if(nameEl) nameEl.textContent = s.companyName||'طاقات';
+  if(subEl)  subEl.textContent  = s.companySubtitle||'النظام المالي المتكامل';
+  if(logoEl){
+    if(s.logoUrl){
+      logoEl.innerHTML = `<img src="${s.logoUrl}" onerror="this.parentElement.textContent='${(s.companyName||'ط')[0]}'" alt="logo">`;
+    } else {
+      logoEl.textContent = (s.companyName||'ط')[0];
+    }
+  }
+  // login screen logo
+  const loginIconEl = document.getElementById('login-logo-icon');
+  const loginNameEl = document.getElementById('login-logo-name');
+  if(loginIconEl) loginIconEl.textContent = (s.companyName||'ط')[0];
+  if(loginNameEl) loginNameEl.textContent = s.companyName||'طاقات';
+}
+
+// ══════════════════════════════════════════════
+// RENDER SETTINGS PAGE
+// ══════════════════════════════════════════════
+function renderSettings(){
+  const s = getSettings();
+  const logoPreview = s.logoUrl
+    ? `<img src="${s.logoUrl}" onerror="this.src=''" alt="logo">`
+    : `<span style="font-size:28px;font-weight:900;color:var(--navy)">${(s.companyName||'ط')[0]}</span>`;
+  document.getElementById('page-settings').innerHTML=`
+  <div class="page active" style="display:block">
+  <div class="settings-wrap">
+    <div class="sec-title"><h2>⚙️ إعدادات البرنامج</h2></div>
+
+    <div class="settings-card">
+      <div class="settings-card-title">🏢 معلومات الشركة</div>
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label>اسم الشركة / البرنامج</label>
+          <input type="text" id="st_name" value="${s.companyName||''}" placeholder="اسم الشركة...">
+        </div>
+        <div class="form-group form-full">
+          <label>العنوان الفرعي</label>
+          <input type="text" id="st_sub" value="${s.companySubtitle||''}" placeholder="مثال: النظام المالي المتكامل">
+        </div>
+      </div>
+      <div style="margin-top:4px">
+        <label class="form-group" style="font-size:12px;font-weight:600;color:var(--gray-700);display:block;margin-bottom:6px">شعار الشركة (رابط URL للصورة)</label>
+        <div class="logo-upload-row">
+          <div class="logo-preview-box" id="logo-preview-box">${logoPreview}</div>
+          <div style="flex:1">
+            <input type="text" id="st_logo" class="form-group input" style="border:1.5px solid var(--gray-200);border-radius:8px;padding:9px 12px;font-size:13px;font-family:Cairo,sans-serif;width:100%;outline:none" value="${s.logoUrl||''}" placeholder="https://example.com/logo.png" oninput="previewLogo(this.value)">
+            <div style="font-size:11px;color:var(--gray-500);margin-top:5px">أدخل رابط URL لصورة الشعار (PNG/JPG)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-card-title">💱 أسعار صرف العملات (مقابل الدولار الأمريكي)</div>
+      <div style="background:var(--blue-pale);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--blue);font-weight:600;margin-bottom:14px">
+        💡 العملة الأساسية هي الدولار الأمريكي (USD = 1). أدخل كم دولار يساوي الدولار، والقيمة لكل عملة أخرى.
+      </div>
+      <div class="rate-row">
+        <span class="rate-flag">🇺🇸</span>
+        <span class="rate-label">دولار أمريكي (USD)</span>
+        <span class="rate-equiv">العملة الأساسية</span>
+        <input class="rate-input" value="1" disabled style="background:var(--gray-100);color:var(--gray-500)">
+        <span style="font-size:12px;color:var(--gray-500)">USD لكل دولار</span>
+      </div>
+      <div class="rate-row">
+        <span class="rate-flag">🇮🇱</span>
+        <span class="rate-label">شيكل إسرائيلي (ILS)</span>
+        <span class="rate-equiv" id="rate-equiv-ILS">1 دولار = ${s.rates.ILS||3.70} ₪</span>
+        <input class="rate-input" id="st_rate_ils" type="number" min="0.01" step="0.01" value="${s.rates.ILS||3.70}" oninput="document.getElementById('rate-equiv-ILS').textContent='1 دولار = '+this.value+' ₪'">
+        <span style="font-size:12px;color:var(--gray-500)">ILS لكل دولار</span>
+      </div>
+      <div class="rate-row">
+        <span class="rate-flag">🇪🇺</span>
+        <span class="rate-label">يورو (EUR)</span>
+        <span class="rate-equiv" id="rate-equiv-EUR">1 دولار = ${s.rates.EUR||0.93} €</span>
+        <input class="rate-input" id="st_rate_eur" type="number" min="0.01" step="0.01" value="${s.rates.EUR||0.93}" oninput="document.getElementById('rate-equiv-EUR').textContent='1 دولار = '+this.value+' €'">
+        <span style="font-size:12px;color:var(--gray-500)">EUR لكل دولار</span>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+      <button class="btn ghost" onclick="renderSettings()">↺ إلغاء التغييرات</button>
+      <button class="btn navy" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+    </div>
+  </div>
+  </div>`;
+}
+function previewLogo(url){
+  const box = document.getElementById('logo-preview-box');
+  if(!box) return;
+  const s = getSettings();
+  if(url){ box.innerHTML=`<img src="${url}" onerror="this.parentElement.textContent='${(s.companyName||'ط')[0]}'" alt="logo">`; }
+  else   { box.textContent = (s.companyName||'ط')[0]; }
+}
+function saveSettings(){
+  const s = {
+    companyName:     document.getElementById('st_name').value.trim()||'طاقات',
+    companySubtitle: document.getElementById('st_sub').value.trim(),
+    logoUrl:         document.getElementById('st_logo').value.trim(),
+    rates:{
+      ILS: parseFloat(document.getElementById('st_rate_ils').value)||3.70,
+      EUR: parseFloat(document.getElementById('st_rate_eur').value)||0.93,
+    }
+  };
+  saveSettingsObj(s);
+  applySettingsUI();
+  toast('✅ تم حفظ الإعدادات');
+  renderSettings();
+}
+
+// ══════════════════════════════════════════════
+// RENDER VOUCHERS PAGE
+// ══════════════════════════════════════════════
+let voucherTab = 'receipts';
+function renderVouchers(tab){
+  if(tab) voucherTab=tab;
+  const receipts = DB.get('receipts')||[];
+  const payments = DB.get('payments')||[];
+  const isR = voucherTab==='receipts';
+  const list = isR ? receipts : payments;
+
+  const rows = list.length ? list.slice().reverse().map((v,i)=>`
+    <tr>
+      <td><strong>${v.num||'—'}</strong></td>
+      <td>${v.date||'—'}</td>
+      <td><strong>${isR?v.from:v.to}</strong></td>
+      <td>${v.desc||'—'}</td>
+      <td><strong>${fmtCurr(v.amount, v.currency||'USD')}</strong>${v.currency&&v.currency!=='USD'?`<br><span class="muted">= ${fmtCurr(v.amountUSD||v.amount,'USD')}</span>`:''}</td>
+      <td>${v.method||'—'}</td>
+      ${!isR?`<td>${v.approved||'—'}</td>`:''}
+      <td>
+        <button class="btn gold sm" style="padding:5px 10px;font-size:11px" onclick="openPrintPreview('${v.id}','${isR?'receipt':'payment'}')">🖨️ طباعة</button>
+        <button class="del-btn" onclick="delVoucher('${v.id}','${isR?'receipts':'payments'}')">🗑</button>
+      </td>
+    </tr>`).join('') : `<tr><td colspan="${isR?7:8}" class="empty-cell">لا توجد سندات مسجلة</td></tr>`;
+
+  const totalUSD = list.reduce((s,v)=>s+(v.amountUSD||v.amount||0),0);
+
+  document.getElementById('page-vouchers').innerHTML=`
+    <div class="sec-title"><h2>🧾 السندات</h2></div>
+    <div class="vouchers-tabs">
+      <button class="vtab-btn ${voucherTab==='receipts'?'active':''}" onclick="renderVouchers('receipts')">🧾 سندات القبض (${receipts.length})</button>
+      <button class="vtab-btn ${voucherTab==='payments'?'active':''}" onclick="renderVouchers('payments')">📤 سندات الصرف (${payments.length})</button>
+    </div>
+    <div class="stats-grid" style="margin-bottom:18px">
+      <div class="stat-card ${isR?'green':'red'}">
+        <div class="stat-label">${isR?'إجمالي القبض':'إجمالي الصرف'}</div>
+        <div class="stat-value ${isR?'g':'r'}">${fmtCurr(totalUSD,'USD')}</div>
+      </div>
+      <div class="stat-card"><div class="stat-label">عدد السندات</div><div class="stat-value">${list.length}</div></div>
+    </div>
+    <div class="table-card"><table><thead><tr>
+      <th>رقم السند</th><th>التاريخ</th><th>${isR?'استُلم من':'صُرف لـ'}</th>
+      <th>البيان</th><th>المبلغ</th><th>طريقة ${isR?'الاستلام':'الدفع'}</th>
+      ${!isR?'<th>الموافق</th>':''}
+      <th>إجراء</th>
+    </tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function delVoucher(id, key){
+  if(!confirm('حذف هذا السند؟')) return;
+  DB.set(key, (DB.get(key)||[]).filter(v=>v.id!==id));
+  toast('تم الحذف','err');
+  renderVouchers();
+}
+
+// ══════════════════════════════════════════════
+// PRINT VOUCHER
+// ══════════════════════════════════════════════
+function buildVoucherHTML(v, type){
+  const s = getSettings();
+  const isR = type==='receipt';
+  const logoHTML = s.logoUrl
+    ? `<div class="pv-logo-box"><img src="${s.logoUrl}" alt="logo"></div>`
+    : `<div class="pv-logo-box">${(s.companyName||'ط')[0]}</div>`;
+  const amtLine = v.currency&&v.currency!=='USD'
+    ? `<div class="pv-amt-sub">${fmtCurr(v.amount,v.currency)} = ${fmtCurr(v.amountUSD||v.amount,'USD')}</div>`
+    : '';
+  return `
+  <div class="pv-wrap">
+    <div class="pv-head">
+      ${logoHTML}
+      <div class="pv-company-center">
+        <div class="pv-company-name">${s.companyName||'طاقات'}</div>
+        <div class="pv-company-sub">${s.companySubtitle||''}</div>
+      </div>
+      <div class="pv-num-box">
+        <div class="pv-num-lbl">رقم السند</div>
+        <div class="pv-num-val">${v.num||'—'}</div>
+      </div>
+    </div>
+    <div class="pv-type-bar ${isR?'gold':'teal'}">${isR?'🧾 سند قبض':'📤 سند صرف'}</div>
+    <table class="pv-tbl">
+      <tr><td>التاريخ</td><td>${v.date||'—'}</td></tr>
+      <tr><td>${isR?'استُلم من':'صُرف لـ'}</td><td><strong>${isR?(v.from||'—'):(v.to||'—')}</strong></td></tr>
+      <tr><td>البيان</td><td>${v.desc||'—'}</td></tr>
+      <tr><td>طريقة ${isR?'الاستلام':'الدفع'}</td><td>${v.method||'—'}</td></tr>
+      ${!isR&&v.approved?`<tr><td>الموافق على الصرف</td><td>${v.approved}</td></tr>`:''}
+      ${v.accountName?`<tr><td>الحساب</td><td>${v.accountName}</td></tr>`:''}
+      ${v.notes?`<tr><td>ملاحظات</td><td>${v.notes}</td></tr>`:''}
+    </table>
+    <div class="pv-amt-box">
+      <div class="pv-amt-lbl">المبلغ</div>
+      <div class="pv-amt-val">${fmtCurr(v.amountUSD||v.amount,'USD')}</div>
+      ${amtLine}
+    </div>
+    <div class="pv-sigs">
+      <div class="pv-sig"><div class="pv-sig-lbl">المُستلِم</div><div class="pv-sig-line"></div></div>
+      <div class="pv-sig"><div class="pv-sig-lbl">المُسلِّم</div><div class="pv-sig-line"></div></div>
+      <div class="pv-sig"><div class="pv-sig-lbl">المدير المالي</div><div class="pv-sig-line"></div></div>
+    </div>
+    <div class="pv-footer">${s.companyName||'طاقات'} — ${v.date||''}</div>
+  </div>`;
+}
+function openPrintPreview(id, type){
+  const key = type==='receipt'?'receipts':'payments';
+  const v = (DB.get(key)||[]).find(x=>x.id===id);
+  if(!v){ toast('السند غير موجود','err'); return; }
+  showPrintPreview(v, type);
+}
+function showPrintPreview(v, type){
+  const isR = type==='receipt';
+  const html = buildVoucherHTML(v, type);
+  document.getElementById('print-preview-title').textContent = isR ? '🖨️ معاينة سند القبض' : '🖨️ معاينة سند الصرف';
+  document.getElementById('print-preview-body').innerHTML = html;
+  document.getElementById('print-area').innerHTML = html;
+  openOvl('ovl-print-preview');
+}
+function doPrint(){
+  window.print();
+}
+
 function peekVoucherNum(type){
   const key=type==='receipt'?'rcCount':'pvCount';
   const n=DB.getNum(key,0)+1;
@@ -1537,24 +1897,32 @@ function saveRevenue(){
 function saveReceipt(){
   const date=document.getElementById('rc_date').value,from=document.getElementById('rc_from').value.trim();
   const desc=document.getElementById('rc_desc').value.trim(),amt=parseFloat(document.getElementById('rc_amt').value);
+  const currency=document.getElementById('rc_curr')?.value||'USD';
   if(!date||!from||!desc||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
   const num=nextVoucherNum('receipt');
   const accId=document.getElementById('rc_acc').value;
   const acc=DB.get('accounts').find(a=>a.id===accId);
-  const rec={id:uid(),num,date,from,desc,accountId:accId,accountName:acc?acc.name:'',method:document.getElementById('rc_meth').value,amount:amt,notes:document.getElementById('rc_notes').value.trim()};
+  const amountUSD=parseFloat(toUSD(amt,currency).toFixed(2));
+  const rec={id:uid(),num,date,from,desc,accountId:accId,accountName:acc?acc.name:'',method:document.getElementById('rc_meth').value,amount:amt,currency,amountUSD,notes:document.getElementById('rc_notes').value.trim()};
   const data=DB.get('receipts')||[];data.push(rec);DB.set('receipts',data);
-  closeOvl('ovl-receipt');toast(`✅ تم حفظ سند القبض ${num}: ${fmt(amt)}`);
+  closeOvl('ovl-receipt');
+  toast(`✅ تم حفظ سند القبض ${num}: ${fmtCurr(amt,currency)}`);
+  setTimeout(()=>showPrintPreview(rec,'receipt'),300);
 }
 function savePayment(){
   const date=document.getElementById('pv_date').value,to=document.getElementById('pv_to').value.trim();
   const desc=document.getElementById('pv_desc').value.trim(),amt=parseFloat(document.getElementById('pv_amt').value);
+  const currency=document.getElementById('pv_curr')?.value||'USD';
   if(!date||!to||!desc||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
   const num=nextVoucherNum('payment');
   const accId=document.getElementById('pv_acc').value;
   const acc=DB.get('accounts').find(a=>a.id===accId);
-  const rec={id:uid(),num,date,to,desc,accountId:accId,accountName:acc?acc.name:'',method:document.getElementById('pv_meth').value,amount:amt,approved:document.getElementById('pv_appr').value.trim(),notes:document.getElementById('pv_notes').value.trim()};
+  const amountUSD=parseFloat(toUSD(amt,currency).toFixed(2));
+  const rec={id:uid(),num,date,to,desc,accountId:accId,accountName:acc?acc.name:'',method:document.getElementById('pv_meth').value,amount:amt,currency,amountUSD,approved:document.getElementById('pv_appr').value.trim(),notes:document.getElementById('pv_notes').value.trim()};
   const data=DB.get('payments')||[];data.push(rec);DB.set('payments',data);
-  closeOvl('ovl-payment');toast(`✅ تم حفظ سند الصرف ${num}: ${fmt(amt)}`);
+  closeOvl('ovl-payment');
+  toast(`✅ تم حفظ سند الصرف ${num}: ${fmtCurr(amt,currency)}`);
+  setTimeout(()=>showPrintPreview(rec,'payment'),300);
 }
 function saveAccount(){
   const code=document.getElementById('a_code').value.trim(),name=document.getElementById('a_name').value.trim(),type=document.getElementById('a_type').value;
@@ -2149,6 +2517,7 @@ function importExcel(event){
 
 // ══ AUTO-RESTORE SESSION ON PAGE LOAD ══
 (function(){
+  applySettingsUI();
   if(!LS_OK){
     const banner=document.createElement('div');
     banner.style.cssText='position:fixed;top:0;inset-inline:0;background:#b91c1c;color:#fff;text-align:center;padding:10px 16px;font-family:Cairo,sans-serif;font-size:13px;font-weight:700;z-index:99999;direction:rtl';
