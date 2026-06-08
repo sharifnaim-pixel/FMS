@@ -377,7 +377,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group form-full"><label>البيان <span class="req">*</span></label><input type="text" id="e_desc" placeholder="وصف المصروف..."></div>
         <div class="form-group"><label>الحساب <span class="req">*</span></label><select id="e_acc"></select></div>
         <div class="form-group"><label>الفئة</label><select id="e_cat"><option value="">اختر</option><option>رواتب</option><option>إيجار</option><option>مواصلات</option><option>مستلزمات</option><option>خدمات</option><option>صيانة</option><option>أخرى</option></select></div>
-        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="e_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>المبلغ ($) <span class="req">*</span></label><input type="number" id="e_amt" placeholder="0.00" min="0" step="0.01"></div>
         <div class="form-group"><label>الموافق على الصرف</label><input type="text" id="e_appr" placeholder="الاسم..."></div>
         <div class="form-group form-full"><label>ملاحظات</label><textarea id="e_notes" placeholder="ملاحظات..."></textarea></div>
       </div>
@@ -397,7 +397,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group form-full"><label>المصدر / البيان <span class="req">*</span></label><input type="text" id="r_desc" placeholder="وصف الإيراد..."></div>
         <div class="form-group"><label>الحساب <span class="req">*</span></label><select id="r_acc"></select></div>
         <div class="form-group"><label>نوع الإيراد</label><select id="r_type"><option value="">اختر</option><option>إيرادات خدمات</option><option>إيرادات مبيعات</option><option>منح وتمويل</option><option>أخرى</option></select></div>
-        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="r_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>المبلغ ($) <span class="req">*</span></label><input type="number" id="r_amt" placeholder="0.00" min="0" step="0.01"></div>
         <div class="form-group"><label>اسم العميل / الجهة</label><input type="text" id="r_client" placeholder="الاسم..."></div>
         <div class="form-group form-full"><label>ملاحظات</label><textarea id="r_notes" placeholder="ملاحظات..."></textarea></div>
       </div>
@@ -477,7 +477,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group form-full"><label>اسم الحساب <span class="req">*</span></label><input type="text" id="a_name" placeholder="اسم الحساب..."></div>
         <div class="form-group"><label>النوع <span class="req">*</span></label><select id="a_type"><option value="">اختر</option><option value="asset">أصول</option><option value="liability">التزامات</option><option value="equity">حقوق ملكية</option><option value="revenue">إيرادات</option><option value="expense">مصاريف</option></select></div>
         <div class="form-group"><label>التصنيف</label><input type="text" id="a_cat" placeholder="مثال: أصول متداولة"></div>
-        <div class="form-group"><label>الرصيد الافتتاحي (₪)</label><input type="number" id="a_open" value="0" step="0.01"></div>
+        <div class="form-group"><label>الرصيد الافتتاحي ($)</label><input type="number" id="a_open" value="0" step="0.01"></div>
         <div class="form-group"><label>ملاحظات</label><input type="text" id="a_notes" placeholder="ملاحظات..."></div>
       </div>
     </div>
@@ -494,7 +494,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group form-full"><label>اسم الأصل <span class="req">*</span></label><input type="text" id="ast_name" placeholder="مثال: حاسوب، سيارة..."></div>
         <div class="form-group"><label>الفئة</label><select id="ast_cat"><option>أجهزة ومعدات</option><option>مركبات</option><option>أثاث</option><option>عقارات</option><option>برمجيات</option><option>أخرى</option></select></div>
         <div class="form-group"><label>تاريخ الشراء</label><input type="date" id="ast_date"></div>
-        <div class="form-group"><label>قيمة الشراء (₪) <span class="req">*</span></label><input type="number" id="ast_cost" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>قيمة الشراء ($) <span class="req">*</span></label><input type="number" id="ast_cost" placeholder="0.00" min="0" step="0.01"></div>
         <div class="form-group"><label>العمر الافتراضي (سنة)</label><input type="number" id="ast_life" value="5" min="1"></div>
         <div class="form-group form-full"><label>ملاحظات</label><input type="text" id="ast_notes" placeholder="ملاحظات..."></div>
       </div>
@@ -512,7 +512,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group form-full"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="emp_name" placeholder="اسم الموظف..."></div>
         <div class="form-group"><label>المسمى الوظيفي <span class="req">*</span></label><input type="text" id="emp_title" placeholder="مثال: محاسب، مدير..."></div>
         <div class="form-group"><label>القسم</label><input type="text" id="emp_dept" placeholder="مثال: المالية، التسويق..."></div>
-        <div class="form-group"><label>الراتب الأساسي (₪) <span class="req">*</span></label><input type="number" id="emp_salary" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>الراتب الأساسي ($) <span class="req">*</span></label><input type="number" id="emp_salary" placeholder="0.00" min="0" step="0.01"></div>
         <div class="form-group"><label>تاريخ التعيين</label><input type="date" id="emp_hire"></div>
         <div class="form-group"><label>رقم الهوية / الجواز</label><input type="text" id="emp_id" placeholder="رقم الهوية..."></div>
         <div class="form-group"><label>رقم الهاتف</label><input type="text" id="emp_phone" placeholder="رقم الهاتف..."></div>
@@ -543,7 +543,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
       <div id="advance-emp-info" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:4px"></div>
       <div class="form-grid">
         <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="adv_date"></div>
-        <div class="form-group"><label>مبلغ السلفة (₪) <span class="req">*</span></label><input type="number" id="adv_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>مبلغ السلفة ($) <span class="req">*</span></label><input type="number" id="adv_amt" placeholder="0.00" min="0" step="0.01"></div>
         <div class="form-group"><label>الخصم من راتب شهر</label><select id="adv_month"></select></div>
         <div class="form-group"><label>طريقة الصرف</label><select id="adv_pay"><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option></select></div>
         <div class="form-group form-full"><label>ملاحظات</label><input type="text" id="adv_notes" placeholder="سبب السلفة..."></div>
@@ -561,7 +561,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
       <div id="bonus-emp-info" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:4px"></div>
       <div class="form-grid">
         <div class="form-group"><label>النوع</label><select id="bon_type"><option value="bonus">مكافأة</option><option value="allowance">علاوة</option><option value="overtime">عمل إضافي</option></select></div>
-        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="bon_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>المبلغ ($) <span class="req">*</span></label><input type="number" id="bon_amt" placeholder="0.00" min="0" step="0.01"></div>
         <div class="form-group form-full"><label>تحتسب في راتب شهر <span class="req">*</span></label><select id="bon_month"></select></div>
         <div class="form-group form-full"><label>السبب / الوصف</label><input type="text" id="bon_notes" placeholder="سبب المكافأة أو العلاوة..."></div>
       </div>
@@ -993,7 +993,7 @@ function deleteUser(id){
 }
 
 
-const fmt = n => '₪ '+Number(n||0).toLocaleString('ar-SA',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt = n => '$ '+Number(n||0).toLocaleString('ar-SA',{minimumFractionDigits:2,maximumFractionDigits:2});
 const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const today = () => new Date().toISOString().split('T')[0];
 const N = n => Number(n||0);
@@ -1079,7 +1079,7 @@ function renderBalances(){
       <div class="stat-card ${net>=0?'green':'red'}"><div class="stat-label">صافي الربح / الخسارة</div><div class="stat-value ${net>=0?'g':'r'}">${fmt(net)}</div></div>
     </div>${groups}
     <div class="sec-title" style="margin-top:24px"><h2>الأرصدة الافتتاحية</h2></div>
-    <div class="table-card"><table><thead><tr><th>الحساب</th><th>النوع</th><th>الرصيد الافتتاحي (₪)</th><th>الحركات (₪)</th><th>الرصيد الحالي (₪)</th></tr></thead>
+    <div class="table-card"><table><thead><tr><th>الحساب</th><th>النوع</th><th>الرصيد الافتتاحي ($)</th><th>الحركات ($)</th><th>الرصيد الحالي ($)</th></tr></thead>
     <tbody>${obRows||'<tr><td colspan="5" class="empty-cell">لا توجد حسابات</td></tr>'}</tbody></table></div>`;
 }
 function saveOB(id){
@@ -1117,7 +1117,7 @@ function renderExpenses(){
     <div class="sec-title"><h2>سجل المصاريف</h2></div>
     <div class="toolbar">${canDo('expenses','add')?`<button class="btn red" onclick="openOvl('ovl-expense')">➕ تسجيل مصروف جديد</button>`:''}</div>
     <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card red"><div class="stat-label">إجمالي المصاريف</div><div class="stat-value r">${fmt(tot)}</div></div><div class="stat-card"><div class="stat-label">عدد العمليات</div><div class="stat-value">${exp.length}</div></div></div>
-    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>البيان</th><th>الحساب</th><th>الفئة</th><th>طريقة الدفع</th><th>المبلغ (₪)</th><th>الموافق على الصرف</th><th></th></tr></thead>
+    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>البيان</th><th>الحساب</th><th>الفئة</th><th>طريقة الدفع</th><th>المبلغ ($)</th><th>الموافق على الصرف</th><th></th></tr></thead>
     <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد مصاريف مسجلة</td></tr>'}</tbody></table></div>`;
 }
 
@@ -1135,7 +1135,7 @@ function renderRevenues(){
     <div class="sec-title"><h2>سجل الإيرادات</h2></div>
     <div class="toolbar">${canDo('revenues','add')?`<button class="btn green" onclick="openOvl('ovl-revenue')">➕ تسجيل إيراد جديد</button>`:''}</div>
     <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card green"><div class="stat-label">إجمالي الإيرادات</div><div class="stat-value g">${fmt(tR)}</div></div><div class="stat-card gold"><div class="stat-label">صافي الربح</div><div class="stat-value ${tR-tE>=0?'g':'r'}">${fmt(tR-tE)}</div></div><div class="stat-card"><div class="stat-label">عدد العمليات</div><div class="stat-value">${rev.length}</div></div></div>
-    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>المصدر / البيان</th><th>الحساب</th><th>نوع الإيراد</th><th>العميل / الجهة</th><th>المبلغ (₪)</th><th>طريقة الاستلام</th><th></th></tr></thead>
+    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>المصدر / البيان</th><th>الحساب</th><th>نوع الإيراد</th><th>العميل / الجهة</th><th>المبلغ ($)</th><th>طريقة الاستلام</th><th></th></tr></thead>
     <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد إيرادات مسجلة</td></tr>'}</tbody></table></div>`;
 }
 
@@ -1150,7 +1150,7 @@ function renderAssets(){
     <div class="sec-title"><h2>سجل الأصول</h2></div>
     <div class="toolbar">${canDo('assets','add')?`<button class="btn navy" onclick="openOvl('ovl-asset')">➕ إضافة أصل جديد</button>`:''}</div>
     <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card blue"><div class="stat-label">إجمالي قيمة الشراء</div><div class="stat-value">${fmt(tC)}</div></div><div class="stat-card red"><div class="stat-label">إجمالي الاستهلاك السنوي</div><div class="stat-value r">${fmt(tD)}</div></div><div class="stat-card green"><div class="stat-label">القيمة الدفترية الحالية</div><div class="stat-value g">${fmt(tC-tD)}</div></div></div>
-    <div class="table-card"><table><thead><tr><th>#</th><th>اسم الأصل</th><th>الفئة</th><th>تاريخ الشراء</th><th>قيمة الشراء (₪)</th><th>العمر الافتراضي</th><th>الاستهلاك السنوي (₪)</th><th>القيمة الدفترية (₪)</th><th></th></tr></thead>
+    <div class="table-card"><table><thead><tr><th>#</th><th>اسم الأصل</th><th>الفئة</th><th>تاريخ الشراء</th><th>قيمة الشراء ($)</th><th>العمر الافتراضي</th><th>الاستهلاك السنوي ($)</th><th>القيمة الدفترية ($)</th><th></th></tr></thead>
     <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد أصول مسجلة</td></tr>'}</tbody></table></div>`;
 }
 
@@ -1469,7 +1469,7 @@ function showPayslip(payrollId){
         <div class="payslip-info-item"><span class="payslip-info-label">رقم القسيمة</span><span class="payslip-info-val">${p.id.toUpperCase()}</span></div>
       </div>
       <table class="payslip-table">
-        <thead><tr><th>البند</th><th>الوصف</th><th>المبلغ (₪)</th></tr></thead>
+        <thead><tr><th>البند</th><th>الوصف</th><th>المبلغ ($)</th></tr></thead>
         <tbody>
           <tr><td><strong>الراتب الأساسي</strong></td><td>راتب شهر ${monthLabel(p.month)}</td><td class="gt"><strong>${fmt(p.baseSalary)}</strong></td></tr>
           ${bonRows}
@@ -2263,7 +2263,7 @@ function renderEdTab(tab) {
           <div class="ii"><div class="ii-label">إجمالي السلف المخصومة</div><div class="ii-val" style="color:var(--blue)">${fmt(deductedTotal)}</div></div>
         </div>
         <table class="dt">
-          <thead><tr><th>التاريخ</th><th>المبلغ (₪)</th><th>شهر الخصم</th><th>طريقة الصرف</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <thead><tr><th>التاريخ</th><th>المبلغ ($)</th><th>شهر الخصم</th><th>طريقة الصرف</th><th>الحالة</th><th>إجراء</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>`;
@@ -2295,7 +2295,7 @@ function renderEdTab(tab) {
           <div class="ii"><div class="ii-label">مكافآت مُطبَّقة</div><div class="ii-val" style="color:var(--blue)">${fmt(appliedTotal)}</div></div>
         </div>
         <table class="dt">
-          <thead><tr><th>النوع</th><th>المبلغ (₪)</th><th>شهر الاحتساب</th><th>الوصف</th><th>إجراء</th></tr></thead>
+          <thead><tr><th>النوع</th><th>المبلغ ($)</th><th>شهر الاحتساب</th><th>الوصف</th><th>إجراء</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>`;
