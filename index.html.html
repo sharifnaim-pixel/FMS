@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طاقات - النظام المالي</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f2044;--gold:#b8851e;--gold-light:#e8b84b;--gold-pale:#fdf6e3;
+  --green:#1a7a4a;--green-light:#22a060;--green-pale:#e8f7ee;
+  --red:#b91c1c;--red-light:#dc2626;--red-pale:#fef2f2;
+  --purple:#6d28d9;--purple-pale:#f5f3ff;
+  --blue:#1d4ed8;--blue-pale:#eff6ff;
+  --teal:#0f766e;--teal-pale:#f0fdfa;
+  --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+  --gray-500:#64748b;--gray-700:#334155;--text:#1e293b;
+  --radius:12px;--radius-sm:8px;
+  --shadow:0 2px 16px rgba(15,32,68,.10);
+}
+body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-height:100vh;direction:rtl}
+.topbar{background:var(--navy);color:#fff;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(15,32,68,.3)}
+.logo{display:flex;align-items:center;gap:11px}
+.logo-icon{width:36px;height:36px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:900;color:var(--navy)}
+.logo-name{font-size:18px;font-weight:700}.logo-sub{font-size:11px;opacity:.5;margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.save-status{font-size:11px;color:rgba(255,255,255,.6)}
+.export-btn{background:var(--gold);color:var(--navy);border:none;border-radius:var(--radius-sm);padding:9px 16px;font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s}
+.export-btn:hover{opacity:.85}.export-btn:disabled{opacity:.5;cursor:not-allowed}
+.nav-wrap{background:#fff;border-bottom:2px solid var(--gray-200);padding:0 20px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;position:sticky;top:58px;z-index:99}
+.nav-wrap::-webkit-scrollbar{display:none}
+.tab-btn{padding:13px 16px;font-size:13px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--gray-500);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:'Cairo',sans-serif;transition:.15s;display:flex;align-items:center;gap:6px}
+.tab-btn:hover{color:var(--navy);background:var(--gray-50)}.tab-btn.active{color:var(--navy);border-bottom-color:var(--gold)}
+.page{display:none;padding:22px;max-width:1300px;margin:0 auto}.page.active{display:block}
+.sec-title{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sec-title h2{font-size:19px;font-weight:700;color:var(--navy)}
+.sec-title .pill{background:var(--gold-pale);color:var(--gold);border:1px solid #f0d98a;font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.stat-card{background:#fff;border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);border-right:4px solid var(--gray-200)}
+.stat-card.green{border-right-color:var(--green-light)}.stat-card.red{border-right-color:var(--red-light)}
+.stat-card.gold{border-right-color:var(--gold)}.stat-card.blue{border-right-color:var(--blue)}.stat-card.teal{border-right-color:var(--teal)}
+.stat-label{font-size:12px;color:var(--gray-500);font-weight:500;margin-bottom:5px}
+.stat-value{font-size:21px;font-weight:700;color:var(--navy)}
+.stat-value.g{color:var(--green)}.stat-value.r{color:var(--red)}.stat-value.gold{color:var(--gold)}.stat-value.teal{color:var(--teal)}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;transition:.15s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}.btn.red{background:var(--red-light);color:#fff}
+.btn.green{background:var(--green-light);color:#fff}.btn.purple{background:var(--purple);color:#fff}
+.btn.navy{background:var(--navy);color:#fff}.btn.gold{background:var(--gold);color:var(--navy)}
+.btn.teal{background:var(--teal);color:#fff}.btn.sm{padding:7px 13px;font-size:12px}
+.btn.ghost{background:var(--gray-100);color:var(--gray-700)}
+.table-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.table-card table{width:100%;border-collapse:collapse}
+.table-card th{background:var(--navy);color:#fff;padding:11px 14px;font-size:12px;font-weight:600;text-align:right;white-space:nowrap}
+.table-card td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+.table-card tr:last-child td{border-bottom:none}.table-card tr:hover td{background:var(--gray-50)}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:15px;padding:3px 7px;border-radius:6px;transition:.15s}
+.del-btn:hover{color:var(--red);background:var(--red-pale)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge.asset{background:var(--blue-pale);color:var(--blue)}.badge.liability{background:var(--red-pale);color:var(--red)}
+.badge.equity{background:var(--gold-pale);color:#b45309}.badge.revenue{background:var(--green-pale);color:var(--green)}
+.badge.expense{background:var(--red-pale);color:var(--red)}
+.badge.active-badge{background:#dcfce7;color:#15803d}.badge.inactive-badge{background:#fee2e2;color:#b91c1c}
+.gt{color:var(--green);font-weight:600}.rt{color:var(--red);font-weight:600}.muted{color:var(--gray-500);font-size:12px}
+.empty-cell{text-align:center;padding:44px;color:var(--gray-500);font-size:14px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(10,20,50,.55);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;width:520px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(10,20,50,.25);animation:mIn .2s ease}
+.modal.wide{width:680px}
+@keyframes mIn{from{transform:translateY(24px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.modal-head{padding:20px 22px 14px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:16px;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-500);padding:2px 7px;border-radius:6px}
+.modal-close:hover{background:var(--gray-100)}
+.modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:13px}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--gray-100);display:flex;gap:9px;justify-content:flex-end}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr}
+.form-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;font-weight:600;color:var(--gray-700)}
+.form-group input,.form-group select,.form-group textarea{border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;font-family:'Cairo',sans-serif;color:var(--text);direction:rtl;outline:none;transition:border-color .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--navy)}
+.form-group textarea{min-height:68px;resize:vertical}.req{color:var(--red)}
+/* BALANCES */
+.bal-section{margin-bottom:20px}
+.bal-section-title{font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.bal-section-title::before{content:'';flex:1;height:1px;background:var(--gray-200)}
+.bal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.bal-card{background:#fff;border-radius:var(--radius-sm);padding:14px 16px;box-shadow:0 1px 8px rgba(15,32,68,.07);display:flex;justify-content:space-between;align-items:center;border:1px solid var(--gray-100)}
+.bal-card:hover{border-color:var(--gold-light)}
+.bal-card-name{font-size:13px;font-weight:600;color:var(--gray-700)}.bal-card-code{font-size:11px;color:var(--gray-500)}
+.ob-row{display:flex;align-items:center;gap:5px}
+.ob-row input{width:108px;border:1.5px solid var(--gray-200);border-radius:6px;padding:5px 9px;font-size:12px;font-family:'Cairo',sans-serif;text-align:left;direction:ltr;outline:none}
+.ob-row input:focus{border-color:var(--navy)}
+.ob-save-btn{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif}
+.bs-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+@media(max-width:680px){.bs-grid,.form-grid,.form-grid.three{grid-template-columns:1fr}}
+.bs-panel{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.bs-panel-head{padding:11px 16px;font-size:13px;font-weight:700;color:#fff;background:var(--navy)}
+.bs-panel-head.green{background:var(--green)}.bs-panel-head.gold{background:var(--gold);color:var(--navy)}.bs-panel-head.teal{background:var(--teal)}
+.bs-body{padding:13px 16px;display:flex;flex-direction:column;gap:0}
+.bs-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--gray-100);font-size:13px}
+.bs-row:last-child{border-bottom:none}
+.bs-row.total{font-weight:700;font-size:14px;border-top:2px solid var(--navy);margin-top:4px;padding-top:10px;border-bottom:none}
+.bs-row.total.green{color:var(--green);border-top-color:var(--green)}.bs-row.total.red{color:var(--red);border-top-color:var(--red)}
+/* EMPLOYEE CARDS */
+.emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:20px}
+.emp-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--gray-100);transition:.2s}
+.emp-card:hover{border-color:var(--gold-light);box-shadow:0 4px 24px rgba(15,32,68,.14)}
+.emp-card.inactive{opacity:.65;border-style:dashed}
+.emp-card-head{padding:16px 18px;background:linear-gradient(135deg,var(--navy) 0%,#1a3a6e 100%);color:#fff;display:flex;align-items:center;gap:12px}
+.emp-avatar{width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--navy);flex-shrink:0}
+.emp-name{font-size:15px;font-weight:700}.emp-title{font-size:11px;opacity:.65;margin-top:2px}
+.emp-card-body{padding:14px 18px}
+.emp-info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--gray-100);font-size:13px}
+.emp-info-row:last-child{border-bottom:none}
+.emp-info-label{color:var(--gray-500);font-size:12px}
+.emp-info-val{font-weight:600}
+.emp-card-actions{padding:10px 18px;border-top:1px solid var(--gray-100);display:flex;gap:7px;flex-wrap:wrap}
+.emp-action-btn{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:6px 12px;font-size:12px;font-weight:600;font-family:'Cairo',sans-serif;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:5px}
+.emp-action-btn:hover{border-color:var(--navy);background:var(--gray-100)}
+.emp-action-btn.red-btn{border-color:var(--red-pale);color:var(--red)}.emp-action-btn.red-btn:hover{background:var(--red-pale)}
+.emp-action-btn.green-btn{border-color:var(--green-pale);color:var(--green)}.emp-action-btn.green-btn:hover{background:var(--green-pale)}
+.emp-action-btn.gold-btn{border-color:var(--gold-pale);color:var(--gold)}.emp-action-btn.gold-btn:hover{background:var(--gold-pale)}
+.emp-action-btn.teal-btn{border-color:var(--teal-pale);color:var(--teal)}.emp-action-btn.teal-btn:hover{background:var(--teal-pale)}
+/* PAYSLIP */
+.payslip{background:#fff;border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);max-width:680px;margin:0 auto}
+.payslip-head{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--navy)}
+.payslip-title{font-size:20px;font-weight:900;color:var(--navy)}.payslip-sub{font-size:13px;color:var(--gray-500);margin-top:4px}
+.payslip-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;padding:14px;background:var(--gray-50);border-radius:var(--radius-sm)}
+.payslip-info-item{display:flex;flex-direction:column;gap:3px}
+.payslip-info-label{font-size:11px;color:var(--gray-500);font-weight:600}
+.payslip-info-val{font-size:13px;font-weight:700;color:var(--navy)}
+.payslip-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+.payslip-table th{background:var(--navy);color:#fff;padding:9px 14px;font-size:12px;text-align:right}
+.payslip-table td{padding:9px 14px;border-bottom:1px solid var(--gray-100);font-size:13px}
+.payslip-table tr:last-child td{border-bottom:none}
+.payslip-table tr.total-row{background:var(--gold-pale);font-weight:700}
+.payslip-table tr.deduct-row td{color:var(--red)}
+.payslip-net{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--navy);color:#fff;border-radius:var(--radius-sm);margin-top:10px}
+.payslip-net-label{font-size:15px;font-weight:600}.payslip-net-val{font-size:22px;font-weight:900}
+.emp-detail-modal{width:860px;max-width:97vw}
+.edh{background:linear-gradient(135deg,var(--navy) 0%,#1a3a6e 100%);padding:24px 28px;display:flex;align-items:center;gap:16px;color:#fff;border-radius:16px 16px 0 0}
+.ed-avatar{width:60px;height:60px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:var(--navy);flex-shrink:0;border:3px solid rgba(255,255,255,.2)}
+.ed-name{font-size:20px;font-weight:900}.ed-sub{font-size:12px;opacity:.65;margin-top:2px}
+.ed-badges{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.ed-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:3px 11px;font-size:11px;font-weight:600}
+.ed-tabs{display:flex;border-bottom:1px solid var(--gray-200);padding:0 22px;background:#fff;gap:2px;overflow-x:auto}
+.ed-tab{padding:11px 14px;font-size:13px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--gray-500);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'Cairo',sans-serif;transition:.15s;white-space:nowrap}
+.ed-tab:hover{color:var(--navy)}.ed-tab.active{color:var(--navy);border-bottom-color:var(--gold)}
+.ed-body{padding:20px 24px;max-height:460px;overflow-y:auto}
+.ed-sec{margin-bottom:20px}
+.ed-sec-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--navy);display:flex;align-items:center;justify-content:space-between}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px}
+.info-grid.two{grid-template-columns:repeat(2,1fr)}
+.ii{background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 13px}
+.ii-label{font-size:11px;color:var(--gray-500);font-weight:600;margin-bottom:3px}
+.ii-val{font-size:13px;font-weight:700;color:var(--navy)}
+.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+.dt th{background:var(--gray-100);color:var(--gray-700);padding:8px 11px;text-align:right;font-weight:600;font-size:11.5px;white-space:nowrap}
+.dt td{padding:8px 11px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
+.dt tr:last-child td{border-bottom:none}.dt tr:hover td{background:var(--gray-50)}
+.ei{display:flex;align-items:center;gap:5px}
+.ei input{width:100px;border:1.5px solid var(--gray-200);border-radius:5px;padding:4px 8px;font-size:12px;font-family:'Cairo',sans-serif;direction:ltr;text-align:left;outline:none}
+.ei input:focus{border-color:var(--navy)}
+.ei-save{background:var(--navy);color:#fff;border:none;border-radius:5px;padding:4px 9px;font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif}
+.ei-save:hover{opacity:.85}
+.ci-btn{background:none;color:var(--red);cursor:pointer;font-size:11.5px;padding:3px 8px;border-radius:5px;font-family:'Cairo',sans-serif;border:1px solid var(--red-pale)}
+.ci-btn:hover{background:var(--red-pale)}
+.stag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.s-paid{background:var(--green-pale);color:var(--green)}.s-pend{background:var(--gold-pale);color:var(--gold)}.s-ded{background:var(--blue-pale);color:var(--blue)}background:none;border:1.5px solid var(--gray-200);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;font-family:'Cairo',sans-serif;cursor:pointer;transition:.15s}
+.toggle-btn.on{background:var(--green-pale);border-color:var(--green);color:var(--green)}
+.toggle-btn.off{background:var(--red-pale);border-color:var(--red);color:var(--red)}
+.month-filter{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.month-filter select,.month-filter input{border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-family:'Cairo',sans-serif;outline:none}
+.section-divider{font-size:13px;font-weight:700;color:var(--navy);padding:8px 0;border-bottom:2px solid var(--navy);margin-bottom:12px}
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:7px;align-items:center;pointer-events:none}
+.toast{background:var(--navy);color:#fff;padding:11px 22px;border-radius:40px;font-size:13px;font-weight:600;font-family:'Cairo',sans-serif;box-shadow:0 6px 24px rgba(15,32,68,.22);animation:tIn .25s ease,tOut .3s 2.6s ease forwards}
+.toast.ok{background:var(--green)}.toast.err{background:var(--red-light)}
+@keyframes tIn{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+@keyframes tOut{to{transform:translateY(16px);opacity:0}}
+/* ══ LOGIN ══ */
+#login-screen{display:none;position:fixed;inset:0;background:#0b1a3b;z-index:9999;align-items:center;justify-content:center}
+#login-screen.show{display:flex}
+.login-box{background:#fff;border-radius:20px;padding:40px 44px;width:400px;max-width:94vw;box-shadow:0 24px 80px rgba(0,0,0,.4)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo-icon{width:58px;height:58px;background:var(--navy);border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:900;color:var(--gold);margin:0 auto 10px}
+.login-logo-name{font-size:22px;font-weight:900;color:var(--navy)}
+.login-logo-sub{font-size:12px;color:var(--gray-500);margin-top:3px}
+.login-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.login-field label{font-size:12.5px;font-weight:600;color:var(--gray-700)}
+.login-field input{border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:11px 14px;font-size:14px;font-family:'Cairo',sans-serif;direction:rtl;outline:none;transition:.15s}
+.login-field input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,32,68,.08)}
+.login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;font-family:'Cairo',sans-serif;cursor:pointer;margin-top:6px;transition:.15s}
+.login-btn:hover{background:#1a3560}
+.login-error{background:var(--red-pale);color:var(--red);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;text-align:center;display:none;margin-top:10px;font-weight:600}
+.login-error.show{display:block}
+/* ══ USER BADGE ══ */
+.user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:5px 12px;cursor:pointer;transition:.15s}
+.user-badge:hover{background:rgba(255,255,255,.2)}
+.user-av{width:28px;height:28px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy)}
+.user-nm{font-size:12px;font-weight:600;color:#fff}
+.user-rl{font-size:10px;color:rgba(255,255,255,.55)}
+/* ══ ACCESS DENIED ══ */
+.no-access{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:70px 20px;gap:10px}
+.no-access-icon{font-size:52px}
+.no-access-msg{font-size:15px;font-weight:700;color:var(--red)}
+.no-access-sub{font-size:13px;color:var(--gray-500);text-align:center}
+/* ══ PERMISSIONS ══ */
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:580px){.perm-grid{grid-template-columns:1fr}}
+.perm-card{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:13px 15px;transition:.15s}
+.perm-card.on{border-color:var(--teal);background:var(--teal-pale)}
+.perm-page-label{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:9px}
+.perm-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.perm-row label{font-size:12px;color:var(--gray-700);cursor:pointer;display:flex;align-items:center;gap:4px}
+.perm-row input[type=checkbox]{width:14px;height:14px;accent-color:var(--teal);cursor:pointer}
+.perm-master{display:flex;align-items:center;gap:6px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--gray-200)}
+.perm-master label{font-size:12.5px;font-weight:700;color:var(--navy);cursor:pointer;display:flex;align-items:center;gap:5px}
+.role-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.rb-super{background:#fef3c7;color:#92400e}
+.rb-admin{background:var(--blue-pale);color:var(--blue)}
+.rb-custom{background:var(--green-pale);color:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen" style="display:flex;position:fixed;inset:0;background:#0b1a3b;z-index:9999;align-items:center;justify-content:center">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">ط</div>
+      <div class="login-logo-name">طاقات</div>
+      <div class="login-logo-sub">النظام المالي المتكامل — تسجيل الدخول</div>
+    </div>
+    <div class="login-field">
+      <label>اسم المستخدم</label>
+      <input type="text" id="login-username" placeholder="أدخل اسم المستخدم..." autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()">
+    </div>
+    <div class="login-field">
+      <label>كلمة المرور</label>
+      <input type="password" id="login-password" placeholder="أدخل كلمة المرور..." autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">🔐 تسجيل الدخول</button>
+    <div class="login-error" id="login-error" style="display:none">اسم المستخدم أو كلمة المرور غير صحيحة</div>
+    <div style="text-align:center;margin-top:18px;font-size:11px;color:var(--gray-500)">طاقات © 2025 — جميع الحقوق محفوظة</div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="main-app" style="display:none">
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">ط</div>
+    <div><div class="logo-name">طاقات</div><div class="logo-sub">النظام المالي المتكامل</div></div>
+  </div>
+  <div class="topbar-actions">
+    <div class="save-status" id="saveStatus">✓ محفوظ</div>
+    <div class="user-badge" onclick="goAdminPanel()" id="user-badge-btn">
+      <div class="user-av" id="user-av-initials">؟</div>
+      <div><div class="user-nm" id="user-display-name">—</div><div class="user-rl" id="user-display-role">—</div></div>
+    </div>
+    <button class="export-btn" id="exportBtn" onclick="exportExcel()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9,15 12,18 15,15"/></svg>
+      تصدير Excel
+    </button>
+    <button class="export-btn" style="background:#1a7a4a" onclick="triggerImport()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="15,9 12,12 9,9"/></svg>
+      استيراد Excel
+    </button>
+    <input type="file" id="importFileInput" accept=".xlsx" style="display:none" onchange="importExcel(event)">
+    <button class="export-btn" style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);font-size:12px;padding:8px 13px" onclick="doLogout()">⬅ خروج</button>
+  </div>
+</div>
+
+<div class="nav-wrap">
+  <button class="tab-btn active" onclick="showTab('balances',this)">📊 الأرصدة</button>
+  <button class="tab-btn" onclick="showTab('accounts',this)">📒 الحسابات</button>
+  <button class="tab-btn" onclick="showTab('expenses',this)">💸 المصاريف</button>
+  <button class="tab-btn" onclick="showTab('revenues',this)">💰 الإيرادات</button>
+  <button class="tab-btn" onclick="showTab('assets',this)">🏗️ الأصول</button>
+  <button class="tab-btn" onclick="showTab('hr',this)">👥 إدارة الموظفين</button>
+  <button class="tab-btn" id="admin-tab" onclick="showTab('admin',this)">🔐 إدارة المستخدمين</button>
+  <button class="tab-btn" onclick="showTab('summary',this)">📋 الميزانية</button>
+</div>
+
+<div class="page active" id="page-balances"></div>
+<div class="page" id="page-accounts"></div>
+<div class="page" id="page-expenses"></div>
+<div class="page" id="page-revenues"></div>
+<div class="page" id="page-assets"></div>
+<div class="page" id="page-hr"></div>
+<div class="page" id="page-admin"></div>
+<div class="page" id="page-summary"></div>
+
+<!-- ═══════════ MODALS ═══════════ -->
+
+<!-- Expense Modal -->
+<div class="overlay" id="ovl-expense" onclick="if(event.target===this)closeOvl('ovl-expense')">
+  <div class="modal">
+    <div class="modal-head"><h3>💸 تسجيل مصروف جديد</h3><button class="modal-close" onclick="closeOvl('ovl-expense')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="e_date"></div>
+        <div class="form-group"><label>طريقة الدفع</label><select id="e_pay"><option value="">اختر</option><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option><option>بطاقة</option></select></div>
+        <div class="form-group form-full"><label>البيان <span class="req">*</span></label><input type="text" id="e_desc" placeholder="وصف المصروف..."></div>
+        <div class="form-group"><label>الحساب <span class="req">*</span></label><select id="e_acc"></select></div>
+        <div class="form-group"><label>الفئة</label><select id="e_cat"><option value="">اختر</option><option>رواتب</option><option>إيجار</option><option>مواصلات</option><option>مستلزمات</option><option>خدمات</option><option>صيانة</option><option>أخرى</option></select></div>
+        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="e_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>الموافق على الصرف</label><input type="text" id="e_appr" placeholder="الاسم..."></div>
+        <div class="form-group form-full"><label>ملاحظات</label><textarea id="e_notes" placeholder="ملاحظات..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-expense')">إلغاء</button><button class="btn red sm" onclick="saveExpense()">💾 حفظ</button></div>
+  </div>
+</div>
+
+<!-- Revenue Modal -->
+<div class="overlay" id="ovl-revenue" onclick="if(event.target===this)closeOvl('ovl-revenue')">
+  <div class="modal">
+    <div class="modal-head"><h3>💰 تسجيل إيراد جديد</h3><button class="modal-close" onclick="closeOvl('ovl-revenue')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="r_date"></div>
+        <div class="form-group"><label>طريقة الاستلام</label><select id="r_meth"><option value="">اختر</option><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option><option>إلكتروني</option></select></div>
+        <div class="form-group form-full"><label>المصدر / البيان <span class="req">*</span></label><input type="text" id="r_desc" placeholder="وصف الإيراد..."></div>
+        <div class="form-group"><label>الحساب <span class="req">*</span></label><select id="r_acc"></select></div>
+        <div class="form-group"><label>نوع الإيراد</label><select id="r_type"><option value="">اختر</option><option>إيرادات خدمات</option><option>إيرادات مبيعات</option><option>منح وتمويل</option><option>أخرى</option></select></div>
+        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="r_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>اسم العميل / الجهة</label><input type="text" id="r_client" placeholder="الاسم..."></div>
+        <div class="form-group form-full"><label>ملاحظات</label><textarea id="r_notes" placeholder="ملاحظات..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-revenue')">إلغاء</button><button class="btn green sm" onclick="saveRevenue()">💾 حفظ</button></div>
+  </div>
+</div>
+
+<!-- Account Modal -->
+<div class="overlay" id="ovl-account" onclick="if(event.target===this)closeOvl('ovl-account')">
+  <div class="modal">
+    <div class="modal-head"><h3>📒 إضافة حساب جديد</h3><button class="modal-close" onclick="closeOvl('ovl-account')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>كود الحساب <span class="req">*</span></label><input type="text" id="a_code" placeholder="مثال: 1003"></div>
+        <div class="form-group"><label>حساب الأب</label><select id="a_par"></select></div>
+        <div class="form-group form-full"><label>اسم الحساب <span class="req">*</span></label><input type="text" id="a_name" placeholder="اسم الحساب..."></div>
+        <div class="form-group"><label>النوع <span class="req">*</span></label><select id="a_type"><option value="">اختر</option><option value="asset">أصول</option><option value="liability">التزامات</option><option value="equity">حقوق ملكية</option><option value="revenue">إيرادات</option><option value="expense">مصاريف</option></select></div>
+        <div class="form-group"><label>التصنيف</label><input type="text" id="a_cat" placeholder="مثال: أصول متداولة"></div>
+        <div class="form-group"><label>الرصيد الافتتاحي (₪)</label><input type="number" id="a_open" value="0" step="0.01"></div>
+        <div class="form-group"><label>ملاحظات</label><input type="text" id="a_notes" placeholder="ملاحظات..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-account')">إلغاء</button><button class="btn purple sm" onclick="saveAccount()">➕ إضافة</button></div>
+  </div>
+</div>
+
+<!-- Asset Modal -->
+<div class="overlay" id="ovl-asset" onclick="if(event.target===this)closeOvl('ovl-asset')">
+  <div class="modal">
+    <div class="modal-head"><h3>🏗️ إضافة أصل ثابت</h3><button class="modal-close" onclick="closeOvl('ovl-asset')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group form-full"><label>اسم الأصل <span class="req">*</span></label><input type="text" id="ast_name" placeholder="مثال: حاسوب، سيارة..."></div>
+        <div class="form-group"><label>الفئة</label><select id="ast_cat"><option>أجهزة ومعدات</option><option>مركبات</option><option>أثاث</option><option>عقارات</option><option>برمجيات</option><option>أخرى</option></select></div>
+        <div class="form-group"><label>تاريخ الشراء</label><input type="date" id="ast_date"></div>
+        <div class="form-group"><label>قيمة الشراء (₪) <span class="req">*</span></label><input type="number" id="ast_cost" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>العمر الافتراضي (سنة)</label><input type="number" id="ast_life" value="5" min="1"></div>
+        <div class="form-group form-full"><label>ملاحظات</label><input type="text" id="ast_notes" placeholder="ملاحظات..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-asset')">إلغاء</button><button class="btn navy sm" onclick="saveAsset()">💾 حفظ</button></div>
+  </div>
+</div>
+
+<!-- Employee Modal -->
+<div class="overlay" id="ovl-employee" onclick="if(event.target===this)closeOvl('ovl-employee')">
+  <div class="modal">
+    <div class="modal-head"><h3>👤 إضافة موظف جديد</h3><button class="modal-close" onclick="closeOvl('ovl-employee')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group form-full"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="emp_name" placeholder="اسم الموظف..."></div>
+        <div class="form-group"><label>المسمى الوظيفي <span class="req">*</span></label><input type="text" id="emp_title" placeholder="مثال: محاسب، مدير..."></div>
+        <div class="form-group"><label>القسم</label><input type="text" id="emp_dept" placeholder="مثال: المالية، التسويق..."></div>
+        <div class="form-group"><label>الراتب الأساسي (₪) <span class="req">*</span></label><input type="number" id="emp_salary" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>تاريخ التعيين</label><input type="date" id="emp_hire"></div>
+        <div class="form-group"><label>رقم الهوية / الجواز</label><input type="text" id="emp_id" placeholder="رقم الهوية..."></div>
+        <div class="form-group"><label>رقم الهاتف</label><input type="text" id="emp_phone" placeholder="رقم الهاتف..."></div>
+        <div class="form-group"><label>الحساب البنكي (IBAN)</label><input type="text" id="emp_iban" placeholder="رقم الحساب..."></div>
+        <div class="form-group form-full" style="border-top:1.5px solid var(--gray-200);padding-top:12px;margin-top:2px">
+          <label>الحساب المالي للموظف</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="emp_account" style="flex:1;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;font-family:'Cairo',sans-serif;direction:rtl;outline:none"></select>
+          </div>
+          <div style="margin-top:6px;display:flex;align-items:center;gap:6px">
+            <input type="checkbox" id="emp_auto_account" style="width:15px;height:15px;cursor:pointer">
+            <label for="emp_auto_account" style="font-size:12px;color:var(--teal);font-weight:600;cursor:pointer">✨ إنشاء حساب تلقائي في شجرة الحسابات تحت حساب الرواتب</label>
+          </div>
+          <div id="emp_account_preview" style="display:none;margin-top:6px;background:var(--teal-pale);border:1px solid #99f6e4;border-radius:6px;padding:8px 12px;font-size:12px;color:var(--teal)"></div>
+        </div>
+        <div class="form-group form-full"><label>ملاحظات</label><textarea id="emp_notes" placeholder="ملاحظات..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-employee')">إلغاء</button><button class="btn teal sm" onclick="saveEmployee()">➕ إضافة الموظف</button></div>
+  </div>
+</div>
+
+<!-- Advance Modal -->
+<div class="overlay" id="ovl-advance" onclick="if(event.target===this)closeOvl('ovl-advance')">
+  <div class="modal">
+    <div class="modal-head"><h3>💳 منح سلفة</h3><button class="modal-close" onclick="closeOvl('ovl-advance')">✕</button></div>
+    <div class="modal-body">
+      <div id="advance-emp-info" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:4px"></div>
+      <div class="form-grid">
+        <div class="form-group"><label>التاريخ <span class="req">*</span></label><input type="date" id="adv_date"></div>
+        <div class="form-group"><label>مبلغ السلفة (₪) <span class="req">*</span></label><input type="number" id="adv_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group"><label>الخصم من راتب شهر</label><select id="adv_month"></select></div>
+        <div class="form-group"><label>طريقة الصرف</label><select id="adv_pay"><option>نقداً</option><option>تحويل بنكي</option><option>شيك</option></select></div>
+        <div class="form-group form-full"><label>ملاحظات</label><input type="text" id="adv_notes" placeholder="سبب السلفة..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-advance')">إلغاء</button><button class="btn gold sm" onclick="saveAdvance()">💾 منح السلفة</button></div>
+  </div>
+</div>
+
+<!-- Bonus Modal -->
+<div class="overlay" id="ovl-bonus" onclick="if(event.target===this)closeOvl('ovl-bonus')">
+  <div class="modal">
+    <div class="modal-head"><h3>🏆 إضافة علاوة / مكافأة</h3><button class="modal-close" onclick="closeOvl('ovl-bonus')">✕</button></div>
+    <div class="modal-body">
+      <div id="bonus-emp-info" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;margin-bottom:4px"></div>
+      <div class="form-grid">
+        <div class="form-group"><label>النوع</label><select id="bon_type"><option value="bonus">مكافأة</option><option value="allowance">علاوة</option><option value="overtime">عمل إضافي</option></select></div>
+        <div class="form-group"><label>المبلغ (₪) <span class="req">*</span></label><input type="number" id="bon_amt" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group form-full"><label>تحتسب في راتب شهر <span class="req">*</span></label><select id="bon_month"></select></div>
+        <div class="form-group form-full"><label>السبب / الوصف</label><input type="text" id="bon_notes" placeholder="سبب المكافأة أو العلاوة..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-bonus')">إلغاء</button><button class="btn green sm" onclick="saveBonus()">➕ إضافة</button></div>
+  </div>
+</div>
+
+<!-- Run Payroll Modal -->
+<div class="overlay" id="ovl-payroll" onclick="if(event.target===this)closeOvl('ovl-payroll')">
+  <div class="modal wide">
+    <div class="modal-head"><h3>📋 احتساب الرواتب الشهرية</h3><button class="modal-close" onclick="closeOvl('ovl-payroll')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>شهر الراتب <span class="req">*</span></label><select id="pay_month"></select></div>
+        <div class="form-group"><label>تاريخ الصرف</label><input type="date" id="pay_date"></div>
+      </div>
+      <div id="payroll-preview" style="margin-top:8px"></div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-payroll')">إلغاء</button><button class="btn teal sm" onclick="runPayroll()">✅ تأكيد وصرف الرواتب</button></div>
+  </div>
+</div>
+
+<!-- Payslip Modal -->
+<div class="overlay" id="ovl-payslip" onclick="if(event.target===this)closeOvl('ovl-payslip')">
+  <div class="modal wide">
+    <div class="modal-head"><h3>🧾 قسيمة الراتب</h3><button class="modal-close" onclick="closeOvl('ovl-payslip')">✕</button></div>
+    <div class="modal-body" id="payslip-content"></div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-payslip')">إغلاق</button><button class="btn navy sm" onclick="printPayslip()">🖨️ طباعة</button></div>
+  </div>
+</div>
+
+<!-- Employee Detail Modal -->
+<div class="overlay" id="ovl-emp-detail" onclick="if(event.target===this)closeOvl('ovl-emp-detail')">
+  <div class="modal emp-detail-modal" style="padding:0;border-radius:16px;overflow:hidden">
+    <div class="edh" id="ed-header"></div>
+    <div class="ed-tabs" id="ed-tabs">
+      <button class="ed-tab active" onclick="switchEdTab('info',this)">👤 البيانات الشخصية</button>
+      <button class="ed-tab" onclick="switchEdTab('advances',this)">💳 السلف</button>
+      <button class="ed-tab" onclick="switchEdTab('bonuses',this)">🏆 العلاوات والمكافآت</button>
+      <button class="ed-tab" onclick="switchEdTab('payrolls',this)">🧾 قسائم الرواتب</button>
+    </div>
+    <div class="ed-body" id="ed-body"></div>
+    <div class="modal-foot" style="border-top:1px solid var(--gray-200);padding:13px 22px;display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;gap:8px">
+        <button class="btn gold sm" id="ed-advance-btn" onclick="openAdvanceFromDetail()">💳 سلفة جديدة</button>
+        <button class="btn green sm" id="ed-bonus-btn" onclick="openBonusFromDetail()">🏆 علاوة جديدة</button>
+      </div>
+      <button class="btn ghost sm" onclick="closeOvl('ovl-emp-detail')">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="overlay" id="ovl-user" onclick="if(event.target===this)closeOvl('ovl-user')">
+  <div class="modal" style="width:560px">
+    <div class="modal-head"><h3 id="user-modal-title">👤 إضافة مدير جديد</h3><button class="modal-close" onclick="closeOvl('ovl-user')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="u_edit_id">
+      <div class="form-grid">
+        <div class="form-group"><label>اسم المستخدم <span class="req">*</span></label><input type="text" id="u_username" placeholder="مثال: manager1" autocomplete="off"></div>
+        <div class="form-group"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="u_fullname" placeholder="الاسم الظاهر..."></div>
+        <div class="form-group"><label>كلمة المرور <span class="req">*</span></label><input type="password" id="u_password" placeholder="كلمة المرور..." autocomplete="new-password"></div>
+        <div class="form-group"><label>تأكيد كلمة المرور</label><input type="password" id="u_password2" placeholder="أعد كتابة كلمة المرور..." autocomplete="new-password"></div>
+      </div>
+      <div style="margin-top:4px">
+        <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--navy)">صلاحيات الوصول</div>
+        <div class="perm-grid" id="perm-grid-container"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-user')">إلغاء</button><button class="btn navy sm" onclick="saveUser()">💾 حفظ المستخدم</button></div>
+  </div>
+</div>
+
+</div><!-- end main-app -->
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const DB = {
+  get(k){ try{return JSON.parse(localStorage.getItem('taqat_'+k))||[];}catch{return [];} },
+  set(k,v){ localStorage.setItem('taqat_'+k,JSON.stringify(v)); setSaveStatus('محفوظ ✓'); },
+  getObj(k,d={}){ try{return JSON.parse(localStorage.getItem('taqat_'+k))||d;}catch{return d;} },
+  setObj(k,v){ localStorage.setItem('taqat_'+k,JSON.stringify(v)); }
+};
+
+const DEFAULTS = [
+  {id:'a1',code:'1000',name:'الصندوق النقدي',type:'asset',category:'أصول متداولة',parent:'',opening:0,notes:''},
+  {id:'a2',code:'1001',name:'البنك - الحساب الجاري',type:'asset',category:'أصول متداولة',parent:'',opening:0,notes:''},
+  {id:'a3',code:'1002',name:'البنك - حساب التوفير',type:'asset',category:'أصول متداولة',parent:'',opening:0,notes:''},
+  {id:'a4',code:'1100',name:'ذمم مدينة (عملاء)',type:'asset',category:'أصول متداولة',parent:'',opening:0,notes:''},
+  {id:'a5',code:'2000',name:'رواتب موظفين مستحقة',type:'liability',category:'التزامات متداولة',parent:'',opening:0,notes:''},
+  {id:'a6',code:'2100',name:'ذمم دائنة (موردين)',type:'liability',category:'التزامات متداولة',parent:'',opening:0,notes:''},
+  {id:'a7',code:'2200',name:'قروض وتمويل',type:'liability',category:'التزامات طويلة الأجل',parent:'',opening:0,notes:''},
+  {id:'a8',code:'3000',name:'رأس المال',type:'equity',category:'حقوق ملكية',parent:'',opening:0,notes:''},
+  {id:'a9',code:'4000',name:'الإيرادات التشغيلية',type:'revenue',category:'إيرادات',parent:'',opening:0,notes:''},
+  {id:'a10',code:'4001',name:'إيرادات الخدمات',type:'revenue',category:'إيرادات',parent:'a9',opening:0,notes:''},
+  {id:'a11',code:'4002',name:'إيرادات المبيعات',type:'revenue',category:'إيرادات',parent:'a9',opening:0,notes:''},
+  {id:'a12',code:'5000',name:'المصاريف التشغيلية',type:'expense',category:'مصاريف',parent:'',opening:0,notes:''},
+  {id:'a13',code:'5001',name:'رواتب الموظفين',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+  {id:'a14',code:'5002',name:'إيجار المكتب',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+  {id:'a15',code:'5003',name:'مصاريف المواصلات',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+  {id:'a16',code:'5004',name:'مستلزمات مكتبية',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+  {id:'a17',code:'5005',name:'فواتير الخدمات',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+  {id:'a18',code:'5006',name:'مصاريف الصيانة',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+  {id:'a19',code:'5007',name:'سلف الموظفين',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+  {id:'a20',code:'5008',name:'مكافآت وعلاوات',type:'expense',category:'مصاريف',parent:'a12',opening:0,notes:''},
+];
+
+const MONTHS_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+// ══════════════════════════════════════════════
+// AUTH & PERMISSIONS SYSTEM
+// ══════════════════════════════════════════════
+
+const PAGES_CONFIG = [
+  {id:'balances', label:'📊 الأرصدة',    ops:['view','add','edit']},
+  {id:'accounts', label:'📒 الحسابات',   ops:['view','add','edit','delete']},
+  {id:'expenses', label:'💸 المصاريف',   ops:['view','add','delete']},
+  {id:'revenues', label:'💰 الإيرادات',  ops:['view','add','delete']},
+  {id:'assets',   label:'🏗️ الأصول',    ops:['view','add','delete']},
+  {id:'hr',       label:'👥 الموظفون',   ops:['view','add','edit','delete']},
+  {id:'summary',  label:'📋 الميزانية',  ops:['view']},
+  {id:'admin',    label:'🔐 المستخدمون', ops:['view','add','edit','delete']},
+];
+const OP_LABELS = {view:'عرض', add:'إضافة', edit:'تعديل', delete:'حذف'};
+
+const SUPER_ADMIN = {
+  id:'__superadmin__', username:'admin', password:'1407',
+  fullname:'مدير النظام', role:'superadmin',
+  perms: Object.fromEntries(PAGES_CONFIG.map(p=>[p.id, Object.fromEntries(p.ops.map(op=>[op,true]))]))
+};
+
+// SESSION persists across page refresh via sessionStorage
+let SESSION = (()=>{
+  try{
+    const s = sessionStorage.getItem('taqat_session');
+    return s ? JSON.parse(s) : null;
+  }catch{ return null; }
+})();
+
+function hashPw(pw){ return btoa(unescape(encodeURIComponent(pw+':taqat'))); }
+
+function getUsers(){
+  try{ return JSON.parse(localStorage.getItem('taqat_users'))||[]; }catch{ return []; }
+}
+function setUsers(u){ localStorage.setItem('taqat_users', JSON.stringify(u)); }
+
+function getAllUsers(){ return [SUPER_ADMIN, ...getUsers()]; }
+
+function findUser(username, password){
+  return getAllUsers().find(u => u.username===username && (u.id==='__superadmin__' ? u.password===password : u.password===hashPw(password)));
+}
+
+function canDo(page, op){
+  if(!SESSION) return false;
+  if(SESSION.role==='superadmin') return true;
+  return !!(SESSION.perms?.[page]?.[op]);
+}
+function canView(page){ return canDo(page,'view'); }
+
+function doLogin(){
+  const un = document.getElementById('login-username').value.trim();
+  const pw = document.getElementById('login-password').value;
+  const err = document.getElementById('login-error');
+  const user = findUser(un, pw);
+  if(!user){ err.style.display='block'; document.getElementById('login-password').value=''; return; }
+  err.style.display='none';
+  SESSION = user;
+  try{ sessionStorage.setItem('taqat_session', JSON.stringify(user)); }catch{}
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  // Update user badge
+  const initials = user.fullname.split(' ').map(n=>n[0]).slice(0,2).join('');
+  document.getElementById('user-av-initials').textContent = initials;
+  document.getElementById('user-display-name').textContent = user.fullname;
+  document.getElementById('user-display-role').textContent = user.role==='superadmin'?'مدير النظام':'مدير';
+  // Show/hide admin tab
+  const adminTab = document.getElementById('admin-tab');
+  if(adminTab) adminTab.style.display = canView('admin')?'':'none';
+  // Build nav visibility
+  buildNavVisibility();
+  init();
+}
+
+function doLogout(){
+  if(!confirm('هل تريد تسجيل الخروج؟')) return;
+  SESSION = null;
+  try{ sessionStorage.removeItem('taqat_session'); }catch{}
+  document.getElementById('main-app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('login-username').value='';
+  document.getElementById('login-password').value='';
+}
+
+function buildNavVisibility(){
+  const tabMap = {balances:0,accounts:1,expenses:2,revenues:3,assets:4,hr:5,admin:6,summary:7};
+  document.querySelectorAll('.tab-btn').forEach((btn,i)=>{
+    const pages = ['balances','accounts','expenses','revenues','assets','hr','admin','summary'];
+    const page = pages[i];
+    if(page && !canView(page)) btn.style.display='none';
+    else btn.style.display='';
+  });
+}
+
+function goAdminPanel(){
+  if(!canView('admin')){ toast('ليس لديك صلاحية الوصول لهذا القسم','err'); return; }
+  const btn = document.querySelector('#admin-tab');
+  if(btn) showTab('admin', btn);
+}
+
+function init(){
+  if(!DB.get('accounts').length) DB.set('accounts', DEFAULTS);
+  // Navigate to first visible page
+  const pages=['balances','accounts','expenses','revenues','assets','hr','summary'];
+  const first = pages.find(p=>canView(p))||'balances';
+  const btns = document.querySelectorAll('.tab-btn');
+  const pageIdx = {balances:0,accounts:1,expenses:2,revenues:3,assets:4,hr:5,admin:6,summary:7};
+  btns.forEach(b=>b.classList.remove('active'));
+  if(btns[pageIdx[first]]) btns[pageIdx[first]].classList.add('active');
+  renderPage(first);
+}
+
+// ══════════════════════════════════════════════
+// ADMIN PAGE
+// ══════════════════════════════════════════════
+function renderAdmin(){
+  if(!canView('admin')){
+    document.getElementById('page-admin').innerHTML=`<div class="no-access"><div class="no-access-icon">🔒</div><div class="no-access-msg">ليس لديك صلاحية</div><div class="no-access-sub">تواصل مع مدير النظام للحصول على الصلاحية</div></div>`;
+    return;
+  }
+  const users = getUsers();
+  const roleLabel = r => r==='superadmin'?'<span class="role-badge rb-super">مدير النظام</span>':'<span class="role-badge rb-admin">مدير</span>';
+
+  const rows = [SUPER_ADMIN, ...users].map(u=>`<tr>
+    <td><strong>${u.fullname}</strong></td>
+    <td><code style="background:var(--gray-100);padding:2px 7px;border-radius:4px;font-size:12px">${u.username}</code></td>
+    <td>${roleLabel(u.role)}</td>
+    <td style="font-size:12px;color:var(--gray-500)">${u.id==='__superadmin__'?'جميع الصلاحيات':getSummaryPerms(u.perms)}</td>
+    <td>
+      ${u.id!=='__superadmin__'?`
+        <div style="display:flex;gap:5px">
+          <button class="btn ghost sm" style="font-size:11px" onclick="openEditUser('${u.id}')">✏️ تعديل</button>
+          <button class="btn sm" style="background:var(--red-pale);color:var(--red);font-size:11px" onclick="deleteUser('${u.id}')">🗑 حذف</button>
+        </div>`:'<span class="muted">—</span>'}
+    </td>
+  </tr>`).join('');
+
+  document.getElementById('page-admin').innerHTML=`
+    <div class="sec-title"><h2>إدارة المستخدمين والصلاحيات</h2><span class="pill">النظام الأمني</span></div>
+    <div class="stats-grid">
+      <div class="stat-card teal"><div class="stat-label">إجمالي المستخدمين</div><div class="stat-value teal">${users.length+1}</div></div>
+      <div class="stat-card gold"><div class="stat-label">المستخدم الحالي</div><div class="stat-value gold" style="font-size:15px">${SESSION?.fullname||'-'}</div></div>
+    </div>
+    ${canDo('admin','add')?`<div class="toolbar"><button class="btn navy" onclick="openAddUser()">➕ إضافة مدير جديد</button></div>`:''}
+    <div class="table-card"><table>
+      <thead><tr><th>الاسم الكامل</th><th>اسم المستخدم</th><th>الدور</th><th>الصلاحيات</th><th>إجراء</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <div style="margin-top:20px;background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--gray-700)">
+      <strong style="color:var(--navy)">⚠️ ملاحظة أمان:</strong> البيانات محفوظة محلياً في هذا المتصفح. لا تشارك كلمات المرور. مدير النظام (admin) لا يمكن حذفه أو تعديل صلاحياته.
+    </div>`;
+}
+
+function getSummaryPerms(perms){
+  if(!perms) return 'لا صلاحيات';
+  const active = PAGES_CONFIG.filter(p=>perms[p.id]?.view).map(p=>p.label);
+  return active.length ? active.join(' ، ') : 'لا صلاحيات';
+}
+
+function openAddUser(){
+  document.getElementById('user-modal-title').textContent='👤 إضافة مدير جديد';
+  document.getElementById('u_edit_id').value='';
+  document.getElementById('u_username').value='';
+  document.getElementById('u_fullname').value='';
+  document.getElementById('u_password').value='';
+  document.getElementById('u_password2').value='';
+  document.getElementById('u_username').disabled=false;
+  buildPermGrid({});
+  openOvl('ovl-user');
+}
+
+function openEditUser(id){
+  const user = getUsers().find(u=>u.id===id);
+  if(!user) return;
+  document.getElementById('user-modal-title').textContent='✏️ تعديل بيانات المدير';
+  document.getElementById('u_edit_id').value=id;
+  document.getElementById('u_username').value=user.username;
+  document.getElementById('u_username').disabled=true;
+  document.getElementById('u_fullname').value=user.fullname;
+  document.getElementById('u_password').value='';
+  document.getElementById('u_password2').value='';
+  buildPermGrid(user.perms||{});
+  openOvl('ovl-user');
+}
+
+function buildPermGrid(existingPerms){
+  const container = document.getElementById('perm-grid-container');
+  container.innerHTML = PAGES_CONFIG.map(page=>{
+    const pageActive = existingPerms[page.id]?.view;
+    const checks = page.ops.map(op=>`
+      <label class="perm-check">
+        <input type="checkbox" id="perm_${page.id}_${op}" ${existingPerms[page.id]?.[op]?'checked':''} ${op==='view'?`onchange="togglePagePerm('${page.id}',this)"`:''}>
+        ${OP_LABELS[op]}
+      </label>`).join('');
+    return `<div class="perm-card ${pageActive?'on':''}" id="perm-card-${page.id}">
+      <div class="perm-page-label">${page.label}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">${checks}</div>
+    </div>`;
+  }).join('');
+}
+
+function togglePagePerm(pageId, viewChk){
+  const card = document.getElementById('perm-card-'+pageId);
+  if(!viewChk.checked){
+    // Uncheck all ops if view unchecked
+    PAGES_CONFIG.find(p=>p.id===pageId).ops.forEach(op=>{
+      const el=document.getElementById(`perm_${pageId}_${op}`);
+      if(el) el.checked=false;
+    });
+    card.classList.remove('on');
+  } else {
+    card.classList.add('on');
+  }
+}
+
+function saveUser(){
+  const editId = document.getElementById('u_edit_id').value;
+  const username = document.getElementById('u_username').value.trim();
+  const fullname = document.getElementById('u_fullname').value.trim();
+  const pw = document.getElementById('u_password').value;
+  const pw2 = document.getElementById('u_password2').value;
+  if(!fullname){toast('يرجى إدخال الاسم الكامل','err');return;}
+  if(!editId && !username){toast('يرجى إدخال اسم المستخدم','err');return;}
+  if(!editId && !pw){toast('يرجى إدخال كلمة المرور','err');return;}
+  if(pw && pw!==pw2){toast('كلمتا المرور غير متطابقتان','err');return;}
+  if(pw && pw.length<4){toast('كلمة المرور يجب أن تكون 4 أحرف على الأقل','err');return;}
+  const users = getUsers();
+  if(!editId && (username==='admin'||users.find(u=>u.username===username))){toast('اسم المستخدم موجود مسبقاً','err');return;}
+  // Collect perms
+  const perms={};
+  PAGES_CONFIG.forEach(page=>{
+    perms[page.id]={};
+    page.ops.forEach(op=>{ perms[page.id][op]=document.getElementById(`perm_${page.id}_${op}`)?.checked||false; });
+  });
+  if(editId){
+    const i=users.findIndex(u=>u.id===editId);
+    if(i>=0){
+      users[i].fullname=fullname;
+      users[i].perms=perms;
+      if(pw) users[i].password=hashPw(pw);
+    }
+    toast(`✅ تم تحديث بيانات المدير: ${fullname}`);
+  } else {
+    users.push({id:uid(),username,fullname,password:hashPw(pw),role:'admin',perms});
+    toast(`✅ تم إضافة المدير: ${fullname}`);
+  }
+  setUsers(users);
+  closeOvl('ovl-user');
+  renderAdmin();
+}
+
+function deleteUser(id){
+  if(!confirm('هل تريد حذف هذا المستخدم؟'))return;
+  setUsers(getUsers().filter(u=>u.id!==id));
+  toast('تم حذف المستخدم','err');
+  renderAdmin();
+}
+
+
+const fmt = n => '₪ '+Number(n||0).toLocaleString('ar-SA',{minimumFractionDigits:2,maximumFractionDigits:2});
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const today = () => new Date().toISOString().split('T')[0];
+const N = n => Number(n||0);
+const TL = {asset:'أصول',liability:'التزامات',equity:'حقوق ملكية',revenue:'إيرادات',expense:'مصاريف'};
+const TBADGE = {asset:'asset',liability:'liability',equity:'equity',revenue:'revenue',expense:'expense'};
+const curMonthKey = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; };
+const monthLabel = k => { if(!k)return ''; const [y,m]=k.split('-'); return `${MONTHS_AR[parseInt(m)-1]} ${y}`; };
+
+function setSaveStatus(msg){ document.getElementById('saveStatus').textContent = msg; }
+function toast(msg,type='ok'){
+  const w=document.getElementById('toastWrap');
+  const t=document.createElement('div'); t.className='toast '+type; t.textContent=msg;
+  w.appendChild(t); setTimeout(()=>t.remove(),3200);
+}
+
+function calcMov(acc, expenses, revenues){
+  let m=0;
+  revenues.filter(r=>r.accountId===acc.id).forEach(r=>{ if(['asset','revenue'].includes(acc.type)) m+=N(r.amount); else m-=N(r.amount); });
+  expenses.filter(e=>e.accountId===acc.id).forEach(e=>{ if(acc.type==='asset') m-=N(e.amount); else if(acc.type==='expense') m+=N(e.amount); else m+=N(e.amount); });
+  return m;
+}
+function getBal(acc,exp,rev){ return N(acc.opening)+calcMov(acc,exp,rev); }
+
+function getMonthOptions(selectedKey=''){
+  const d=new Date(); let opts='';
+  for(let y=d.getFullYear();y>=d.getFullYear()-2;y--){
+    for(let m=12;m>=1;m--){
+      const k=`${y}-${String(m).padStart(2,'0')}`;
+      opts+=`<option value="${k}" ${k===selectedKey?'selected':''}>${MONTHS_AR[m-1]} ${y}</option>`;
+    }
+  }
+  return opts;
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+let curPage='balances';
+function showTab(page,btn){
+  if(!canView(page)){ toast('ليس لديك صلاحية الوصول لهذا القسم','err'); return; }
+  curPage=page;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderPage(page);
+}
+function renderPage(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pageEl = document.getElementById('page-'+page);
+  if(pageEl) pageEl.classList.add('active');
+  if(!canView(page)){
+    if(pageEl) pageEl.innerHTML=`<div class="no-access"><div class="no-access-icon">🔒</div><div class="no-access-msg">ليس لديك صلاحية الوصول</div><div class="no-access-sub">تواصل مع مدير النظام</div></div>`;
+    return;
+  }
+  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary})[page]?.();
+}
+
+// ══════════════════════════════════════════════
+// BALANCES
+// ══════════════════════════════════════════════
+function renderBalances(){
+  const accs=DB.get('accounts'),exp=DB.get('expenses'),rev=DB.get('revenues');
+  const tR=rev.reduce((s,r)=>s+N(r.amount),0),tE=exp.reduce((s,r)=>s+N(r.amount),0),net=tR-tE;
+  const tA=accs.filter(a=>a.type==='asset').reduce((s,a)=>s+getBal(a,exp,rev),0);
+  const tL=accs.filter(a=>a.type==='liability').reduce((s,a)=>s+getBal(a,exp,rev),0);
+  let groups='';
+  [['asset','أصول'],['liability','التزامات'],['equity','حقوق ملكية']].forEach(([type,label])=>{
+    const fa=accs.filter(a=>a.type===type); if(!fa.length)return;
+    groups+=`<div class="bal-section"><div class="bal-section-title">${label}</div><div class="bal-grid">`;
+    fa.forEach(a=>{ const b=getBal(a,exp,rev); groups+=`<div class="bal-card"><div><div class="bal-card-name">${a.name}</div><div class="bal-card-code">${a.code}</div></div><div class="${b>=0?'gt':'rt'}">${fmt(b)}</div></div>`; });
+    groups+='</div></div>';
+  });
+  const obRows=accs.filter(a=>['asset','liability','equity'].includes(a.type)).map(a=>{
+    const m=calcMov(a,exp,rev),b=getBal(a,exp,rev);
+    return `<tr><td><strong>${a.name}</strong><div class="muted">${a.code}</div></td><td><span class="badge ${TBADGE[a.type]}">${TL[a.type]}</span></td><td><div class="ob-row"><input type="number" id="ob_${a.id}" value="${a.opening||0}" step="0.01"><button class="ob-save-btn" onclick="saveOB('${a.id}')">حفظ</button></div></td><td class="${m>=0?'gt':'rt'}">${fmt(m)}</td><td style="font-weight:700;color:${b>=0?'var(--green)':'var(--red)'};">${fmt(b)}</td></tr>`;
+  }).join('');
+  document.getElementById('page-balances').innerHTML=`
+    <div class="sec-title"><h2>لوحة الأرصدة</h2><span class="pill">يتحدث تلقائياً</span></div>
+    <div class="stats-grid">
+      <div class="stat-card green"><div class="stat-label">إجمالي الأصول</div><div class="stat-value g">${fmt(tA)}</div></div>
+      <div class="stat-card red"><div class="stat-label">إجمالي الالتزامات</div><div class="stat-value r">${fmt(tL)}</div></div>
+      <div class="stat-card gold"><div class="stat-label">إجمالي الإيرادات</div><div class="stat-value gold">${fmt(tR)}</div></div>
+      <div class="stat-card red"><div class="stat-label">إجمالي المصاريف</div><div class="stat-value r">${fmt(tE)}</div></div>
+      <div class="stat-card ${net>=0?'green':'red'}"><div class="stat-label">صافي الربح / الخسارة</div><div class="stat-value ${net>=0?'g':'r'}">${fmt(net)}</div></div>
+    </div>${groups}
+    <div class="sec-title" style="margin-top:24px"><h2>الأرصدة الافتتاحية</h2></div>
+    <div class="table-card"><table><thead><tr><th>الحساب</th><th>النوع</th><th>الرصيد الافتتاحي (₪)</th><th>الحركات (₪)</th><th>الرصيد الحالي (₪)</th></tr></thead>
+    <tbody>${obRows||'<tr><td colspan="5" class="empty-cell">لا توجد حسابات</td></tr>'}</tbody></table></div>`;
+}
+function saveOB(id){
+  const v=parseFloat(document.getElementById('ob_'+id).value)||0;
+  const accs=DB.get('accounts'),i=accs.findIndex(a=>a.id===id);
+  if(i>=0){accs[i].opening=v;DB.set('accounts',accs);toast('تم حفظ الرصيد الافتتاحي');renderPage(curPage);}
+}
+
+// ══════════════════════════════════════════════
+// ACCOUNTS
+// ══════════════════════════════════════════════
+function renderAccounts(){
+  const accs=DB.get('accounts'),exp=DB.get('expenses'),rev=DB.get('revenues');
+  const rows=accs.map(a=>{ const par=accs.find(p=>p.id===a.parent),b=getBal(a,exp,rev);
+    return `<tr><td>${a.code}</td><td>${a.parent?'└ ':''}<strong>${a.name}</strong>${par?`<span class="muted"> (${par.name})</span>`:''}</td><td><span class="badge ${TBADGE[a.type]}">${TL[a.type]}</span></td><td class="muted">${a.category||'-'}</td><td style="font-weight:600;color:${b>=0?'var(--green)':'var(--red)'};">${fmt(b)}</td><td>${canDo('accounts','delete')?`<button class="del-btn" onclick="delAccount('${a.id}')">🗑</button>`:''}</td></tr>`;
+  }).join('');
+  document.getElementById('page-accounts').innerHTML=`
+    <div class="sec-title"><h2>دليل الحسابات</h2></div>
+    <div class="toolbar">${canDo('accounts','add')?`<button class="btn purple" onclick="openOvl('ovl-account')">➕ إضافة حساب جديد</button>`:''}</div>
+    <div class="table-card"><table><thead><tr><th>الكود</th><th>اسم الحساب</th><th>النوع</th><th>التصنيف</th><th>الرصيد الحالي</th><th></th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="6" class="empty-cell">لا توجد حسابات</td></tr>'}</tbody></table></div>`;
+}
+
+// ══════════════════════════════════════════════
+// EXPENSES
+// ══════════════════════════════════════════════
+function renderExpenses(){
+  const exp=DB.get('expenses'),accs=DB.get('accounts');
+  const sorted=[...exp].sort((a,b)=>b.date.localeCompare(a.date));
+  const tot=sorted.reduce((s,e)=>s+N(e.amount),0);
+  const rows=sorted.map((e,i)=>{ const acc=accs.find(a=>a.id===e.accountId);
+    return `<tr><td class="muted">${i+1}</td><td>${e.date}</td><td><strong>${e.desc}</strong>${e.notes?`<div class="muted">${e.notes}</div>`:''}</td><td class="muted">${acc?acc.name:e.accountName||'-'}</td><td>${e.category?`<span class="badge expense">${e.category}</span>`:'-'}</td><td class="muted">${e.payment||'-'}</td><td class="rt">${fmt(e.amount)}</td><td class="muted">${e.approved||'-'}</td><td>${canDo('expenses','delete')?`<button class="del-btn" onclick="delExpense('${e.id}')">🗑</button>`:''}</td></tr>`;
+  }).join('');
+  document.getElementById('page-expenses').innerHTML=`
+    <div class="sec-title"><h2>سجل المصاريف</h2></div>
+    <div class="toolbar">${canDo('expenses','add')?`<button class="btn red" onclick="openOvl('ovl-expense')">➕ تسجيل مصروف جديد</button>`:''}</div>
+    <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card red"><div class="stat-label">إجمالي المصاريف</div><div class="stat-value r">${fmt(tot)}</div></div><div class="stat-card"><div class="stat-label">عدد العمليات</div><div class="stat-value">${exp.length}</div></div></div>
+    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>البيان</th><th>الحساب</th><th>الفئة</th><th>طريقة الدفع</th><th>المبلغ (₪)</th><th>الموافق على الصرف</th><th></th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد مصاريف مسجلة</td></tr>'}</tbody></table></div>`;
+}
+
+// ══════════════════════════════════════════════
+// REVENUES
+// ══════════════════════════════════════════════
+function renderRevenues(){
+  const rev=DB.get('revenues'),accs=DB.get('accounts'),exp=DB.get('expenses');
+  const sorted=[...rev].sort((a,b)=>b.date.localeCompare(a.date));
+  const tR=sorted.reduce((s,r)=>s+N(r.amount),0),tE=exp.reduce((s,e)=>s+N(e.amount),0);
+  const rows=sorted.map((r,i)=>{ const acc=accs.find(a=>a.id===r.accountId);
+    return `<tr><td class="muted">${i+1}</td><td>${r.date}</td><td><strong>${r.desc}</strong>${r.notes?`<div class="muted">${r.notes}</div>`:''}</td><td class="muted">${acc?acc.name:r.accountName||'-'}</td><td>${r.type?`<span class="badge revenue">${r.type}</span>`:'-'}</td><td class="muted">${r.client||'-'}</td><td class="gt">${fmt(r.amount)}</td><td class="muted">${r.method||'-'}</td><td>${canDo('revenues','delete')?`<button class="del-btn" onclick="delRevenue('${r.id}')">🗑</button>`:''}</td></tr>`;
+  }).join('');
+  document.getElementById('page-revenues').innerHTML=`
+    <div class="sec-title"><h2>سجل الإيرادات</h2></div>
+    <div class="toolbar">${canDo('revenues','add')?`<button class="btn green" onclick="openOvl('ovl-revenue')">➕ تسجيل إيراد جديد</button>`:''}</div>
+    <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card green"><div class="stat-label">إجمالي الإيرادات</div><div class="stat-value g">${fmt(tR)}</div></div><div class="stat-card gold"><div class="stat-label">صافي الربح</div><div class="stat-value ${tR-tE>=0?'g':'r'}">${fmt(tR-tE)}</div></div><div class="stat-card"><div class="stat-label">عدد العمليات</div><div class="stat-value">${rev.length}</div></div></div>
+    <div class="table-card"><table><thead><tr><th>#</th><th>التاريخ</th><th>المصدر / البيان</th><th>الحساب</th><th>نوع الإيراد</th><th>العميل / الجهة</th><th>المبلغ (₪)</th><th>طريقة الاستلام</th><th></th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد إيرادات مسجلة</td></tr>'}</tbody></table></div>`;
+}
+
+// ══════════════════════════════════════════════
+// ASSETS
+// ══════════════════════════════════════════════
+function renderAssets(){
+  const ast=DB.get('assets');
+  const tC=ast.reduce((s,a)=>s+N(a.cost),0),tD=ast.reduce((s,a)=>s+N(a.depreciation),0);
+  const rows=ast.map((a,i)=>`<tr><td class="muted">${i+1}</td><td><strong>${a.name}</strong></td><td class="muted">${a.category||'-'}</td><td class="muted">${a.date||'-'}</td><td style="font-weight:600;">${fmt(a.cost)}</td><td class="muted">${a.life||'-'} سنة</td><td class="rt">${fmt(a.depreciation)}</td><td class="gt">${fmt(a.cost-a.depreciation)}</td><td>${canDo('assets','delete')?`<button class="del-btn" onclick="delAsset('${a.id}')">🗑</button>`:''}</td></tr>`).join('');
+  document.getElementById('page-assets').innerHTML=`
+    <div class="sec-title"><h2>سجل الأصول</h2></div>
+    <div class="toolbar">${canDo('assets','add')?`<button class="btn navy" onclick="openOvl('ovl-asset')">➕ إضافة أصل جديد</button>`:''}</div>
+    <div class="stats-grid" style="margin-bottom:18px"><div class="stat-card blue"><div class="stat-label">إجمالي قيمة الشراء</div><div class="stat-value">${fmt(tC)}</div></div><div class="stat-card red"><div class="stat-label">إجمالي الاستهلاك السنوي</div><div class="stat-value r">${fmt(tD)}</div></div><div class="stat-card green"><div class="stat-label">القيمة الدفترية الحالية</div><div class="stat-value g">${fmt(tC-tD)}</div></div></div>
+    <div class="table-card"><table><thead><tr><th>#</th><th>اسم الأصل</th><th>الفئة</th><th>تاريخ الشراء</th><th>قيمة الشراء (₪)</th><th>العمر الافتراضي</th><th>الاستهلاك السنوي (₪)</th><th>القيمة الدفترية (₪)</th><th></th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="9" class="empty-cell">لا توجد أصول مسجلة</td></tr>'}</tbody></table></div>`;
+}
+
+// ══════════════════════════════════════════════
+// HR — إدارة الموظفين
+// ══════════════════════════════════════════════
+function renderHR(){
+  const emps=DB.get('employees');
+  const advances=DB.get('advances');
+  const bonuses=DB.get('bonuses');
+  const payrolls=DB.get('payrolls');
+
+  const totalSalaries=emps.filter(e=>e.active).reduce((s,e)=>s+N(e.salary),0);
+  const totalAdvances=advances.reduce((s,a)=>s+N(a.amount),0);
+  const totalBonuses=bonuses.reduce((s,b)=>s+N(b.amount),0);
+  const activeCount=emps.filter(e=>e.active).length;
+
+  const empCards = emps.length===0
+    ? '<p style="color:var(--gray-500);font-size:14px;padding:20px 0">لا يوجد موظفون. أضف موظفاً جديداً باستخدام الزر أعلاه.</p>'
+    : emps.map(emp=>{
+      const empAdv=advances.filter(a=>a.empId===emp.id&&!a.deducted).reduce((s,a)=>s+N(a.amount),0);
+      const initials=emp.name.split(' ').map(n=>n[0]).slice(0,2).join('');
+      return `<div class="emp-card ${emp.active?'':'inactive'}">
+        <div class="emp-card-head" style="cursor:pointer" onclick="openEmpDetail('${emp.id}')">
+          <div class="emp-avatar">${initials}</div>
+          <div>
+            <div class="emp-name" style="text-decoration:underline;text-decoration-color:rgba(255,255,255,.4)">${emp.name}</div>
+            <div class="emp-title">${emp.title||''} ${emp.dept?`— ${emp.dept}`:''}</div>
+          </div>
+        </div>
+        <div class="emp-card-body">
+          <div class="emp-info-row"><span class="emp-info-label">الراتب الأساسي</span><span class="emp-info-val gt">${fmt(emp.salary)}</span></div>
+          <div class="emp-info-row"><span class="emp-info-label">السلف المعلقة</span><span class="emp-info-val ${empAdv>0?'rt':''}">${empAdv>0?fmt(empAdv):'لا يوجد'}</span></div>
+          <div class="emp-info-row"><span class="emp-info-label">الحساب المرتبط</span><span class="emp-info-val" style="font-size:12px;color:var(--teal)">${emp.accountName||'<span style="color:var(--gray-500);font-weight:400">غير مرتبط</span>'}</span></div>
+          <div class="emp-info-row"><span class="emp-info-label">تاريخ التعيين</span><span class="emp-info-val">${emp.hire||'-'}</span></div>
+          <div class="emp-info-row"><span class="emp-info-label">الحالة</span>
+            <span><span class="badge ${emp.active?'active-badge':'inactive-badge'}">${emp.active?'نشط':'غير نشط'}</span></span>
+          </div>
+        </div>
+        <div class="emp-card-actions">
+          <button class="emp-action-btn" onclick="openEmpDetail('${emp.id}')">📋 التفاصيل</button>
+          <button class="emp-action-btn gold-btn" onclick="openAdvance('${emp.id}')">💳 سلفة</button>
+          <button class="emp-action-btn green-btn" onclick="openBonus('${emp.id}')">🏆 علاوة</button>
+          <button class="emp-action-btn ${emp.active?'red-btn':''}" onclick="toggleEmpStatus('${emp.id}')">${emp.active?'⏸ تعطيل':'▶ تفعيل'}</button>
+          <button class="emp-action-btn red-btn" onclick="delEmployee('${emp.id}')">🗑</button>
+        </div>
+      </div>`;
+    }).join('');
+
+  // Recent payrolls table
+  const payrollRows=payrolls.slice(-10).reverse().map(p=>`<tr>
+    <td>${monthLabel(p.month)}</td><td class="muted">${p.date}</td>
+    <td>${p.empName}</td><td class="gt">${fmt(p.baseSalary)}</td>
+    <td class="gt">${p.bonusAmt>0?fmt(p.bonusAmt):'-'}</td>
+    <td class="rt">${p.advDeduct>0?fmt(p.advDeduct):'-'}</td>
+    <td style="font-weight:700;color:var(--navy);">${fmt(p.netPay)}</td>
+    <td><button class="btn ghost sm" style="font-size:11px" onclick="showPayslip('${p.id}')">عرض</button></td>
+  </tr>`).join('');
+
+  document.getElementById('page-hr').innerHTML=`
+    <div class="sec-title"><h2>إدارة الموظفين</h2><span class="pill">متكامل مع الحسابات</span></div>
+    <div class="stats-grid">
+      <div class="stat-card teal"><div class="stat-label">الموظفون النشطون</div><div class="stat-value teal">${activeCount}</div></div>
+      <div class="stat-card gold"><div class="stat-label">إجمالي الرواتب الشهرية</div><div class="stat-value gold">${fmt(totalSalaries)}</div></div>
+      <div class="stat-card red"><div class="stat-label">إجمالي السلف المعلقة</div><div class="stat-value r">${fmt(advances.filter(a=>!a.deducted).reduce((s,a)=>s+N(a.amount),0))}</div></div>
+      <div class="stat-card green"><div class="stat-label">إجمالي المكافآت المسجلة</div><div class="stat-value g">${fmt(totalBonuses)}</div></div>
+    </div>
+    <div class="toolbar">
+      ${canDo('hr','add')?`<button class="btn teal" onclick="openOvl('ovl-employee')">➕ إضافة موظف جديد</button>`:''}
+      ${canDo('hr','edit')?`<button class="btn navy" onclick="openPayroll()">📋 احتساب رواتب شهرية</button>`:''}
+    </div>
+    <div class="emp-grid">${empCards}</div>
+    ${payrolls.length>0?`
+    <div class="sec-title" style="margin-top:8px"><h2>آخر قسائم الرواتب</h2></div>
+    <div class="table-card"><table>
+      <thead><tr><th>الشهر</th><th>تاريخ الصرف</th><th>الموظف</th><th>الراتب الأساسي</th><th>المكافآت</th><th>خصم السلفة</th><th>صافي الراتب</th><th></th></tr></thead>
+      <tbody>${payrollRows}</tbody>
+    </table></div>`:''}`;
+}
+
+// ══════════════════════════════════════════════
+// EMPLOYEE CRUD
+// ══════════════════════════════════════════════
+function saveEmployee(){
+  const name=document.getElementById('emp_name').value.trim();
+  const title=document.getElementById('emp_title').value.trim();
+  const salary=parseFloat(document.getElementById('emp_salary').value);
+  if(!name||!title||!salary||salary<=0){toast('يرجى تعبئة الاسم والمسمى الوظيفي والراتب','err');return;}
+
+  let accountId=document.getElementById('emp_account').value;
+  let accountName='';
+  const autoCreate=document.getElementById('emp_auto_account').checked;
+  let accs=DB.get('accounts');
+
+  if(autoCreate||!accountId){
+    // إيجاد حساب الرواتب الأب
+    const salaryParent=accs.find(a=>a.code==='5001')||accs.find(a=>a.name.includes('رواتب الموظفين'))||accs.find(a=>a.type==='expense'&&a.name.includes('رواتب'));
+    const newCode=generateEmpAccountCode(accs,salaryParent);
+    const newAcc={
+      id:uid(),
+      code:newCode,
+      name:`راتب ${name}`,
+      type:'expense',
+      category:'رواتب الموظفين',
+      parent:salaryParent?salaryParent.id:'',
+      opening:0,
+      notes:`حساب راتب الموظف: ${name}`
+    };
+    accs.push(newAcc);
+    DB.set('accounts',accs);
+    accountId=newAcc.id;
+    accountName=newAcc.name;
+    toast(`📒 تم إنشاء الحساب: ${newCode} - راتب ${name}`);
+  } else {
+    const acc=accs.find(a=>a.id===accountId);
+    accountName=acc?acc.name:'';
+  }
+
+  const emp={id:uid(),name,title,
+    dept:document.getElementById('emp_dept').value.trim(),
+    salary,hire:document.getElementById('emp_hire').value,
+    idNum:document.getElementById('emp_id').value.trim(),
+    phone:document.getElementById('emp_phone').value.trim(),
+    iban:document.getElementById('emp_iban').value.trim(),
+    notes:document.getElementById('emp_notes').value.trim(),
+    accountId,accountName,
+    active:true};
+
+  const data=DB.get('employees'); data.push(emp); DB.set('employees',data);
+  closeOvl('ovl-employee');
+  toast(`✅ تمت إضافة الموظف: ${name}${accountId?' — مرتبط بحساب: '+accountName:''}`);
+  renderPage(curPage);
+}
+function toggleEmpStatus(id){
+  const emps=DB.get('employees'),i=emps.findIndex(e=>e.id===id);
+  if(i>=0){emps[i].active=!emps[i].active;DB.set('employees',emps);renderPage(curPage);}
+}
+function delEmployee(id){
+  if(!confirm('هل تريد حذف هذا الموظف؟'))return;
+  DB.set('employees',DB.get('employees').filter(e=>e.id!==id));
+  toast('تم حذف الموظف','err'); renderPage(curPage);
+}
+
+// ══════════════════════════════════════════════
+// ADVANCES — السلف
+// ══════════════════════════════════════════════
+let currentEmpId=null;
+function openAdvance(empId){
+  currentEmpId=empId;
+  const emp=DB.get('employees').find(e=>e.id===empId);
+  document.getElementById('advance-emp-info').innerHTML=`<strong>${emp.name}</strong> — ${emp.title} | الراتب: <strong>${fmt(emp.salary)}</strong>`;
+  document.getElementById('adv_date').value=today();
+  document.getElementById('adv_month').innerHTML=getMonthOptions(curMonthKey());
+  openOvl('ovl-advance');
+}
+function saveAdvance(){
+  const amt=parseFloat(document.getElementById('adv_amt').value);
+  const date=document.getElementById('adv_date').value;
+  if(!amt||amt<=0||!date){toast('يرجى إدخال المبلغ والتاريخ','err');return;}
+  const emp=DB.get('employees').find(e=>e.id===currentEmpId);
+  const adv={id:uid(),empId:currentEmpId,empName:emp.name,amount:amt,date,
+    deductMonth:document.getElementById('adv_month').value,
+    payment:document.getElementById('adv_pay').value,
+    notes:document.getElementById('adv_notes').value.trim(),deducted:false};
+  const data=DB.get('advances'); data.push(adv); DB.set('advances',data);
+  // تسجيل كمصروف في حساب الموظف الخاص أو حساب السلف
+  const accs=DB.get('accounts');
+  const advAcc=emp.accountId
+    ? accs.find(a=>a.id===emp.accountId)
+    : accs.find(a=>a.code==='5007')||accs.find(a=>a.name.includes('سلف'));
+  const expRec={id:uid(),date,desc:`سلفة للموظف: ${emp.name}`,
+    accountId:advAcc?advAcc.id:'',accountName:advAcc?advAcc.name:'سلف الموظفين',
+    category:'رواتب',payment:adv.payment,amount:amt,approved:'إدارة الموظفين',
+    notes:adv.notes,isAdvance:true,advId:adv.id};
+  const expenses=DB.get('expenses'); expenses.push(expRec); DB.set('expenses',expenses);
+  closeOvl('ovl-advance'); toast(`✅ تم منح سلفة بمبلغ ${fmt(amt)} للموظف ${emp.name}`); renderPage(curPage);
+}
+
+// ══════════════════════════════════════════════
+// BONUSES — العلاوات والمكافآت
+// ══════════════════════════════════════════════
+function openBonus(empId){
+  currentEmpId=empId;
+  const emp=DB.get('employees').find(e=>e.id===empId);
+  document.getElementById('bonus-emp-info').innerHTML=`<strong>${emp.name}</strong> — ${emp.title} | الراتب: <strong>${fmt(emp.salary)}</strong>`;
+  document.getElementById('bon_month').innerHTML=getMonthOptions(curMonthKey());
+  openOvl('ovl-bonus');
+}
+function saveBonus(){
+  const amt=parseFloat(document.getElementById('bon_amt').value);
+  if(!amt||amt<=0){toast('يرجى إدخال المبلغ','err');return;}
+  const emp=DB.get('employees').find(e=>e.id===currentEmpId);
+  const typeMap={bonus:'مكافأة',allowance:'علاوة',overtime:'عمل إضافي'};
+  const bType=document.getElementById('bon_type').value;
+  const bonus={id:uid(),empId:currentEmpId,empName:emp.name,type:bType,
+    typeLabel:typeMap[bType],amount:amt,
+    month:document.getElementById('bon_month').value,
+    notes:document.getElementById('bon_notes').value.trim(),applied:false};
+  const data=DB.get('bonuses'); data.push(bonus); DB.set('bonuses',data);
+  closeOvl('ovl-bonus'); toast(`✅ تمت إضافة ${typeMap[bType]} بمبلغ ${fmt(amt)} للموظف ${emp.name}`); renderPage(curPage);
+}
+
+// ══════════════════════════════════════════════
+// PAYROLL — احتساب الرواتب
+// ══════════════════════════════════════════════
+function openPayroll(){
+  document.getElementById('pay_month').innerHTML=getMonthOptions(curMonthKey());
+  document.getElementById('pay_date').value=today();
+  updatePayrollPreview();
+  openOvl('ovl-payroll');
+}
+function updatePayrollPreview(){
+  const month=document.getElementById('pay_month')?.value||curMonthKey();
+  const emps=DB.get('employees').filter(e=>e.active);
+  const advances=DB.get('advances');
+  const bonuses=DB.get('bonuses');
+  // Check already paid
+  const payrolls=DB.get('payrolls');
+  const alreadyPaid=payrolls.filter(p=>p.month===month).map(p=>p.empId);
+
+  if(!emps.length){document.getElementById('payroll-preview').innerHTML='<p style="color:var(--gray-500);font-size:13px">لا يوجد موظفون نشطون</p>';return;}
+  const rows=emps.map(emp=>{
+    const empAdv=advances.filter(a=>a.empId===emp.id&&a.deductMonth===month&&!a.deducted).reduce((s,a)=>s+N(a.amount),0);
+    const empBon=bonuses.filter(b=>b.empId===emp.id&&b.month===month&&!b.applied).reduce((s,b)=>s+N(b.amount),0);
+    const net=N(emp.salary)+empBon-empAdv;
+    const paid=alreadyPaid.includes(emp.id);
+    return `<tr style="${paid?'opacity:.5':''}"><td><strong>${emp.name}</strong><div class="muted">${emp.title}</div></td><td class="gt">${fmt(emp.salary)}</td><td class="${empBon>0?'gt':''}">${empBon>0?fmt(empBon):'-'}</td><td class="${empAdv>0?'rt':''}">${empAdv>0?`(${fmt(empAdv)})`:'-'}</td><td style="font-weight:700">${fmt(net)}</td><td>${paid?'<span class="badge active-badge">مدفوع</span>':'<span class="badge inactive-badge">معلق</span>'}</td></tr>`;
+  }).join('');
+  const totalNet=emps.filter(e=>!alreadyPaid.includes(e.id)).reduce((s,emp)=>{
+    const empAdv=advances.filter(a=>a.empId===emp.id&&a.deductMonth===month&&!a.deducted).reduce((s,a)=>s+N(a.amount),0);
+    const empBon=bonuses.filter(b=>b.empId===emp.id&&b.month===month&&!b.applied).reduce((s,b)=>s+N(b.amount),0);
+    return s+N(emp.salary)+empBon-empAdv;
+  },0);
+  document.getElementById('payroll-preview').innerHTML=`
+    <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px">معاينة رواتب ${monthLabel(month)}</div>
+    <div class="table-card"><table><thead><tr><th>الموظف</th><th>الراتب الأساسي</th><th>المكافآت</th><th>خصم السلف</th><th>صافي الراتب</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:12px 16px;background:var(--navy);color:#fff;border-radius:var(--radius-sm);">
+      <span style="font-weight:600;font-size:14px">إجمالي الرواتب المستحقة لهذا الشهر</span>
+      <span style="font-size:18px;font-weight:900">${fmt(totalNet)}</span>
+    </div>`;
+}
+function runPayroll(){
+  const month=document.getElementById('pay_month').value;
+  const date=document.getElementById('pay_date').value||today();
+  const emps=DB.get('employees').filter(e=>e.active);
+  let advances=DB.get('advances');
+  let bonuses=DB.get('bonuses');
+  let payrolls=DB.get('payrolls');
+  let expenses=DB.get('expenses');
+  const alreadyPaid=payrolls.filter(p=>p.month===month).map(p=>p.empId);
+  const accs=DB.get('accounts');
+  const bonusAcc=accs.find(a=>a.code==='5008')||accs.find(a=>a.name.includes('مكافآت'));
+  let count=0;
+  emps.forEach(emp=>{
+    if(alreadyPaid.includes(emp.id)) return;
+    // حساب الموظف الخاص أو الحساب العام للرواتب
+    const empSalaryAcc=emp.accountId
+      ? accs.find(a=>a.id===emp.accountId)
+      : accs.find(a=>a.code==='5001')||accs.find(a=>a.name.includes('رواتب الموظفين'));
+    const empAdv=advances.filter(a=>a.empId===emp.id&&a.deductMonth===month&&!a.deducted).reduce((s,a)=>s+N(a.amount),0);
+    const empBon=bonuses.filter(b=>b.empId===emp.id&&b.month===month&&!b.applied).reduce((s,b)=>s+N(b.amount),0);
+    const netPay=N(emp.salary)+empBon-empAdv;
+    const payrollRec={id:uid(),empId:emp.id,empName:emp.name,month,date,
+      baseSalary:N(emp.salary),bonusAmt:empBon,advDeduct:empAdv,netPay,
+      advances:advances.filter(a=>a.empId===emp.id&&a.deductMonth===month&&!a.deducted).map(a=>a.id),
+      bonuses:bonuses.filter(b=>b.empId===emp.id&&b.month===month&&!b.applied).map(b=>b.id)};
+    payrolls.push(payrollRec);
+    // Mark advances deducted
+    advances=advances.map(a=>a.empId===emp.id&&a.deductMonth===month&&!a.deducted?{...a,deducted:true,payrollId:payrollRec.id}:a);
+    // Mark bonuses applied
+    bonuses=bonuses.map(b=>b.empId===emp.id&&b.month===month&&!b.applied?{...b,applied:true,payrollId:payrollRec.id}:b);
+    // سجّل مصروف الراتب
+    expenses.push({id:uid(),date,desc:`راتب ${monthLabel(month)} - ${emp.name}`,
+      accountId:empSalaryAcc?empSalaryAcc.id:'',accountName:empSalaryAcc?empSalaryAcc.name:'رواتب الموظفين',
+      category:'رواتب',payment:'تحويل بنكي',amount:netPay,approved:'إدارة الموظفين',
+      notes:`الراتب الأساسي: ${fmt(emp.salary)}${empBon>0?` | مكافآت: ${fmt(empBon)}`:''}${empAdv>0?` | خصم سلفة: ${fmt(empAdv)}`:''}`,
+      isPayroll:true,payrollId:payrollRec.id});
+    // إذا في مكافآت سجّلها منفصلة
+    if(empBon>0){
+      expenses.push({id:uid(),date,desc:`مكافآت وعلاوات ${monthLabel(month)} - ${emp.name}`,
+        accountId:bonusAcc?bonusAcc.id:'',accountName:bonusAcc?bonusAcc.name:'مكافآت وعلاوات',
+        category:'رواتب',payment:'تحويل بنكي',amount:empBon,approved:'إدارة الموظفين',
+        notes:'مكافآت وعلاوات',isPayroll:true,payrollId:payrollRec.id});
+    }
+    count++;
+  });
+  DB.set('payrolls',payrolls); DB.set('advances',advances); DB.set('bonuses',bonuses); DB.set('expenses',expenses);
+  closeOvl('ovl-payroll');
+  toast(`✅ تم صرف رواتب ${count} موظف لشهر ${monthLabel(month)}`);
+  renderPage(curPage);
+}
+
+// ══════════════════════════════════════════════
+// PAYSLIP — قسيمة الراتب
+// ══════════════════════════════════════════════
+function showPayslip(payrollId){
+  const payrolls=DB.get('payrolls');
+  const p=payrolls.find(x=>x.id===payrollId);
+  if(!p){toast('لم يتم العثور على قسيمة الراتب','err');return;}
+  const advances=DB.get('advances');
+  const bonuses=DB.get('bonuses');
+  const empAdv=advances.filter(a=>a.payrollId===payrollId);
+  const empBon=bonuses.filter(b=>b.payrollId===payrollId);
+  const bonRows=empBon.map(b=>`<tr><td>${b.typeLabel}</td><td>${b.notes||'-'}</td><td class="gt">+ ${fmt(b.amount)}</td></tr>`).join('');
+  const advRows=empAdv.map(a=>`<tr class="deduct-row"><td>خصم سلفة</td><td>${a.notes||'-'} (${a.date})</td><td class="rt">- ${fmt(a.amount)}</td></tr>`).join('');
+  document.getElementById('payslip-content').innerHTML=`
+    <div class="payslip">
+      <div class="payslip-head">
+        <div class="payslip-title">مؤسسة طاقات</div>
+        <div class="payslip-sub">قسيمة الراتب — ${monthLabel(p.month)}</div>
+      </div>
+      <div class="payslip-info">
+        <div class="payslip-info-item"><span class="payslip-info-label">اسم الموظف</span><span class="payslip-info-val">${p.empName}</span></div>
+        <div class="payslip-info-item"><span class="payslip-info-label">شهر الراتب</span><span class="payslip-info-val">${monthLabel(p.month)}</span></div>
+        <div class="payslip-info-item"><span class="payslip-info-label">تاريخ الصرف</span><span class="payslip-info-val">${p.date}</span></div>
+        <div class="payslip-info-item"><span class="payslip-info-label">رقم القسيمة</span><span class="payslip-info-val">${p.id.toUpperCase()}</span></div>
+      </div>
+      <table class="payslip-table">
+        <thead><tr><th>البند</th><th>الوصف</th><th>المبلغ (₪)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>الراتب الأساسي</strong></td><td>راتب شهر ${monthLabel(p.month)}</td><td class="gt"><strong>${fmt(p.baseSalary)}</strong></td></tr>
+          ${bonRows}
+          ${advRows}
+        </tbody>
+      </table>
+      <div class="payslip-net">
+        <span class="payslip-net-label">صافي الراتب المستحق</span>
+        <span class="payslip-net-val">${fmt(p.netPay)}</span>
+      </div>
+      <div style="margin-top:16px;display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500)">
+        <span>توقيع المدير: ________________</span>
+        <span>توقيع الموظف: ________________</span>
+      </div>
+    </div>`;
+  openOvl('ovl-payslip');
+}
+
+function showPayslipHistory(empId){
+  const payrolls=DB.get('payrolls').filter(p=>p.empId===empId);
+  if(!payrolls.length){toast('لا توجد قسائم راتب لهذا الموظف','err');return;}
+  // Show last payslip
+  showPayslip(payrolls[payrolls.length-1].id);
+}
+
+function printPayslip(){
+  const content=document.getElementById('payslip-content').innerHTML;
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Cairo',sans-serif;padding:20px;direction:rtl}.payslip{background:#fff;border-radius:12px;padding:28px;max-width:680px;margin:0 auto}.payslip-head{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #0f2044}.payslip-title{font-size:22px;font-weight:900;color:#0f2044}.payslip-sub{font-size:13px;color:#64748b;margin-top:4px}.payslip-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;padding:14px;background:#f8fafc;border-radius:8px}.payslip-info-label{font-size:11px;color:#64748b;font-weight:600}.payslip-info-val{font-size:13px;font-weight:700;color:#0f2044}.payslip-table{width:100%;border-collapse:collapse;margin-bottom:16px}.payslip-table th{background:#0f2044;color:#fff;padding:9px 14px;font-size:12px;text-align:right}.payslip-table td{padding:9px 14px;border-bottom:1px solid #f1f5f9;font-size:13px}.gt{color:#1a7a4a;font-weight:600}.rt{color:#b91c1c}.deduct-row td{color:#b91c1c}.payslip-net{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#0f2044;color:#fff;border-radius:8px;margin-top:10px}.payslip-net-label{font-size:15px;font-weight:600}.payslip-net-val{font-size:22px;font-weight:900}</style></head><body>${content}</body></html>`);
+  w.document.close();w.print();
+}
+
+// ══════════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════════
+function renderSummary(){
+  const accs=DB.get('accounts'),exp=DB.get('expenses'),rev=DB.get('revenues'),ast=DB.get('assets');
+  const tR=rev.reduce((s,r)=>s+N(r.amount),0),tE=exp.reduce((s,r)=>s+N(r.amount),0),net=tR-tE;
+  const aA=accs.filter(a=>a.type==='asset'),lA=accs.filter(a=>a.type==='liability'),eA=accs.filter(a=>a.type==='equity');
+  const tAs=aA.reduce((s,a)=>s+getBal(a,exp,rev),0),tL=lA.reduce((s,a)=>s+getBal(a,exp,rev),0),tEq=eA.reduce((s,a)=>s+getBal(a,exp,rev),0);
+  const bk=ast.reduce((s,a)=>s+N(a.cost)-N(a.depreciation),0);
+  const margin=tR>0?((net/tR)*100).toFixed(1):'0.0';
+  const aRows=aA.map(a=>`<div class="bs-row"><span>${a.name}</span><span>${fmt(getBal(a,exp,rev))}</span></div>`).join('');
+  const lRows=lA.map(a=>`<div class="bs-row"><span>${a.name}</span><span>${fmt(getBal(a,exp,rev))}</span></div>`).join('');
+  const eRows=eA.map(a=>`<div class="bs-row"><span>${a.name}</span><span>${fmt(getBal(a,exp,rev))}</span></div>`).join('');
+  document.getElementById('page-summary').innerHTML=`
+    <div class="sec-title"><h2>الميزانية العمومية وقائمة الدخل</h2><span class="pill">ملخص شامل</span></div>
+    <div class="bs-grid">
+      <div class="bs-panel"><div class="bs-panel-head">الأصول</div><div class="bs-body">${aRows}${bk>0?`<div class="bs-row"><span>أصول ثابتة (القيمة الدفترية)</span><span>${fmt(bk)}</span></div>`:''}<div class="bs-row total"><span>إجمالي الأصول</span><span>${fmt(tAs+bk)}</span></div></div></div>
+      <div class="bs-panel"><div class="bs-panel-head">الخصوم وحقوق الملكية</div><div class="bs-body">${lRows}<div class="bs-row total red"><span>إجمالي الالتزامات</span><span>${fmt(tL)}</span></div><div style="font-size:11px;color:var(--gray-500);font-weight:600;margin:12px 0 6px">حقوق الملكية</div>${eRows}<div class="bs-row"><span>صافي الربح / الخسارة</span><span class="${net>=0?'gt':'rt'}">${fmt(net)}</span></div><div class="bs-row total green"><span>إجمالي حقوق الملكية</span><span>${fmt(tEq+net)}</span></div></div></div>
+    </div>
+    <div class="bs-grid">
+      <div class="bs-panel"><div class="bs-panel-head green">قائمة الدخل (الأرباح والخسائر)</div><div class="bs-body"><div class="bs-row"><span>إجمالي الإيرادات</span><span class="gt">${fmt(tR)}</span></div><div class="bs-row"><span>إجمالي المصاريف</span><span class="rt">(${fmt(tE)})</span></div><div class="bs-row total ${net>=0?'green':'red'}"><span>صافي ${net>=0?'الربح':'الخسارة'}</span><span>${fmt(Math.abs(net))}</span></div></div></div>
+      <div class="bs-panel"><div class="bs-panel-head gold">المؤشرات المالية الرئيسية</div><div class="bs-body"><div class="bs-row"><span>هامش الربح الصافي</span><span style="font-weight:600">${margin}%</span></div><div class="bs-row"><span>عدد العمليات الإيرادية</span><span style="font-weight:600">${rev.length}</span></div><div class="bs-row"><span>عدد العمليات المصروفية</span><span style="font-weight:600">${exp.length}</span></div><div class="bs-row"><span>عدد الأصول الثابتة</span><span style="font-weight:600">${ast.length}</span></div><div class="bs-row"><span>عدد الحسابات</span><span style="font-weight:600">${accs.length}</span></div><div class="bs-row total"><span>نسبة الأصول / الالتزامات</span><span>${tL>0?((tAs/tL).toFixed(2)+'x'):'—'}</span></div></div></div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════════
+function openOvl(id){
+  fillAccDrops();
+  if(id==='ovl-employee') fillEmpAccountDrop();
+  document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('open'));
+  document.getElementById(id).classList.add('open');
+  const df=document.getElementById(id).querySelector('input[type=date]');
+  if(df&&!df.value) df.value=today();
+}
+
+function fillEmpAccountDrop(){
+  const accs=DB.get('accounts');
+  // حساب الرواتب الأساسي (5001 أو ما يحتوي على كلمة "رواتب الموظفين")
+  const salaryParent=accs.find(a=>a.code==='5001')||accs.find(a=>a.name.includes('رواتب الموظفين'))||accs.find(a=>a.type==='expense'&&a.name.includes('رواتب'));
+  // الحسابات الفرعية تحت حساب الرواتب + حساب الرواتب نفسه
+  const relevant=accs.filter(a=>a.type==='expense'&&(a.id===salaryParent?.id||a.parent===salaryParent?.id||a.name.includes('راتب')||a.name.includes('موظف')));
+  const allExpense=accs.filter(a=>a.type==='expense');
+  const el=document.getElementById('emp_account');
+  if(!el)return;
+  el.innerHTML='<option value="">-- اختر حساباً موجوداً (اختياري) --</option>'
+    +(relevant.length?'<optgroup label="حسابات الرواتب">'+relevant.map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('')+'</optgroup>':'')
+    +'<optgroup label="باقي حسابات المصاريف">'+allExpense.filter(a=>!relevant.find(r=>r.id===a.id)).map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('')+'</optgroup>';
+  // ضبط checkbox
+  const cb=document.getElementById('emp_auto_account');
+  const prev=document.getElementById('emp_account_preview');
+  if(cb){
+    cb.checked=false;
+    cb.onchange=function(){
+      el.disabled=this.checked;
+      if(this.checked){
+        const nameVal=document.getElementById('emp_name').value.trim()||'الموظف الجديد';
+        const newCode=generateEmpAccountCode(accs,salaryParent);
+        prev.style.display='block';
+        prev.innerHTML=`سيتم إنشاء الحساب: <strong>${newCode} - راتب ${nameVal}</strong> تحت حساب "${salaryParent?salaryParent.name:'المصاريف التشغيلية'}"`;
+      } else { prev.style.display='none'; }
+    };
+    document.getElementById('emp_name').addEventListener('input',function(){
+      if(cb.checked){
+        const newCode=generateEmpAccountCode(accs,salaryParent);
+        prev.innerHTML=`سيتم إنشاء الحساب: <strong>${newCode} - راتب ${this.value.trim()||'الموظف الجديد'}</strong> تحت حساب "${salaryParent?salaryParent.name:'المصاريف التشغيلية'}"`;
+      }
+    });
+  }
+}
+
+function generateEmpAccountCode(accs,parent){
+  // توليد كود فرعي تحت حساب الرواتب
+  const parentCode=parent?parent.code:'5001';
+  const existing=accs.filter(a=>a.code.startsWith(parentCode+'-')||a.parent===parent?.id);
+  let num=1;
+  while(accs.find(a=>a.code===`${parentCode}-${String(num).padStart(2,'0')}`)) num++;
+  return `${parentCode}-${String(num).padStart(2,'0')}`;
+}
+function closeOvl(id){
+  document.getElementById(id).classList.remove('open');
+  document.getElementById(id).querySelectorAll('input:not([type=date]),textarea').forEach(el=>{ if(el.type==='number') el.value=''; else el.value=''; });
+}
+function fillAccDrops(){
+  const accs=DB.get('accounts');
+  const opts=accs.map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
+  ['e_acc','r_acc'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML='<option value="">-- اختر الحساب --</option>'+opts; });
+  const ap=document.getElementById('a_par'); if(ap) ap.innerHTML='<option value="">-- لا يوجد --</option>'+opts;
+}
+
+// ══════════════════════════════════════════════
+// SAVES
+// ══════════════════════════════════════════════
+function saveExpense(){
+  const date=document.getElementById('e_date').value,desc=document.getElementById('e_desc').value.trim();
+  const accId=document.getElementById('e_acc').value,amt=parseFloat(document.getElementById('e_amt').value);
+  if(!date||!desc||!accId||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
+  const acc=DB.get('accounts').find(a=>a.id===accId);
+  const rec={id:uid(),date,desc,accountId:accId,accountName:acc?acc.name:'',category:document.getElementById('e_cat').value,payment:document.getElementById('e_pay').value,amount:amt,approved:document.getElementById('e_appr').value.trim(),notes:document.getElementById('e_notes').value.trim()};
+  const data=DB.get('expenses');data.push(rec);DB.set('expenses',data);
+  closeOvl('ovl-expense');toast(`✅ تم تسجيل المصروف: ${fmt(amt)}`);renderPage(curPage);
+}
+function saveRevenue(){
+  const date=document.getElementById('r_date').value,desc=document.getElementById('r_desc').value.trim();
+  const accId=document.getElementById('r_acc').value,amt=parseFloat(document.getElementById('r_amt').value);
+  if(!date||!desc||!accId||!amt||amt<=0){toast('يرجى تعبئة الحقول المطلوبة','err');return;}
+  const acc=DB.get('accounts').find(a=>a.id===accId);
+  const rec={id:uid(),date,desc,accountId:accId,accountName:acc?acc.name:'',type:document.getElementById('r_type').value,client:document.getElementById('r_client').value.trim(),amount:amt,method:document.getElementById('r_meth').value,notes:document.getElementById('r_notes').value.trim()};
+  const data=DB.get('revenues');data.push(rec);DB.set('revenues',data);
+  closeOvl('ovl-revenue');toast(`✅ تم تسجيل الإيراد: ${fmt(amt)}`);renderPage(curPage);
+}
+function saveAccount(){
+  const code=document.getElementById('a_code').value.trim(),name=document.getElementById('a_name').value.trim(),type=document.getElementById('a_type').value;
+  if(!code||!name||!type){toast('يرجى تعبئة الكود والاسم والنوع','err');return;}
+  const accs=DB.get('accounts');
+  if(accs.find(a=>a.code===code)){toast('هذا الكود موجود مسبقاً!','err');return;}
+  const rec={id:uid(),code,name,type,category:document.getElementById('a_cat').value.trim(),parent:document.getElementById('a_par').value,opening:parseFloat(document.getElementById('a_open').value)||0,notes:document.getElementById('a_notes').value.trim()};
+  accs.push(rec);DB.set('accounts',accs);closeOvl('ovl-account');toast(`✅ تمت إضافة الحساب: ${name}`);renderPage(curPage);
+}
+function saveAsset(){
+  const name=document.getElementById('ast_name').value.trim(),cost=parseFloat(document.getElementById('ast_cost').value);
+  if(!name||!cost||cost<=0){toast('يرجى إدخال اسم الأصل والقيمة','err');return;}
+  const life=parseInt(document.getElementById('ast_life').value)||5;
+  const rec={id:uid(),name,category:document.getElementById('ast_cat').value,date:document.getElementById('ast_date').value,cost,life,depreciation:cost/life,notes:document.getElementById('ast_notes').value.trim()};
+  const data=DB.get('assets');data.push(rec);DB.set('assets',data);closeOvl('ovl-asset');toast(`✅ تمت إضافة الأصل: ${name}`);renderPage(curPage);
+}
+
+// ══════════════════════════════════════════════
+// DELETES
+// ══════════════════════════════════════════════
+function delExpense(id){if(!confirm('حذف هذا المصروف؟'))return;DB.set('expenses',DB.get('expenses').filter(e=>e.id!==id));toast('تم الحذف','err');renderPage(curPage);}
+function delRevenue(id){if(!confirm('حذف هذا الإيراد؟'))return;DB.set('revenues',DB.get('revenues').filter(r=>r.id!==id));toast('تم الحذف','err');renderPage(curPage);}
+function delAccount(id){
+  const exp=DB.get('expenses'),rev=DB.get('revenues');
+  if(exp.find(e=>e.accountId===id)||rev.find(r=>r.accountId===id)){toast('لا يمكن حذف حساب مرتبط بعمليات','err');return;}
+  if(!confirm('حذف هذا الحساب؟'))return;
+  DB.set('accounts',DB.get('accounts').filter(a=>a.id!==id));toast('تم حذف الحساب','err');renderPage(curPage);
+}
+function delAsset(id){if(!confirm('حذف هذا الأصل؟'))return;DB.set('assets',DB.get('assets').filter(a=>a.id!==id));toast('تم الحذف','err');renderPage(curPage);}
+
+// ══════════════════════════════════════════════
+// EXCEL EXPORT
+// ══════════════════════════════════════════════
+function exportExcel(){
+  const btn=document.getElementById('exportBtn');
+  btn.disabled=true; btn.textContent='جاري التصدير...';
+  try{
+    // ── Read ALL data stored in localStorage dynamically ──
+    const accs=DB.get('accounts'), exp=DB.get('expenses'), rev=DB.get('revenues');
+    const ast=DB.get('assets'), emps=DB.get('employees'), advances=DB.get('advances');
+    const bonuses=DB.get('bonuses'), payrolls=DB.get('payrolls');
+    const tR=rev.reduce((s,r)=>s+N(r.amount),0);
+    const tE=exp.reduce((s,r)=>s+N(r.amount),0);
+    const net=tR-tE;
+
+    const wb=XLSX.utils.book_new();
+    const NAVY='1B3A6B',GOLD='C9952A',GREEN='1A7A4A',RED='B91C1C',WHITE='FFFFFF';
+    const LGOLD='FDF6E3',LGREEN='E8F7EE',LRED='FEF2F2',LBLUE='DBEAFE',LGRAY='F8FAFC',TEAL='0F766E',LTEAL='F0FDFA';
+    const bdr={top:{style:'thin',color:{rgb:'CBD5E1'}},bottom:{style:'thin',color:{rgb:'CBD5E1'}},left:{style:'thin',color:{rgb:'CBD5E1'}},right:{style:'thin',color:{rgb:'CBD5E1'}}};
+    const hs=(bg,fg,sz=10,bold=true)=>({font:{name:'Arial',bold,color:{rgb:fg||WHITE},sz},fill:{fgColor:{rgb:bg}},alignment:{horizontal:'right',vertical:'center',readingOrder:2,wrapText:true},border:bdr});
+    const ds=(fg,bg,bold=false)=>({font:{name:'Arial',color:{rgb:fg||'1E293B'},sz:10,bold},fill:{fgColor:{rgb:bg||WHITE}},alignment:{horizontal:'right',vertical:'center',readingOrder:2},border:bdr});
+    function txt(v,fg,bg,bold=false){return{v:v||'',t:'s',s:ds(fg,bg,bold)};}
+    function num(v,fg,bg,bold=false){return{v:N(v),t:'n',z:'#,##0.00 "\u20aa"',s:ds(fg||'1E293B',bg||WHITE,bold)};}
+    function addTitle(ws,title,sub,n){
+      const r0=Array.from({length:n},(_,i)=>i===0?{v:title,t:'s',s:{font:{name:'Arial',bold:true,color:{rgb:WHITE},sz:14},fill:{fgColor:{rgb:NAVY}},alignment:{horizontal:'center',vertical:'center',readingOrder:2}}}:{v:'',t:'s',s:{fill:{fgColor:{rgb:NAVY}}}});
+      const r1=Array.from({length:n},(_,i)=>i===0?{v:sub,t:'s',s:{font:{name:'Arial',color:{rgb:'64748B'},sz:9,italic:true},fill:{fgColor:{rgb:LBLUE}},alignment:{horizontal:'center',vertical:'center',readingOrder:2}}}:{v:'',t:'s',s:{fill:{fgColor:{rgb:LBLUE}}}});
+      XLSX.utils.sheet_add_aoa(ws,[r0,r1],{origin:'A1'});
+      if(!ws['!rows'])ws['!rows']=[];ws['!rows'][0]={hpt:32};ws['!rows'][1]={hpt:18};
+      ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:n-1}},{s:{r:1,c:0},e:{r:1,c:n-1}}];
+    }
+
+    // ── Sheet 1: الأرصدة ──
+    const wsB=XLSX.utils.aoa_to_sheet([]);wsB['!rtl']=true;
+    addTitle(wsB,'طاقات - لوحة الأرصدة المالية',`تاريخ التصدير: ${new Date().toLocaleDateString('ar-SA')} | إجمالي الإيرادات: ${fmt(tR)} | إجمالي المصاريف: ${fmt(tE)} | صافي الربح: ${fmt(net)}`,5);
+    XLSX.utils.sheet_add_aoa(wsB,[['البند','الرصيد الافتتاحي (\u20aa)','الحركات (\u20aa)','الرصيد الحالي (\u20aa)','النوع']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3'].forEach(c=>wsB[c]={...wsB[c],s:hs('E2E8F0','1E293B',10)});
+    if(!wsB['!rows'])wsB['!rows']=[];wsB['!rows'][2]={hpt:22};
+    const TBG={asset:LBLUE,liability:LRED,equity:LGOLD};
+    const TL2={asset:'\u0623\u0635\u0648\u0644',liability:'\u0627\u0644\u062a\u0632\u0627\u0645\u0627\u062a',equity:'\u062d\u0642\u0648\u0642 \u0645\u0644\u0643\u064a\u0629',revenue:'\u0625\u064a\u0631\u0627\u062f\u0627\u062a',expense:'\u0645\u0635\u0627\u0631\u064a\u0641'};
+    let br=4;
+    accs.filter(a=>['asset','liability','equity'].includes(a.type)).forEach(a=>{
+      const m=calcMov(a,exp,rev),b=getBal(a,exp,rev),bg=TBG[a.type]||WHITE;
+      wsB[`A${br}`]=txt(a.name,NAVY,bg,true);wsB[`B${br}`]=num(a.opening,'0000FF',bg);
+      wsB[`C${br}`]=num(m,m>=0?GREEN:RED,bg);wsB[`D${br}`]=num(b,b>=0?GREEN:RED,bg,true);
+      wsB[`E${br}`]=txt(TL2[a.type]||a.type,NAVY,bg,false);wsB['!rows'][br-1]={hpt:20};br++;
+    });
+    br++;
+    [['إجمالي الإيرادات',tR,GREEN,LGREEN],['إجمالي المصاريف',tE,RED,LRED],['صافي الربح / الخسارة',net,net>=0?GREEN:RED,LGRAY]].forEach(([l,v,fg,bg])=>{
+      wsB[`A${br}`]=txt(l,NAVY,bg,true);if(!wsB['!merges'])wsB['!merges']=[];wsB['!merges'].push({s:{r:br-1,c:0},e:{r:br-1,c:2}});
+      wsB[`D${br}`]=num(v,fg,bg,true);wsB['!merges'].push({s:{r:br-1,c:3},e:{r:br-1,c:4}});wsB['!rows'][br-1]={hpt:20};br++;
+    });
+    wsB['!cols']=[{wch:28},{wch:18},{wch:18},{wch:18},{wch:14}];
+    XLSX.utils.book_append_sheet(wb,wsB,'\u0627\u0644\u0623\u0631\u0635\u062f\u0629');
+
+    // ── Sheet 2: الحسابات ──
+    const wsA=XLSX.utils.aoa_to_sheet([]);wsA['!rtl']=true;
+    addTitle(wsA,'\u062f\u0644\u064a\u0644 \u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a',`إجمالي الحسابات: ${accs.length}`,6);
+    XLSX.utils.sheet_add_aoa(wsA,[['\u0627\u0644\u0643\u0648\u062f','\u0643\u0648\u062f \u0627\u0644\u0623\u0628','\u0627\u0633\u0645 \u0627\u0644\u062d\u0633\u0627\u0628','\u0627\u0644\u0646\u0648\u0639','\u0627\u0644\u062a\u0635\u0646\u064a\u0641','\u0627\u0644\u0631\u0635\u064a\u062f \u0627\u0644\u0627\u0641\u062a\u062a\u0627\u062d\u064a (\u20aa)']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3'].forEach(c=>wsA[c]={...wsA[c],s:hs('7C3AED',WHITE,10)});
+    if(!wsA['!rows'])wsA['!rows']=[];wsA['!rows'][2]={hpt:22};
+    const TypBg={asset:LBLUE,liability:LRED,equity:LGOLD,revenue:LGREEN,expense:LRED};
+    accs.forEach((a,i)=>{const r=4+i;const par=accs.find(p=>p.id===a.parent);const bg=TypBg[a.type]||WHITE;
+      wsA['!rows'][r-1]={hpt:20};
+      [txt(a.code,NAVY,bg,true),txt(par?par.code:'','64748B',bg),txt((a.parent?'    ':'')+a.name,'0000FF',bg,!a.parent),txt(TL2[a.type]||a.type,NAVY,bg,false,'center'),txt(a.category||'','64748B',bg),num(N(a.opening),'0000FF',bg)].forEach((v,ci)=>wsA[`${'ABCDEF'[ci]}${r}`]=v);
+    });
+    wsA['!cols']=[{wch:8},{wch:12},{wch:30},{wch:16},{wch:22},{wch:20}];
+    XLSX.utils.book_append_sheet(wb,wsA,'\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a');
+
+    // ── Sheet 3: المصاريف ──
+    const wsE=XLSX.utils.aoa_to_sheet([]);wsE['!rtl']=true;
+    addTitle(wsE,'\u0633\u062c\u0644 \u0627\u0644\u0645\u0635\u0627\u0631\u064a\u0641',`إجمالي المصاريف: ${fmt(tE)} | عدد العمليات: ${exp.length}`,9);
+    XLSX.utils.sheet_add_aoa(wsE,[['#','\u0627\u0644\u062a\u0627\u0631\u064a\u062e','\u0627\u0644\u0628\u064a\u0627\u0646','\u0627\u0644\u062d\u0633\u0627\u0628','\u0627\u0644\u0641\u0626\u0629','\u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u062f\u0641\u0639','\u0627\u0644\u0645\u0628\u0644\u063a (\u20aa)','\u0627\u0644\u0645\u0648\u0627\u0641\u0642','\u0645\u0644\u0627\u062d\u0638\u0627\u062a']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3','G3','H3','I3'].forEach(c=>wsE[c]={...wsE[c],s:hs(NAVY,WHITE,10)});
+    if(!wsE['!rows'])wsE['!rows']=[];wsE['!rows'][0]={hpt:32};wsE['!rows'][1]={hpt:18};wsE['!rows'][2]={hpt:22};
+    [...exp].sort((a,b)=>b.date.localeCompare(a.date)).forEach((e,i)=>{
+      const r=4+i;const acc=accs.find(a=>a.id===e.accountId);const bg=i%2===0?WHITE:LGRAY;
+      wsE['!rows'][r-1]={hpt:20};
+      [txt(String(i+1),'64748B',bg),txt(e.date,'1E293B',bg),txt(e.desc,'1E293B',bg,true),txt(acc?acc.name:e.accountName||'','64748B',bg),txt(e.category||'','64748B',bg),txt(e.payment||'','64748B',bg),num(N(e.amount),RED,bg,true),txt(e.approved||'','64748B',bg),txt(e.notes||'','64748B',bg)].forEach((v,ci)=>wsE[`${'ABCDEFGHI'[ci]}${r}`]=v);
+    });
+    wsE['!cols']=[{wch:5},{wch:12},{wch:30},{wch:20},{wch:13},{wch:13},{wch:15},{wch:16},{wch:18}];
+    XLSX.utils.book_append_sheet(wb,wsE,'\u0627\u0644\u0645\u0635\u0627\u0631\u064a\u0641');
+
+    // ── Sheet 4: الإيرادات ──
+    const wsR=XLSX.utils.aoa_to_sheet([]);wsR['!rtl']=true;
+    addTitle(wsR,'\u0633\u062c\u0644 \u0627\u0644\u0625\u064a\u0631\u0627\u062f\u0627\u062a',`إجمالي الإيرادات: ${fmt(tR)} | صافي الربح: ${fmt(net)}`,9);
+    XLSX.utils.sheet_add_aoa(wsR,[['#','\u0627\u0644\u062a\u0627\u0631\u064a\u062e','\u0627\u0644\u0645\u0635\u062f\u0631','\u0627\u0644\u062d\u0633\u0627\u0628','\u0646\u0648\u0639 \u0627\u0644\u0625\u064a\u0631\u0627\u062f','\u0627\u0644\u0639\u0645\u064a\u0644','\u0627\u0644\u0645\u0628\u0644\u063a (\u20aa)','\u0637\u0631\u064a\u0642\u0629 \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645','\u0645\u0644\u0627\u062d\u0638\u0627\u062a']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3','G3','H3','I3'].forEach(c=>wsR[c]={...wsR[c],s:hs(GREEN,WHITE,10)});
+    if(!wsR['!rows'])wsR['!rows']=[];wsR['!rows'][2]={hpt:22};
+    [...rev].sort((a,b)=>b.date.localeCompare(a.date)).forEach((rv,i)=>{
+      const r=4+i;const acc=accs.find(a=>a.id===rv.accountId);const bg=i%2===0?WHITE:LGRAY;
+      wsR['!rows'][r-1]={hpt:20};
+      [txt(String(i+1),'64748B',bg),txt(rv.date,'1E293B',bg),txt(rv.desc,'1E293B',bg,true),txt(acc?acc.name:rv.accountName||'','64748B',bg),txt(rv.type||'','64748B',bg),txt(rv.client||'','64748B',bg),num(N(rv.amount),GREEN,bg,true),txt(rv.method||'','64748B',bg),txt(rv.notes||'','64748B',bg)].forEach((v,ci)=>wsR[`${'ABCDEFGHI'[ci]}${r}`]=v);
+    });
+    wsR['!cols']=[{wch:5},{wch:12},{wch:30},{wch:20},{wch:16},{wch:16},{wch:15},{wch:14},{wch:18}];
+    XLSX.utils.book_append_sheet(wb,wsR,'\u0627\u0644\u0625\u064a\u0631\u0627\u062f\u0627\u062a');
+
+    // ── Sheet 5: الأصول ──
+    const wsAs=XLSX.utils.aoa_to_sheet([]);wsAs['!rtl']=true;
+    const tC=ast.reduce((s,a)=>s+N(a.cost),0),tD=ast.reduce((s,a)=>s+N(a.depreciation),0);
+    addTitle(wsAs,'\u0633\u062c\u0644 \u0627\u0644\u0623\u0635\u0648\u0644',`إجمالي الشراء: ${fmt(tC)} | القيمة الدفترية: ${fmt(tC-tD)}`,8);
+    XLSX.utils.sheet_add_aoa(wsAs,[['#','\u0627\u0633\u0645 \u0627\u0644\u0623\u0635\u0644','\u0627\u0644\u0641\u0626\u0629','\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0634\u0631\u0627\u0621','\u0642\u064a\u0645\u0629 \u0627\u0644\u0634\u0631\u0627\u0621 (\u20aa)','\u0627\u0644\u0639\u0645\u0631','\u0627\u0644\u0627\u0633\u062a\u0647\u0644\u0627\u0643 \u0627\u0644\u0633\u0646\u0648\u064a (\u20aa)','\u0627\u0644\u0642\u064a\u0645\u0629 \u0627\u0644\u062f\u0641\u062a\u0631\u064a\u0629 (\u20aa)']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3','G3','H3'].forEach(c=>wsAs[c]={...wsAs[c],s:hs('1D4ED8',WHITE,10)});
+    if(!wsAs['!rows'])wsAs['!rows']=[];wsAs['!rows'][2]={hpt:22};
+    ast.forEach((a,i)=>{const r=4+i;const bg=i%2===0?WHITE:LGRAY;wsAs['!rows'][r-1]={hpt:20};
+      [txt(String(i+1),'64748B',bg),txt(a.name,'1E293B',bg,true),txt(a.category||'','64748B',bg),txt(a.date||'','64748B',bg),num(N(a.cost),'1E293B',bg,true),{v:a.life||5,t:'n',s:ds('64748B',bg)},num(N(a.depreciation),RED,bg),num(N(a.cost)-N(a.depreciation),GREEN,bg,true)].forEach((v,ci)=>wsAs[`${'ABCDEFGH'[ci]}${r}`]=v);
+    });
+    wsAs['!cols']=[{wch:5},{wch:26},{wch:15},{wch:13},{wch:17},{wch:10},{wch:18},{wch:18}];
+    XLSX.utils.book_append_sheet(wb,wsAs,'\u0627\u0644\u0623\u0635\u0648\u0644');
+
+    // ── Sheet 6: الموظفون ──
+    const wsHR=XLSX.utils.aoa_to_sheet([]);wsHR['!rtl']=true;
+    addTitle(wsHR,'\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646',`الموظفون النشطون: ${emps.filter(e=>e.active).length} | إجمالي الرواتب: ${fmt(emps.filter(e=>e.active).reduce((s,e)=>s+N(e.salary),0))}`,9);
+    XLSX.utils.sheet_add_aoa(wsHR,[['#','\u0627\u0644\u0627\u0633\u0645','\u0627\u0644\u0645\u0633\u0645\u0649','\u0627\u0644\u0642\u0633\u0645','\u0627\u0644\u0631\u0627\u062a\u0628 (\u20aa)','\u0627\u0644\u0633\u0644\u0641 \u0627\u0644\u0645\u0639\u0644\u0642\u0629 (\u20aa)','\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u062a\u0639\u064a\u064a\u0646','\u0627\u0644\u0647\u0627\u062a\u0641','\u0627\u0644\u062d\u0627\u0644\u0629']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3','G3','H3','I3'].forEach(c=>wsHR[c]={...wsHR[c],s:hs(TEAL,WHITE,10)});
+    if(!wsHR['!rows'])wsHR['!rows']=[];wsHR['!rows'][2]={hpt:22};
+    emps.forEach((e,i)=>{const r=4+i;const bg=i%2===0?WHITE:LTEAL;
+      const empAdv=advances.filter(a=>a.empId===e.id&&!a.deducted).reduce((s,a)=>s+N(a.amount),0);
+      wsHR['!rows'][r-1]={hpt:20};
+      [txt(String(i+1),'64748B',bg),txt(e.name,TEAL,bg,true),txt(e.title,'1E293B',bg),txt(e.dept||'','64748B',bg),num(e.salary,GREEN,bg,true),num(empAdv,empAdv>0?RED:'1E293B',bg),txt(e.hire||'','64748B',bg),txt(e.phone||'','64748B',bg),txt(e.active?'\u0646\u0634\u0637':'\u063a\u064a\u0631 \u0646\u0634\u0637',e.active?GREEN:RED,bg,true)].forEach((v,ci)=>wsHR[`${'ABCDEFGHI'[ci]}${r}`]=v);
+    });
+    wsHR['!cols']=[{wch:5},{wch:22},{wch:18},{wch:14},{wch:18},{wch:18},{wch:14},{wch:14},{wch:10}];
+    XLSX.utils.book_append_sheet(wb,wsHR,'\u0627\u0644\u0645\u0648\u0638\u0641\u0648\u0646');
+
+    // ── Sheet 7: السلف ──
+    const wsAdv=XLSX.utils.aoa_to_sheet([]);wsAdv['!rtl']=true;
+    addTitle(wsAdv,'\u0633\u062c\u0644 \u0633\u0644\u0641 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646',`إجمالي السلف: ${fmt(advances.reduce((s,a)=>s+N(a.amount),0))} | المعلقة: ${fmt(advances.filter(a=>!a.deducted).reduce((s,a)=>s+N(a.amount),0))}`,7);
+    XLSX.utils.sheet_add_aoa(wsAdv,[['#','\u0627\u0644\u0645\u0648\u0638\u0641','\u0627\u0644\u062a\u0627\u0631\u064a\u062e','\u0627\u0644\u0645\u0628\u0644\u063a (\u20aa)','\u0634\u0647\u0631 \u0627\u0644\u062e\u0635\u0645','\u0627\u0644\u062d\u0627\u0644\u0629','\u0645\u0644\u0627\u062d\u0638\u0627\u062a']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3','G3'].forEach(c=>wsAdv[c]={...wsAdv[c],s:hs(GOLD,'1E293B',10)});
+    if(!wsAdv['!rows'])wsAdv['!rows']=[];wsAdv['!rows'][2]={hpt:22};
+    advances.forEach((a,i)=>{const r=4+i;const bg=i%2===0?WHITE:LGRAY;wsAdv['!rows'][r-1]={hpt:20};
+      [txt(String(i+1),'64748B',bg),txt(a.empName,'1E293B',bg,true),txt(a.date,'64748B',bg),num(N(a.amount),a.deducted?'64748B':RED,bg,true),txt(monthLabel(a.deductMonth),'64748B',bg),txt(a.deducted?'\u0645\u062e\u0635\u0648\u0645':'\u0645\u0639\u0644\u0642',a.deducted?'1D4ED8':GOLD,bg,true),txt(a.notes||'','64748B',bg)].forEach((v,ci)=>wsAdv[`${'ABCDEFG'[ci]}${r}`]=v);
+    });
+    wsAdv['!cols']=[{wch:5},{wch:22},{wch:12},{wch:16},{wch:16},{wch:12},{wch:20}];
+    XLSX.utils.book_append_sheet(wb,wsAdv,'\u0633\u0644\u0641 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646');
+
+    // ── Sheet 8: المكافآت والعلاوات ──
+    const wsBon=XLSX.utils.aoa_to_sheet([]);wsBon['!rtl']=true;
+    addTitle(wsBon,'\u0633\u062c\u0644 \u0627\u0644\u0645\u0643\u0627\u0641\u0622\u062a \u0648\u0627\u0644\u0639\u0644\u0627\u0648\u0627\u062a',`إجمالي المكافآت: ${fmt(bonuses.reduce((s,b)=>s+N(b.amount),0))}`,6);
+    XLSX.utils.sheet_add_aoa(wsBon,[['#','\u0627\u0644\u0645\u0648\u0638\u0641','\u0627\u0644\u0646\u0648\u0639','\u0627\u0644\u0645\u0628\u0644\u063a (\u20aa)','\u0634\u0647\u0631 \u0627\u0644\u0627\u062d\u062a\u0633\u0627\u0628','\u0627\u0644\u062d\u0627\u0644\u0629']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3'].forEach(c=>wsBon[c]={...wsBon[c],s:hs(GREEN,WHITE,10)});
+    if(!wsBon['!rows'])wsBon['!rows']=[];wsBon['!rows'][2]={hpt:22};
+    bonuses.forEach((b,i)=>{const r=4+i;const bg=i%2===0?WHITE:LGRAY;wsBon['!rows'][r-1]={hpt:20};
+      [txt(String(i+1),'64748B',bg),txt(b.empName,'1E293B',bg,true),txt(b.typeLabel||b.type,'64748B',bg),num(N(b.amount),GREEN,bg,true),txt(monthLabel(b.month),'64748B',bg),txt(b.applied?'\u0645\u064f\u0637\u0628\u064e\u0651\u0642':'\u0645\u0639\u0644\u0642',b.applied?'1D4ED8':GOLD,bg,true)].forEach((v,ci)=>wsBon[`${'ABCDEF'[ci]}${r}`]=v);
+    });
+    wsBon['!cols']=[{wch:5},{wch:22},{wch:14},{wch:16},{wch:16},{wch:12}];
+    XLSX.utils.book_append_sheet(wb,wsBon,'\u0645\u0643\u0627\u0641\u0622\u062a \u0648\u0639\u0644\u0627\u0648\u0627\u062a');
+
+    // ── Sheet 9: قسائم الرواتب ──
+    const wsPay=XLSX.utils.aoa_to_sheet([]);wsPay['!rtl']=true;
+    addTitle(wsPay,'\u0633\u062c\u0644 \u0642\u0633\u0627\u0626\u0645 \u0627\u0644\u0631\u0648\u0627\u062a\u0628',`إجمالي الرواتب المصروفة: ${fmt(payrolls.reduce((s,p)=>s+N(p.netPay),0))}`,7);
+    XLSX.utils.sheet_add_aoa(wsPay,[['#','\u0627\u0644\u0645\u0648\u0638\u0641','\u0634\u0647\u0631 \u0627\u0644\u0631\u0627\u062a\u0628','\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0635\u0631\u0641','\u0627\u0644\u0631\u0627\u062a\u0628 \u0627\u0644\u0623\u0633\u0627\u0633\u064a (\u20aa)','\u0627\u0644\u0645\u0643\u0627\u0641\u0622\u062a (\u20aa)','\u062e\u0635\u0645 \u0627\u0644\u0633\u0644\u0641 (\u20aa)','\u0635\u0627\u0641\u064a \u0627\u0644\u0631\u0627\u062a\u0628 (\u20aa)']],{origin:'A3'});
+    ['A3','B3','C3','D3','E3','F3','G3','H3'].forEach(c=>wsPay[c]={...wsPay[c],s:hs(TEAL,WHITE,10)});
+    if(!wsPay['!rows'])wsPay['!rows']=[];wsPay['!rows'][2]={hpt:22};
+    [...payrolls].reverse().forEach((p,i)=>{const r=4+i;const bg=i%2===0?WHITE:LTEAL;wsPay['!rows'][r-1]={hpt:20};
+      [txt(String(i+1),'64748B',bg),txt(p.empName,TEAL,bg,true),txt(monthLabel(p.month),'1E293B',bg,true),txt(p.date,'64748B',bg),num(p.baseSalary,'1E293B',bg),num(p.bonusAmt,p.bonusAmt>0?GREEN:'1E293B',bg),num(p.advDeduct,p.advDeduct>0?RED:'1E293B',bg),num(p.netPay,NAVY,bg,true)].forEach((v,ci)=>wsPay[`${'ABCDEFGH'[ci]}${r}`]=v);
+    });
+    wsPay['!cols']=[{wch:5},{wch:22},{wch:16},{wch:14},{wch:18},{wch:14},{wch:16},{wch:18}];
+    XLSX.utils.book_append_sheet(wb,wsPay,'\u0642\u0633\u0627\u0626\u0645 \u0627\u0644\u0631\u0648\u0627\u062a\u0628');
+
+    // ── Sheet 10: النسخة الاحتياطية الكاملة (JSON) ──
+    const wsBK=XLSX.utils.aoa_to_sheet([]);wsBK['!rtl']=true;
+    addTitle(wsBK,'\u0646\u0633\u062e\u0629 \u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629 \u0634\u0627\u0645\u0644\u0629',`تاريخ التصدير: ${new Date().toLocaleString('ar-SA')} | يُستخدم للاستيراد عبر زر الاستيراد في البرنامج`,2);
+    // Collect ALL taqat_ keys from localStorage
+    const allData={};
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k&&k.startsWith('taqat_')){
+        try{allData[k.replace('taqat_','')]=JSON.parse(localStorage.getItem(k));}
+        catch{allData[k.replace('taqat_','')]=localStorage.getItem(k);}
+      }
+    }
+    const jsonStr=JSON.stringify(allData,null,2);
+    // Split into rows of 1000 chars to fit in cells
+    wsBK['A3']={v:'⬇️ بيانات النسخة الاحتياطية — لا تعدّل هذه البيانات يدوياً',t:'s',s:{font:{name:'Arial',bold:true,color:{rgb:RED},sz:11},fill:{fgColor:{rgb:LRED}},alignment:{horizontal:'right',vertical:'center',readingOrder:2}}};
+    wsBK['A4']={v:jsonStr,t:'s',s:{font:{name:'Courier New',color:{rgb:'1E293B'},sz:9},fill:{fgColor:{rgb:LGRAY}},alignment:{horizontal:'left',vertical:'top',wrapText:true}}};
+    wsBK['!rows']=[{},{},{hpt:22},{hpt:Math.min(800,Math.ceil(jsonStr.length/80)*12)}];
+    wsBK['!cols']=[{wch:200}];
+    if(!wsBK['!merges'])wsBK['!merges']=[];
+    wsBK['!merges'].push({s:{r:0,c:0},e:{r:0,c:1}},{s:{r:1,c:0},e:{r:1,c:1}});
+    XLSX.utils.book_append_sheet(wb,wsBK,'\u0646\u0633\u062e\u0629 \u0627\u062d\u062a\u064a\u0627\u0637\u064a\u0629');
+
+    const d=new Date();
+    const fname=`\u0637\u0627\u0642\u0627\u062a_\u0627\u0644\u0646\u0638\u0627\u0645_\u0627\u0644\u0645\u0627\u0644\u064a_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.xlsx`;
+    XLSX.writeFile(wb,fname);
+    toast('\u2705 \u062a\u0645 \u062a\u0635\u062f\u064a\u0631 \u0645\u0644\u0641 Excel \u0628\u0646\u062c\u0627\u062d \u2014 10 \u0635\u0641\u062d\u0627\u062a');
+  }catch(err){console.error(err);toast('\u062d\u062f\u062b \u062e\u0637\u0623: '+err.message,'err');}
+  finally{
+    btn.disabled=false;
+    btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9,15 12,18 15,15"/></svg> \u062a\u0635\u062f\u064a\u0631 Excel';
+  }
+}
+// ══════════════════════════════════════════════
+// EMPLOYEE DETAIL MODAL
+// ══════════════════════════════════════════════
+let currentDetailEmpId = null;
+let currentEdTab = 'info';
+
+function openEmpDetail(empId) {
+  currentDetailEmpId = empId;
+  currentEdTab = 'info';
+  document.querySelectorAll('.ed-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ed-tab')[0].classList.add('active');
+  renderEdHeader(empId);
+  renderEdTab('info');
+  document.getElementById('ovl-emp-detail').classList.add('open');
+}
+
+function renderEdHeader(empId) {
+  const emp = DB.get('employees').find(e => e.id === empId);
+  if (!emp) return;
+  const initials = emp.name.split(' ').map(n => n[0]).slice(0, 2).join('');
+  const advances = DB.get('advances');
+  const pendingAdv = advances.filter(a => a.empId === empId && !a.deducted).reduce((s, a) => s + N(a.amount), 0);
+  const payrolls = DB.get('payrolls').filter(p => p.empId === empId);
+  document.getElementById('ed-header').innerHTML = `
+    <div class="ed-avatar">${initials}</div>
+    <div style="flex:1">
+      <div class="ed-name">${emp.name}</div>
+      <div class="ed-sub">${emp.title||''}${emp.dept ? ' — ' + emp.dept : ''}</div>
+      <div class="ed-badges">
+        <span class="ed-badge">${emp.active ? '✓ نشط' : '✗ غير نشط'}</span>
+        <span class="ed-badge">الراتب: ${fmt(emp.salary)}</span>
+        ${pendingAdv > 0 ? `<span class="ed-badge" style="background:rgba(185,28,28,.3)">سلف معلقة: ${fmt(pendingAdv)}</span>` : ''}
+        <span class="ed-badge">${payrolls.length} قسيمة راتب</span>
+        ${emp.accountName ? `<span class="ed-badge">📒 ${emp.accountName}</span>` : ''}
+      </div>
+    </div>
+    <button onclick="closeOvl('ovl-emp-detail')" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:8px;color:#fff;padding:6px 10px;cursor:pointer;font-size:16px;font-family:'Cairo',sans-serif">✕</button>`;
+}
+
+function switchEdTab(tab, btn) {
+  currentEdTab = tab;
+  document.querySelectorAll('.ed-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderEdTab(tab);
+}
+
+function openAdvanceFromDetail() { closeOvl('ovl-emp-detail'); openAdvance(currentDetailEmpId); }
+function openBonusFromDetail() { closeOvl('ovl-emp-detail'); openBonus(currentDetailEmpId); }
+
+function renderEdTab(tab) {
+  const empId = currentDetailEmpId;
+  const emp = DB.get('employees').find(e => e.id === empId);
+  if (!emp) return;
+  const body = document.getElementById('ed-body');
+
+  if (tab === 'info') {
+    const accs = DB.get('accounts');
+    const linkedAcc = emp.accountId ? accs.find(a => a.id === emp.accountId) : null;
+    body.innerHTML = `
+      <div class="ed-sec">
+        <div class="ed-sec-title">البيانات الأساسية
+          <button class="btn teal sm" style="font-size:11px;padding:5px 11px" onclick="openEditEmpSalary('${empId}')">✏️ تعديل الراتب</button>
+        </div>
+        <div class="info-grid">
+          <div class="ii"><div class="ii-label">الاسم الكامل</div><div class="ii-val">${emp.name}</div></div>
+          <div class="ii"><div class="ii-label">المسمى الوظيفي</div><div class="ii-val">${emp.title || '-'}</div></div>
+          <div class="ii"><div class="ii-label">القسم</div><div class="ii-val">${emp.dept || '-'}</div></div>
+          <div class="ii"><div class="ii-label">الراتب الأساسي</div><div class="ii-val gt">${fmt(emp.salary)}</div></div>
+          <div class="ii"><div class="ii-label">تاريخ التعيين</div><div class="ii-val">${emp.hire || '-'}</div></div>
+          <div class="ii"><div class="ii-label">الحالة</div><div class="ii-val"><span class="stag ${emp.active ? 's-paid' : 's-ded'}">${emp.active ? 'نشط' : 'غير نشط'}</span></div></div>
+        </div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-sec-title">بيانات الاتصال والهوية</div>
+        <div class="info-grid">
+          <div class="ii"><div class="ii-label">رقم الهوية</div><div class="ii-val">${emp.idNum || '-'}</div></div>
+          <div class="ii"><div class="ii-label">رقم الهاتف</div><div class="ii-val">${emp.phone || '-'}</div></div>
+          <div class="ii"><div class="ii-label">الحساب البنكي</div><div class="ii-val" style="font-size:12px">${emp.iban || '-'}</div></div>
+        </div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-sec-title">الحساب المالي المرتبط</div>
+        ${linkedAcc
+          ? `<div class="info-grid two">
+              <div class="ii"><div class="ii-label">كود الحساب</div><div class="ii-val" style="color:var(--teal)">${linkedAcc.code}</div></div>
+              <div class="ii"><div class="ii-label">اسم الحساب</div><div class="ii-val" style="color:var(--teal)">${linkedAcc.name}</div></div>
+            </div>`
+          : `<div style="color:var(--gray-500);font-size:13px;padding:10px 0">لا يوجد حساب مرتبط — <button class="btn teal sm" style="font-size:11px;padding:4px 10px" onclick="linkEmpAccount('${empId}')">ربط حساب</button></div>`}
+      </div>
+      ${emp.notes ? `<div class="ed-sec"><div class="ed-sec-title">ملاحظات</div><div style="font-size:13px;color:var(--gray-700);background:var(--gray-50);padding:10px 13px;border-radius:var(--radius-sm)">${emp.notes}</div></div>` : ''}`;
+
+  } else if (tab === 'advances') {
+    const advances = DB.get('advances').filter(a => a.empId === empId);
+    const pendingTotal = advances.filter(a => !a.deducted).reduce((s, a) => s + N(a.amount), 0);
+    const deductedTotal = advances.filter(a => a.deducted).reduce((s, a) => s + N(a.amount), 0);
+    const rows = advances.length === 0
+      ? '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-500)">لا توجد سلف مسجلة</td></tr>'
+      : [...advances].reverse().map(a => `<tr>
+          <td>${a.date}</td>
+          <td class="rt" style="font-weight:600">${fmt(a.amount)}</td>
+          <td>${monthLabel(a.deductMonth)}</td>
+          <td class="muted">${a.payment || '-'}</td>
+          <td><span class="stag ${a.deducted ? 's-ded' : 's-pend'}">${a.deducted ? 'مخصوم' : 'معلق'}</span></td>
+          <td>
+            ${!a.deducted ? `
+              <div class="ei">
+                <input type="number" id="adv_edit_${a.id}" value="${a.amount}" step="0.01" min="0">
+                <button class="ei-save" onclick="updateAdvance('${a.id}','${empId}')">تعديل</button>
+                <button class="ci-btn" onclick="cancelAdvance('${a.id}','${empId}')">إلغاء</button>
+              </div>` : '<span class="muted">—</span>'}
+          </td>
+        </tr>`).join('');
+    body.innerHTML = `
+      <div class="ed-sec">
+        <div class="info-grid two" style="margin-bottom:14px">
+          <div class="ii"><div class="ii-label">إجمالي السلف المعلقة</div><div class="ii-val rt">${fmt(pendingTotal)}</div></div>
+          <div class="ii"><div class="ii-label">إجمالي السلف المخصومة</div><div class="ii-val" style="color:var(--blue)">${fmt(deductedTotal)}</div></div>
+        </div>
+        <table class="dt">
+          <thead><tr><th>التاريخ</th><th>المبلغ (₪)</th><th>شهر الخصم</th><th>طريقة الصرف</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+
+  } else if (tab === 'bonuses') {
+    const bonuses = DB.get('bonuses').filter(b => b.empId === empId);
+    const pendingTotal = bonuses.filter(b => !b.applied).reduce((s, b) => s + N(b.amount), 0);
+    const appliedTotal = bonuses.filter(b => b.applied).reduce((s, b) => s + N(b.amount), 0);
+    const rows = bonuses.length === 0
+      ? '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">لا توجد علاوات أو مكافآت مسجلة</td></tr>'
+      : [...bonuses].reverse().map(b => `<tr>
+          <td><span class="stag s-paid" style="background:var(--green-pale)">${b.typeLabel || b.type}</span></td>
+          <td class="gt" style="font-weight:600">${fmt(b.amount)}</td>
+          <td>${monthLabel(b.month)}</td>
+          <td class="muted" style="font-size:12px">${b.notes || '-'}</td>
+          <td>
+            ${!b.applied ? `
+              <div class="ei">
+                <input type="number" id="bon_edit_${b.id}" value="${b.amount}" step="0.01" min="0">
+                <button class="ei-save" onclick="updateBonus('${b.id}','${empId}')">تعديل</button>
+                <button class="ci-btn" onclick="cancelBonus('${b.id}','${empId}')">إلغاء</button>
+              </div>` : `<span class="stag s-ded">مُطبَّق</span>`}
+          </td>
+        </tr>`).join('');
+    body.innerHTML = `
+      <div class="ed-sec">
+        <div class="info-grid two" style="margin-bottom:14px">
+          <div class="ii"><div class="ii-label">مكافآت معلقة (لم تُصرف بعد)</div><div class="ii-val gt">${fmt(pendingTotal)}</div></div>
+          <div class="ii"><div class="ii-label">مكافآت مُطبَّقة</div><div class="ii-val" style="color:var(--blue)">${fmt(appliedTotal)}</div></div>
+        </div>
+        <table class="dt">
+          <thead><tr><th>النوع</th><th>المبلغ (₪)</th><th>شهر الاحتساب</th><th>الوصف</th><th>إجراء</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+
+  } else if (tab === 'payrolls') {
+    const payrolls = DB.get('payrolls').filter(p => p.empId === empId);
+    const totalPaid = payrolls.reduce((s, p) => s + N(p.netPay), 0);
+    const rows = payrolls.length === 0
+      ? '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--gray-500)">لا توجد قسائم رواتب بعد</td></tr>'
+      : [...payrolls].reverse().map(p => `<tr>
+          <td style="font-weight:600">${monthLabel(p.month)}</td>
+          <td class="muted">${p.date}</td>
+          <td class="gt">${fmt(p.baseSalary)}</td>
+          <td class="${p.bonusAmt > 0 ? 'gt' : 'muted'}">${p.bonusAmt > 0 ? '+' + fmt(p.bonusAmt) : '-'}</td>
+          <td class="${p.advDeduct > 0 ? 'rt' : 'muted'}">${p.advDeduct > 0 ? '-' + fmt(p.advDeduct) : '-'}</td>
+          <td style="font-weight:700;color:var(--navy)">${fmt(p.netPay)}</td>
+          <td><button class="btn ghost sm" style="font-size:11px;padding:4px 9px" onclick="showPayslip('${p.id}')">🧾 عرض</button></td>
+        </tr>`).join('');
+    body.innerHTML = `
+      <div class="ed-sec">
+        <div class="info-grid two" style="margin-bottom:14px">
+          <div class="ii"><div class="ii-label">إجمالي الرواتب المصروفة</div><div class="ii-val gt">${fmt(totalPaid)}</div></div>
+          <div class="ii"><div class="ii-label">عدد قسائم الراتب</div><div class="ii-val">${payrolls.length}</div></div>
+        </div>
+        <table class="dt">
+          <thead><tr><th>الشهر</th><th>تاريخ الصرف</th><th>الراتب الأساسي</th><th>المكافآت</th><th>خصم السلف</th><th>صافي الراتب</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+}
+
+// Edit/cancel advances
+function updateAdvance(advId, empId) {
+  const newAmt = parseFloat(document.getElementById('adv_edit_' + advId).value);
+  if (!newAmt || newAmt <= 0) { toast('المبلغ غير صحيح', 'err'); return; }
+  let advances = DB.get('advances');
+  const i = advances.findIndex(a => a.id === advId);
+  if (i >= 0) {
+    const old = advances[i].amount;
+    advances[i].amount = newAmt;
+    DB.set('advances', advances);
+    // Update the related expense record
+    let expenses = DB.get('expenses');
+    const ei = expenses.findIndex(e => e.advId === advId);
+    if (ei >= 0) { expenses[ei].amount = newAmt; DB.set('expenses', expenses); }
+    toast(`✅ تم تعديل السلفة من ${fmt(old)} إلى ${fmt(newAmt)}`);
+    renderEdTab('advances');
+    renderEdHeader(empId);
+  }
+}
+
+function cancelAdvance(advId, empId) {
+  if (!confirm('هل تريد إلغاء هذه السلفة؟ سيتم حذفها من المصاريف أيضاً.')) return;
+  let advances = DB.get('advances');
+  const adv = advances.find(a => a.id === advId);
+  if (adv && adv.deducted) { toast('لا يمكن إلغاء سلفة مخصومة بالفعل من الراتب', 'err'); return; }
+  DB.set('advances', advances.filter(a => a.id !== advId));
+  // Remove related expense
+  DB.set('expenses', DB.get('expenses').filter(e => e.advId !== advId));
+  toast('تم إلغاء السلفة وحذف المصروف المرتبط بها', 'err');
+  renderEdTab('advances');
+  renderEdHeader(empId);
+  renderPage(curPage);
+}
+
+// Edit/cancel bonuses
+function updateBonus(bonId, empId) {
+  const newAmt = parseFloat(document.getElementById('bon_edit_' + bonId).value);
+  if (!newAmt || newAmt <= 0) { toast('المبلغ غير صحيح', 'err'); return; }
+  let bonuses = DB.get('bonuses');
+  const i = bonuses.findIndex(b => b.id === bonId);
+  if (i >= 0) {
+    const old = bonuses[i].amount;
+    bonuses[i].amount = newAmt;
+    DB.set('bonuses', bonuses);
+    toast(`✅ تم تعديل المكافأة من ${fmt(old)} إلى ${fmt(newAmt)}`);
+    renderEdTab('bonuses');
+    renderEdHeader(empId);
+  }
+}
+
+function cancelBonus(bonId, empId) {
+  if (!confirm('هل تريد إلغاء هذه المكافأة / العلاوة؟')) return;
+  let bonuses = DB.get('bonuses');
+  const bon = bonuses.find(b => b.id === bonId);
+  if (bon && bon.applied) { toast('لا يمكن إلغاء مكافأة مُطبَّقة بالفعل في قسيمة الراتب', 'err'); return; }
+  DB.set('bonuses', bonuses.filter(b => b.id !== bonId));
+  toast('تم إلغاء المكافأة / العلاوة', 'err');
+  renderEdTab('bonuses');
+  renderEdHeader(empId);
+}
+
+// Edit employee salary
+function openEditEmpSalary(empId) {
+  const emp = DB.get('employees').find(e => e.id === empId);
+  const newSal = parseFloat(prompt(`تعديل الراتب الأساسي لـ ${emp.name}\nالراتب الحالي: ${fmt(emp.salary)}\nأدخل الراتب الجديد:`, emp.salary));
+  if (!newSal || newSal <= 0) return;
+  const emps = DB.get('employees');
+  const i = emps.findIndex(e => e.id === empId);
+  if (i >= 0) {
+    const old = emps[i].salary;
+    emps[i].salary = newSal;
+    DB.set('employees', emps);
+    toast(`✅ تم تعديل الراتب من ${fmt(old)} إلى ${fmt(newSal)}`);
+    renderEdHeader(empId);
+    renderEdTab('info');
+    renderPage(curPage);
+  }
+}
+
+// Link account to employee
+function linkEmpAccount(empId) {
+  const accs = DB.get('accounts').filter(a => a.type === 'expense');
+  const opts = accs.map(a => `${a.code} - ${a.name}`).join('\n');
+  const input = prompt(`اختر كود الحساب من القائمة:\n${opts}\n\nاكتب الكود هنا:`);
+  if (!input) return;
+  const acc = accs.find(a => a.code === input.trim());
+  if (!acc) { toast('الكود غير موجود', 'err'); return; }
+  const emps = DB.get('employees');
+  const i = emps.findIndex(e => e.id === empId);
+  if (i >= 0) {
+    emps[i].accountId = acc.id;
+    emps[i].accountName = acc.name;
+    DB.set('employees', emps);
+    toast(`✅ تم ربط الحساب: ${acc.name}`);
+    renderEdHeader(empId);
+    renderEdTab('info');
+  }
+}
+
+// ══════════════════════════════════════════════
+// IMPORT FROM EXCEL
+// ══════════════════════════════════════════════
+function triggerImport(){
+  if(!confirm('⚠️ تحذير: الاستيراد سيستبدل جميع البيانات الحالية ببيانات الملف المستورد.\n\nهل أنت متأكد من الاستمرار؟')) return;
+  document.getElementById('importFileInput').value='';
+  document.getElementById('importFileInput').click();
+}
+
+function importExcel(event){
+  const file = event.target.files[0];
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, {type:'array'});
+
+      // Look for the backup sheet (النسخة الاحتياطية)
+      const backupSheetName = wb.SheetNames.find(n => n.includes('\u0646\u0633\u062e\u0629') || n.includes('backup') || n.toLowerCase().includes('backup'));
+
+      if(backupSheetName){
+        // Full JSON backup restore
+        const ws = wb.Sheets[backupSheetName];
+        const jsonCell = ws['A4'];
+        if(!jsonCell || !jsonCell.v){
+          toast('\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0628\u064a\u0627\u0646\u0627\u062a \u0635\u0627\u0644\u062d\u0629 \u0641\u064a \u0627\u0644\u0645\u0644\u0641','err');
+          return;
+        }
+        const parsed = JSON.parse(jsonCell.v);
+        let count = 0;
+        // Clear all taqat_ keys first
+        const keysToRemove = [];
+        for(let i=0;i<localStorage.length;i++){
+          const k=localStorage.key(i);
+          if(k && k.startsWith('taqat_')) keysToRemove.push(k);
+        }
+        keysToRemove.forEach(k=>localStorage.removeItem(k));
+        // Restore all keys
+        Object.entries(parsed).forEach(([k,v])=>{
+          try{
+            localStorage.setItem('taqat_'+k, JSON.stringify(v));
+            count++;
+          }catch(err){ console.warn('Failed to import key:', k, err); }
+        });
+        toast(`\u2705 \u062a\u0645 \u0627\u0633\u062a\u064a\u0631\u0627\u062f \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0628\u0646\u062c\u0627\u062d \u2014 ${count} \u0645\u062c\u0645\u0648\u0639\u0629 \u0628\u064a\u0627\u0646\u0627\u062a`);
+        setTimeout(()=>renderPage(curPage), 500);
+
+      } else {
+        // Try to import sheet by sheet if no backup sheet found
+        let imported = 0;
+        const sheetMap = {
+          '\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a': {key:'accounts', cols:['code','parentCode','name','type','category','opening']},
+          '\u0627\u0644\u0645\u0635\u0627\u0631\u064a\u0641': {key:'expenses', cols:['_','date','desc','accountName','category','payment','amount','approved','notes']},
+          '\u0627\u0644\u0625\u064a\u0631\u0627\u062f\u0627\u062a': {key:'revenues', cols:['_','date','desc','accountName','type','client','amount','method','notes']},
+          '\u0627\u0644\u0623\u0635\u0648\u0644':  {key:'assets',   cols:['_','name','category','date','cost','life','depreciation','bookValue']},
+        };
+        Object.entries(sheetMap).forEach(([sheetName,{key,cols}])=>{
+          if(!wb.SheetNames.includes(sheetName)) return;
+          const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {header:1, defval:''});
+          if(rows.length < 4) return;
+          const records = rows.slice(3).filter(r=>r[2]).map(r=>{
+            const obj={id:uid()};
+            cols.forEach((c,i)=>{ if(c!=='_') obj[c]=r[i]||''; });
+            if(key==='accounts'){ obj.parent=''; obj.notes=''; }
+            if(key==='expenses'||key==='revenues'){ obj.accountId=''; }
+            return obj;
+          });
+          if(records.length){
+            localStorage.setItem('taqat_'+key, JSON.stringify(records));
+            imported+=records.length;
+          }
+        });
+        if(imported>0){
+          toast(`\u2705 \u062a\u0645 \u0627\u0633\u062a\u064a\u0631\u0627\u062f ${imported} \u0633\u062c\u0644 \u0645\u0646 \u0627\u0644\u0645\u0644\u0641`);
+          setTimeout(()=>renderPage(curPage), 500);
+        } else {
+          toast('\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0628\u064a\u0627\u0646\u0627\u062a \u0642\u0627\u0628\u0644\u0629 \u0644\u0644\u0627\u0633\u062a\u064a\u0631\u0627\u062f \u2014 \u062a\u0623\u0643\u062f \u0645\u0646 \u0623\u0646 \u0627\u0644\u0645\u0644\u0641 \u0635\u0627\u062f\u0631 \u0645\u0646 \u0628\u0631\u0646\u0627\u0645\u062c \u0637\u0627\u0642\u0627\u062a','err');
+        }
+      }
+    }catch(err){
+      console.error(err);
+      toast('\u062e\u0637\u0623 \u0641\u064a \u0642\u0631\u0627\u0621\u0629 \u0627\u0644\u0645\u0644\u0641: '+err.message,'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ══ AUTO-RESTORE SESSION ON PAGE LOAD ══
+(function(){
+  if(SESSION){
+    const stillValid = getAllUsers().find(u=>u.id===SESSION.id && u.username===SESSION.username);
+    if(stillValid){
+      SESSION = stillValid;
+      try{ sessionStorage.setItem('taqat_session', JSON.stringify(stillValid)); }catch{}
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('main-app').style.display='block';
+      const initials = SESSION.fullname.split(' ').map(n=>n[0]).slice(0,2).join('');
+      document.getElementById('user-av-initials').textContent = initials;
+      document.getElementById('user-display-name').textContent = SESSION.fullname;
+      document.getElementById('user-display-role').textContent = SESSION.role==='superadmin'?'مدير النظام':'مدير';
+      const adminTab = document.getElementById('admin-tab');
+      if(adminTab) adminTab.style.display = canView('admin')?'':'none';
+      buildNavVisibility();
+      init();
+    } else {
+      SESSION = null;
+      try{ sessionStorage.removeItem('taqat_session'); }catch{}
+    }
+  }
+})();
+</script>
+</body>
+</html>
