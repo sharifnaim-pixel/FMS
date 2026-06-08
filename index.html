@@ -309,6 +309,13 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 .pos-prod-item-name{font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:5px}
 .pos-prod-item-price{font-size:13px;font-weight:700;color:var(--green)}
 .pos-prod-item-unit{font-size:10px;color:var(--gray-500)}
+.pos-prod-img{width:100%;height:90px;object-fit:cover;border-radius:6px;margin-bottom:7px;background:var(--gray-100)}
+.pos-prod-img-placeholder{width:100%;height:90px;border-radius:6px;margin-bottom:7px;background:linear-gradient(135deg,var(--gray-100),var(--gray-200));display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--gray-400)}
+.prod-card-img{width:100%;height:130px;object-fit:cover;border-radius:0}
+.prod-card-img-ph{width:100%;height:60px;background:var(--gray-50);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--gray-300)}
+.img-upload-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;border:2px dashed var(--gray-200);border-radius:10px;background:var(--gray-50);cursor:pointer;transition:.2s}
+.img-upload-wrap:hover{border-color:var(--gold);background:var(--gold-pale)}
+.img-preview-box{width:120px;height:120px;border-radius:10px;object-fit:cover;border:2px solid var(--gray-200);display:block}
 .pos-cart{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
 .pos-cart-head{padding:14px 16px;background:var(--gold);color:var(--navy);font-size:14px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 .pos-cart-items{flex:1;overflow-y:auto;padding:10px;min-height:200px;max-height:320px}
@@ -709,6 +716,16 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group"><label>العملة</label><select id="prod_curr"><option value="USD">دولار (USD)</option><option value="ILS">شيكل (ILS)</option><option value="EUR">يورو (EUR)</option></select></div>
         <div class="form-group"><label>وحدة القياس</label><input type="text" id="prod_unit" placeholder="مثال: قطعة، كغ، لتر..."></div>
         <div class="form-group form-full"><label>الوصف</label><textarea id="prod_desc" placeholder="وصف المنتج..."></textarea></div>
+        <div class="form-group form-full">
+          <label>صورة المنتج</label>
+          <div class="img-upload-wrap" onclick="document.getElementById('prod_img_input').click()">
+            <img id="prod_img_preview" class="img-preview-box" src="" alt="صورة المنتج" style="display:none">
+            <div id="prod_img_placeholder" style="font-size:30px;color:var(--gray-400)">📷</div>
+            <div id="prod_img_label" style="font-size:12px;color:var(--gray-500)">انقر لرفع صورة المنتج</div>
+            <input type="file" id="prod_img_input" accept="image/*" style="display:none" onchange="handleProdImgUpload(this)">
+          </div>
+          <button type="button" class="btn ghost sm" style="margin-top:6px;font-size:11px" onclick="clearProdImg()">✕ إزالة الصورة</button>
+        </div>
       </div>
     </div>
     <div class="modal-foot"><button class="btn ghost sm" onclick="closeOvl('ovl-product')">إلغاء</button><button class="btn navy sm" onclick="saveProduct()">💾 حفظ المنتج</button></div>
@@ -2087,6 +2104,7 @@ function renderProducts(){
         const priceDisplay=fmtCurr(p.price,p.currency||'USD');
         const priceUSD=(p.currency&&p.currency!=='USD')?('= '+fmt(toUSD(p.price,p.currency||'USD'))):'';
         return `<div class="prod-card ${p.active?'':'inactive'}">
+          ${p.image?`<img class="prod-card-img" src="${p.image}" alt="${p.name}">`:`<div class="prod-card-img-ph">📦</div>`}
           <div class="prod-card-head">
             <span class="prod-code">${p.code||'—'}</span>
             <span class="prod-name">${p.name}</span>
@@ -2127,6 +2145,7 @@ function openAddProduct(){
   document.getElementById('prod_price').value='';
   document.getElementById('prod_curr').value='USD';
   document.getElementById('prod_desc').value='';
+  clearProdImg();
   fillProdCatSelect();
   openOvl('ovl-product');
 }
@@ -2141,6 +2160,7 @@ function editProduct(id){
   document.getElementById('prod_price').value=p.price||'';
   document.getElementById('prod_unit').value=p.unit||'';
   document.getElementById('prod_desc').value=p.description||'';
+  if(p.image){setProdImgPreview(p.image);}else{clearProdImg();}
   fillProdCatSelect(p.categoryId);
   openOvl('ovl-product');
   setTimeout(()=>{ const el=document.getElementById('prod_curr'); if(el) el.value=p.currency||'USD'; },60);
@@ -2154,6 +2174,41 @@ function fillProdCatSelect(selectedId=''){
     cats.map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${c.name}</option>`).join('');
 }
 
+function handleProdImgUpload(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const MAX=300;let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const dataURL=canvas.toDataURL('image/jpeg',0.78);
+      setProdImgPreview(dataURL);
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function setProdImgPreview(src){
+  const prev=document.getElementById('prod_img_preview');
+  const ph=document.getElementById('prod_img_placeholder');
+  const lbl=document.getElementById('prod_img_label');
+  if(prev){prev.src=src;prev.style.display='block';}
+  if(ph) ph.style.display='none';
+  if(lbl) lbl.textContent='انقر لتغيير الصورة';
+}
+function clearProdImg(){
+  const prev=document.getElementById('prod_img_preview');
+  const ph=document.getElementById('prod_img_placeholder');
+  const lbl=document.getElementById('prod_img_label');
+  const inp=document.getElementById('prod_img_input');
+  if(prev){prev.src='';prev.style.display='none';}
+  if(ph) ph.style.display='';
+  if(lbl) lbl.textContent='انقر لرفع صورة المنتج';
+  if(inp) inp.value='';
+}
 function saveProduct(){
   const editId=document.getElementById('prod_edit_id').value;
   const name=document.getElementById('prod_name').value.trim();
@@ -2161,7 +2216,8 @@ function saveProduct(){
   const catId=document.getElementById('prod_cat').value;
   if(!name||!price||price<=0||!catId){toast('يرجى إدخال الاسم والسعر والفئة','err');return;}
   const cats=getProdCategories();const cat=cats.find(c=>c.id===catId);
-  const prodData={id:editId||uid(),code:document.getElementById('prod_code').value.trim(),name,categoryId:catId,categoryName:cat?cat.name:'',price,currency:document.getElementById('prod_curr').value||'USD',unit:document.getElementById('prod_unit').value.trim(),description:document.getElementById('prod_desc').value.trim(),active:true};
+  const imgEl=document.getElementById('prod_img_preview');const imgData=imgEl&&imgEl.style.display!=='none'?imgEl.src:'';
+  const prodData={id:editId||uid(),code:document.getElementById('prod_code').value.trim(),name,categoryId:catId,categoryName:cat?cat.name:'',price,currency:document.getElementById('prod_curr').value||'USD',unit:document.getElementById('prod_unit').value.trim(),description:document.getElementById('prod_desc').value.trim(),image:imgData,active:true};
   const prods=DB.get('products')||[];
   if(editId){const i=prods.findIndex(p=>p.id===editId);if(i>=0){prods[i]={...prods[i],...prodData};}else prods.push(prodData);toast(`✅ تم تحديث المنتج: ${name}`);}
   else{prods.push(prodData);toast(`✅ تمت إضافة المنتج: ${name}`);}
@@ -2198,6 +2254,7 @@ function renderCashier(){
     cats.map(c=>`<button class="cat-chip" id="cat-chip-${c.id}" onclick="filterPosProducts('${c.id}',this)">${c.name} (${prods.filter(p=>p.categoryId===c.id).length})</button>`).join('');
 
   const prodItems=prods.map(p=>`<div class="pos-prod-item" data-cat="${p.categoryId}" onclick="addToCart('${p.id}')">
+    ${p.image?`<img class="pos-prod-img" src="${p.image}" alt="${p.name}" loading="lazy">`:`<div class="pos-prod-img-placeholder">📦</div>`}
     <div class="pos-prod-item-name">${p.name}</div>
     <div class="pos-prod-item-price">${fmtCurr(p.price,p.currency||'USD')}</div>
     <div class="pos-prod-item-unit">${p.unit||'قطعة'}</div>
