@@ -572,11 +572,48 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 // ══════════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════════
+function _lsAvailable(){
+  try{localStorage.setItem('__tq__','1');localStorage.removeItem('__tq__');return true;}catch{return false;}
+}
+const LS_OK = _lsAvailable();
 const DB = {
-  get(k){ try{return JSON.parse(localStorage.getItem('taqat_'+k))||[];}catch{return [];} },
-  set(k,v){ localStorage.setItem('taqat_'+k,JSON.stringify(v)); setSaveStatus('محفوظ ✓'); },
-  getObj(k,d={}){ try{return JSON.parse(localStorage.getItem('taqat_'+k))||d;}catch{return d;} },
-  setObj(k,v){ localStorage.setItem('taqat_'+k,JSON.stringify(v)); }
+  get(k){
+    if(!LS_OK) return [];
+    try{
+      const raw=localStorage.getItem('taqat_'+k);
+      if(raw===null) return [];
+      const p=JSON.parse(raw);
+      return Array.isArray(p)?p:(p===null?[]:p);
+    }catch{return [];}
+  },
+  set(k,v){
+    if(!LS_OK){setSaveStatus('⚠️ التخزين غير متاح');return;}
+    try{
+      localStorage.setItem('taqat_'+k,JSON.stringify(v));
+      setSaveStatus('محفوظ ✓');
+    }catch(e){
+      console.error('DB.set error:',e);
+      setSaveStatus('⚠️ فشل الحفظ');
+      if(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED')
+        toast('⚠️ مساحة التخزين ممتلئة، لا يمكن حفظ البيانات','err');
+    }
+  },
+  getNum(k,d=0){
+    if(!LS_OK) return d;
+    try{const raw=localStorage.getItem('taqat_'+k);return raw===null?d:(parseInt(raw)||d);}catch{return d;}
+  },
+  setNum(k,v){
+    if(!LS_OK) return;
+    try{localStorage.setItem('taqat_'+k,String(parseInt(v)||0));}catch(e){console.error(e);}
+  },
+  getObj(k,d={}){
+    if(!LS_OK) return d;
+    try{const raw=localStorage.getItem('taqat_'+k);return raw===null?d:(JSON.parse(raw)||d);}catch{return d;}
+  },
+  setObj(k,v){
+    if(!LS_OK) return;
+    try{localStorage.setItem('taqat_'+k,JSON.stringify(v));}catch(e){console.error(e);}
+  }
 };
 
 const DEFAULTS = [
@@ -1402,13 +1439,13 @@ function renderSummary(){
 // ══════════════════════════════════════════════
 function peekVoucherNum(type){
   const key=type==='receipt'?'rcCount':'pvCount';
-  const n=(DB.get(key)||0)+1;
+  const n=DB.getNum(key,0)+1;
   return (type==='receipt'?'RV-':'PV-')+String(n).padStart(4,'0');
 }
 function nextVoucherNum(type){
   const key=type==='receipt'?'rcCount':'pvCount';
-  const n=(DB.get(key)||0)+1;
-  DB.set(key,n);
+  const n=DB.getNum(key,0)+1;
+  DB.setNum(key,n);
   return (type==='receipt'?'RV-':'PV-')+String(n).padStart(4,'0');
 }
 function openOvl(id){
@@ -2111,6 +2148,14 @@ function importExcel(event){
 }
 
 // ══ AUTO-RESTORE SESSION ON PAGE LOAD ══
+(function(){
+  if(!LS_OK){
+    const banner=document.createElement('div');
+    banner.style.cssText='position:fixed;top:0;inset-inline:0;background:#b91c1c;color:#fff;text-align:center;padding:10px 16px;font-family:Cairo,sans-serif;font-size:13px;font-weight:700;z-index:99999;direction:rtl';
+    banner.textContent='⚠️ التخزين المحلي غير متاح في هذا المتصفح (وضع التصفح الخاص؟). لن يتم حفظ البيانات.';
+    document.body.prepend(banner);
+  }
+})();
 (function(){
   if(SESSION){
     const stillValid = getAllUsers().find(u=>u.id===SESSION.id && u.username===SESSION.username);
