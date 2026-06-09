@@ -381,6 +381,26 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 .s-draft{background:#f3f4f6;color:#6b7280}.s-confirmed{background:#dbeafe;color:#1d4ed8}
 .s-paid{background:#d1fae5;color:#065f46}.s-partial{background:#fef3c7;color:#b45309}
 .s-overdue{background:#fee2e2;color:#b91c1c}.s-cancelled{background:#f3f4f6;color:#9ca3af}
+.page-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.search-inp{border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 14px;font-family:Cairo,sans-serif;font-size:13px;width:290px;outline:none;transition:.2s}
+.search-inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,210,63,.15)}
+.filter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.ftab{background:transparent;border:1.5px solid var(--gray-200);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;font-family:Cairo,sans-serif;cursor:pointer;color:var(--gray-500);transition:.15s}
+.ftab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.ftab:not(.active):hover{background:var(--gray-50);border-color:var(--gray-400)}
+.cust-code{background:var(--gray-100);color:var(--gray-600);padding:2px 8px;border-radius:12px;font-size:11px;font-weight:700}
+.inv-badge{background:var(--blue-pale);color:var(--blue);padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700;display:inline-block}
+.detail-panel{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:20px;border:1px solid var(--gray-100);margin-top:16px;animation:fadeIn .2s ease}
+.detail-panel-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--gray-100)}
+.detail-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--gray-500);margin-top:6px}
+.detail-meta span{display:flex;align-items:center;gap:4px}
+.inv-line-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.inv-line-tbl th{background:var(--gray-50);padding:8px 12px;font-weight:700;color:var(--navy);font-size:12px;text-align:right;border-bottom:1px solid var(--gray-100)}
+.inv-line-tbl td{padding:8px 12px;border-bottom:1px solid var(--gray-50);vertical-align:top}
+.inv-totals-mini{margin-top:12px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:280px}
+.inv-totals-mini .row{display:flex;justify-content:space-between;gap:40px;font-size:13px;padding:3px 0}
+.inv-totals-mini .row.grand{border-top:2px solid var(--navy);padding-top:6px;font-weight:700;font-size:15px;color:var(--navy)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 /* ══ INVOICE BUILDER ══ */
 .modal-xl{max-width:960px;max-height:90vh;overflow-y:auto}
 .inv-sect{background:var(--gray-50);border-radius:9px;padding:14px 16px;margin-bottom:14px;border:1px solid var(--gray-100)}
@@ -2813,77 +2833,151 @@ function setRptTab(tab){
   if(el){el.setAttribute('data-rpt-tab',tab);renderReports();}
 }
 function renderCustomers(){
-  const customers = DB.get('customers')||[];
-  const active = customers.filter(c=>c.active).length;
-  const totalAR = customers.reduce((s,c)=>s+getCustAR(c.id),0);
-  const rows = customers.length ? customers.map(function(c){
-    const ar = getCustAR(c.id);
-    return '<tr>'
-      +'<td style="font-weight:700;color:var(--navy)">'+( c.code||'-')+'</td>'
-      +'<td style="font-weight:700">'+c.name+'</td>'
-      +'<td style="color:var(--gray-600)">'+( c.phone||'-')+'</td>'
-      +'<td style="color:var(--gray-600)">'+( c.email||'-')+'</td>'
-      +'<td class="'+(ar>0?'ar-pos':'ar-zero')+'">'+fmt(ar)+'</td>'
-      +'<td><span class="tag '+(c.active?'tag-active':'tag-inactive')+'">'+(c.active?'نشط':'متوقف')+'</span></td>'
-      +'<td style="white-space:nowrap">'
-      +'<button class="emp-action-btn" onclick="editCustomer(&apos;'+c.id+'&apos;)">✏️</button> '
-      +'<button class="emp-action-btn" onclick="openPayModal(&apos;'+c.id+'&apos;,&apos;cust&apos;)">💳 دفعة</button> '
-      +'<button class="emp-action-btn red-btn" onclick="deleteCustomer(&apos;'+c.id+'&apos;)">🗑</button>'
-      +'</td></tr>';
-  }).join('') : '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--gray-500)">لا يوجد عملاء. أضف عميلاً جديداً.</td></tr>';
-  document.getElementById('page-customers').innerHTML =
-    '<div class="sec-title"><h2>👤 إدارة العملاء</h2><span class="pill">ذمم مدينة</span></div>'
-    +'<div class="stats-grid">'
-    +'<div class="stat-card blue"><div class="stat-label">إجمالي العملاء</div><div class="stat-value">'+customers.length+'</div></div>'
-    +'<div class="stat-card green"><div class="stat-label">العملاء النشطون</div><div class="stat-value g">'+active+'</div></div>'
-    +'<div class="stat-card red"><div class="stat-label">إجمالي الذمم المدينة</div><div class="stat-value r">'+fmt(totalAR)+'</div></div>'
-    +'</div>'
-    +'<div class="toolbar">'
-    +(canDo('customers','add')?'<button class="btn navy" onclick="openAddCustomer()">➕ إضافة عميل</button>':'')+
-    '<button class="btn ghost" onclick="navTo(&apos;invoices&apos;,document.querySelector(&apos;[data-page=invoices]&apos;))">🧾 فواتير المبيعات</button>'
-    +'</div>'
-    +'<div class="table-card"><table class="party-table">'
-    +'<thead><tr><th>الكود</th><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>ذمم مدينة ($)</th><th>الحالة</th><th>إجراء</th></tr></thead>'
-    +'<tbody>'+rows+'</tbody></table></div>';
+  const customers=DB.get('customers')||[];
+  const flt=window._custFlt||'all';
+  const srch=(window._custSrch||'').trim().toLowerCase();
+  let list=customers.slice();
+  if(flt==='active') list=list.filter(c=>c.active);
+  if(flt==='inactive') list=list.filter(c=>!c.active);
+  if(flt==='ar') list=list.filter(c=>getCustAR(c.id)>0);
+  if(srch) list=list.filter(c=>
+    (c.name||'').toLowerCase().includes(srch)||
+    (c.code||'').toLowerCase().includes(srch)||
+    (c.phone||'').includes(srch)||
+    (c.email||'').toLowerCase().includes(srch)
+  );
+  const totalAR=customers.reduce((s,c)=>s+getCustAR(c.id),0);
+  const withAR=customers.filter(c=>getCustAR(c.id)>0).length;
+  const active=customers.filter(c=>c.active).length;
+  const rows=list.length?list.map(c=>{
+    const ar=getCustAR(c.id);
+    const nInvs=(DB.get('salesInvoices')||[]).filter(i=>i.customerId===c.id&&i.status!=='cancelled').length;
+    return `<tr class="cust-row" onclick="viewCustomerDetail('${c.id}')" style="cursor:pointer">
+      <td><span class="cust-code">${c.code||'—'}</span></td>
+      <td><div style="font-weight:700;color:var(--navy)">${c.name}</div>${c.phone?`<div style="font-size:11px;color:var(--gray-500)">📞 ${c.phone}</div>`:''}  </td>
+      <td style="font-size:12px;color:var(--gray-600)">${c.email||'—'}</td>
+      <td style="font-size:12px;color:var(--gray-500);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.address||'—'}</td>
+      <td class="${ar>0?'ar-pos':'ar-zero'}" style="font-weight:700">${fmt(ar)}</td>
+      <td style="font-size:12px">${c.creditLimit?fmt(c.creditLimit):'—'}</td>
+      <td><span class="inv-badge">${nInvs}</span></td>
+      <td><span class="tag ${c.active?'tag-active':'tag-inactive'}">${c.active?'نشط':'متوقف'}</span></td>
+      <td onclick="event.stopPropagation()" style="white-space:nowrap">
+        <button class="emp-action-btn" title="تعديل" onclick="editCustomer('${c.id}')">✏️</button>
+        <button class="emp-action-btn" title="فاتورة جديدة" onclick="openNewSaleInvForCust('${c.id}')">🧾</button>
+        <button class="emp-action-btn red-btn" title="حذف" onclick="deleteCustomer('${c.id}')">🗑</button>
+      </td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--gray-400)">لا يوجد عملاء مطابقون للبحث.</td></tr>';
+  document.getElementById('page-customers').innerHTML=`
+    <div class="sec-title"><h2>👤 إدارة العملاء</h2><span class="pill">ذمم مدينة</span></div>
+    <div class="stats-grid">
+      <div class="stat-card blue"><div class="stat-label">إجمالي العملاء</div><div class="stat-value">${customers.length}</div></div>
+      <div class="stat-card green"><div class="stat-label">نشطون</div><div class="stat-value g">${active}</div></div>
+      <div class="stat-card red"><div class="stat-label">إجمالي الذمم المدينة</div><div class="stat-value r">${fmt(totalAR)}</div></div>
+      <div class="stat-card gold"><div class="stat-label">عملاء برصيد مستحق</div><div class="stat-value gold">${withAR}</div></div>
+    </div>
+    <div class="page-toolbar">
+      <div style="display:flex;gap:8px">
+        ${canDo('customers','add')?'<button class="btn navy" onclick="openAddCustomer()">➕ إضافة عميل</button>':''}
+        <button class="btn ghost" onclick="navTo('invoices',document.querySelector('[data-page=invoices]'))">🧾 فواتير المبيعات</button>
+      </div>
+      <input type="text" class="search-inp" placeholder="🔍 بحث بالاسم أو الكود أو الهاتف..." value="${window._custSrch||''}" oninput="window._custSrch=this.value;renderCustomers()">
+    </div>
+    <div class="filter-tabs">
+      <button class="ftab ${flt==='all'?'active':''}" onclick="window._custFlt='all';renderCustomers()">الكل (${customers.length})</button>
+      <button class="ftab ${flt==='active'?'active':''}" onclick="window._custFlt='active';renderCustomers()">نشط (${active})</button>
+      <button class="ftab ${flt==='inactive'?'active':''}" onclick="window._custFlt='inactive';renderCustomers()">متوقف (${customers.length-active})</button>
+      <button class="ftab ${flt==='ar'?'active':''}" onclick="window._custFlt='ar';renderCustomers()">برصيد مستحق (${withAR})</button>
+    </div>
+    <div class="table-card" style="overflow-x:auto">
+      <table class="party-table">
+        <thead><tr>
+          <th>الكود</th><th>الاسم والهاتف</th><th>البريد الإلكتروني</th><th>العنوان</th>
+          <th>الذمم ($)</th><th>حد الائتمان</th><th>الفواتير</th><th>الحالة</th><th>إجراء</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div id="cust-detail-panel" style="display:none"></div>
+  `;
 }
 function renderInvoices(){
-  const invs = DB.get('salesInvoices')||[];
-  const statusLabel = {draft:'مسودة',confirmed:'مؤكدة',paid:'مدفوعة',partial:'جزئي',overdue:'متأخرة',cancelled:'ملغاة'};
-  const statusCls = {draft:'s-draft',confirmed:'s-confirmed',paid:'s-paid',partial:'s-partial',overdue:'s-overdue',cancelled:'s-cancelled'};
-  const total = invs.reduce((s,i)=>s+N(i.totalUSD),0);
-  const paid = invs.filter(i=>i.status==='paid').reduce((s,i)=>s+N(i.totalUSD),0);
-  const unpaid = invs.filter(i=>i.status==='confirmed'||i.status==='partial').reduce((s,i)=>s+N(i.totalUSD)-(N(i.paidAmount||0)),0);
-  const overdue = invs.filter(i=>i.status==='overdue').length;
-  const rows = invs.length ? invs.slice().reverse().map(function(inv){
-    const bal = N(inv.totalUSD)-(N(inv.paidAmount||0));
-    return '<tr>'
-      +'<td style="font-weight:700;color:var(--navy);white-space:nowrap">'+inv.number+'</td>'
-      +'<td>'+inv.date+'</td>'
-      +'<td style="font-weight:600">'+inv.customerName+'</td>'
-      +'<td style="font-weight:700">'+fmt(inv.totalUSD)+'</td>'
-      +'<td>'+fmt(inv.paidAmount||0)+'</td>'
-      +'<td class="'+(bal>0?'ar-pos':'ar-zero')+'">'+fmt(bal)+'</td>'
-      +'<td><span class="inv-s '+(statusCls[inv.status]||'s-draft')+'">'+(statusLabel[inv.status]||inv.status)+'</span></td>'
-      +'<td style="white-space:nowrap">'
-      +(inv.status!=='paid'&&inv.status!=='cancelled'?'<button class="emp-action-btn" onclick="openPayInvoice(&apos;'+inv.id+'&apos;,&apos;sale&apos;)">💳</button> ':'')+
-      '<button class="emp-action-btn" onclick="editSaleInvoice(&apos;'+inv.id+'&apos;)">✏️</button> '
-      +'<button class="emp-action-btn red-btn" onclick="deleteSaleInvoice(&apos;'+inv.id+'&apos;)">🗑</button>'
-      +'</td></tr>';
-  }).join('') : '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--gray-500)">لا توجد فواتير.</td></tr>';
-  document.getElementById('page-invoices').innerHTML =
-    '<div class="sec-title"><h2>🧾 فواتير المبيعات</h2><span class="pill">ذمم مدينة</span></div>'
-    +'<div class="stats-grid">'
-    +'<div class="stat-card blue"><div class="stat-label">إجمالي الفواتير</div><div class="stat-value">'+invs.length+'</div></div>'
-    +'<div class="stat-card green"><div class="stat-label">المحصّل</div><div class="stat-value g">'+fmt(paid)+'</div></div>'
-    +'<div class="stat-card red"><div class="stat-label">المستحق</div><div class="stat-value r">'+fmt(unpaid)+'</div></div>'
-    +'<div class="stat-card gold"><div class="stat-label">متأخرة</div><div class="stat-value gold">'+overdue+'</div></div>'
-    +'</div>'
-    +'<div class="toolbar">'
-    +(canDo('invoices','add')?'<button class="btn navy" onclick="openNewSaleInv()">➕ فاتورة جديدة</button>':'')+
-    '</div>'
-    +'<div class="table-card"><table class="party-table">'
-    +'<thead><tr><th>رقم الفاتورة</th><th>التاريخ</th><th>العميل</th><th>الإجمالي</th><th>المدفوع</th><th>الرصيد</th><th>الحالة</th><th>إجراء</th></tr></thead>'
-    +'<tbody>'+rows+'</tbody></table></div>';
+  const allInvs=DB.get('salesInvoices')||[];
+  const flt=window._invFlt||'all';
+  const srch=(window._invSrch||'').trim().toLowerCase();
+  const SL={draft:'مسودة',confirmed:'مؤكدة',paid:'مدفوعة',partial:'جزئي',overdue:'متأخرة',cancelled:'ملغاة'};
+  const SC={draft:'s-draft',confirmed:'s-confirmed',paid:'s-paid',partial:'s-partial',overdue:'s-overdue',cancelled:'s-cancelled'};
+  let list=allInvs.slice().reverse();
+  if(flt!=='all') list=list.filter(i=>i.status===flt);
+  if(srch) list=list.filter(i=>
+    (i.number||'').toLowerCase().includes(srch)||
+    (i.customerName||'').toLowerCase().includes(srch)
+  );
+  const totalAmt=allInvs.reduce((s,i)=>s+N(i.totalUSD),0);
+  const paidAmt=allInvs.filter(i=>i.status==='paid').reduce((s,i)=>s+N(i.totalUSD),0);
+  const outstandingAmt=allInvs.filter(i=>i.status==='confirmed'||i.status==='partial'||i.status==='overdue')
+    .reduce((s,i)=>s+N(i.totalUSD)-N(i.paidAmount||0),0);
+  const overdueN=allInvs.filter(i=>i.status==='overdue').length;
+  const cnts={all:allInvs.length,draft:0,confirmed:0,paid:0,partial:0,overdue:0,cancelled:0};
+  allInvs.forEach(i=>{if(cnts[i.status]!==undefined)cnts[i.status]++;});
+  const rows=list.length?list.map(inv=>{
+    const bal=N(inv.totalUSD)-N(inv.paidAmount||0);
+    const pct=inv.totalUSD>0?Math.round(N(inv.paidAmount||0)/inv.totalUSD*100):0;
+    return `<tr class="inv-row" onclick="viewInvoiceDetail('${inv.id}')" style="cursor:pointer">
+      <td style="font-weight:700;color:var(--navy);white-space:nowrap">${inv.number}</td>
+      <td>${inv.date}</td>
+      <td style="color:var(--gray-500);font-size:12px">${inv.dueDate||'—'}</td>
+      <td style="font-weight:600">${inv.customerName}</td>
+      <td style="font-weight:700">${fmt(inv.totalUSD)}</td>
+      <td style="color:var(--green);font-size:12px">${fmt(inv.paidAmount||0)}</td>
+      <td class="${bal>0.01?'ar-pos':'ar-zero'}">${fmt(bal)}</td>
+      <td>
+        ${inv.totalUSD>0?`<div style="background:var(--gray-100);border-radius:4px;height:4px;min-width:50px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${bal<=0.01?'var(--green)':'var(--gold)'};border-radius:4px"></div></div><div style="font-size:10px;color:var(--gray-500);text-align:center">${pct}%</div>`:''}
+      </td>
+      <td><span class="inv-s ${SC[inv.status]||'s-draft'}">${SL[inv.status]||inv.status}</span></td>
+      <td onclick="event.stopPropagation()" style="white-space:nowrap">
+        ${inv.status!=='paid'&&inv.status!=='cancelled'?`<button class="emp-action-btn" title="تحصيل" onclick="openPayInvoice('${inv.id}','sale')">💳</button>`:''}
+        ${inv.status==='draft'?`<button class="emp-action-btn" title="تأكيد" onclick="confirmSaleDraft('${inv.id}')">✅</button>`:''}
+        <button class="emp-action-btn" title="تعديل" onclick="editSaleInvoice('${inv.id}')">✏️</button>
+        <button class="emp-action-btn red-btn" title="حذف" onclick="deleteSaleInvoice('${inv.id}')">🗑</button>
+      </td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--gray-400)">لا توجد فواتير مطابقة.</td></tr>`;
+  document.getElementById('page-invoices').innerHTML=`
+    <div class="sec-title"><h2>🧾 فواتير المبيعات</h2><span class="pill">ذمم مدينة</span></div>
+    <div class="stats-grid">
+      <div class="stat-card blue"><div class="stat-label">إجمالي الفواتير</div><div class="stat-value">${allInvs.length}</div></div>
+      <div class="stat-card green"><div class="stat-label">المحصّل</div><div class="stat-value g">${fmt(paidAmt)}</div></div>
+      <div class="stat-card red"><div class="stat-label">المستحق</div><div class="stat-value r">${fmt(outstandingAmt)}</div></div>
+      <div class="stat-card gold"><div class="stat-label">متأخرة</div><div class="stat-value gold">${overdueN}</div></div>
+    </div>
+    <div class="page-toolbar">
+      <div style="display:flex;gap:8px">
+        ${canDo('invoices','add')?'<button class="btn navy" onclick="openNewSaleInv()">➕ فاتورة جديدة</button>':''}
+        <button class="btn ghost" onclick="navTo('customers',document.querySelector('[data-page=customers]'))">👤 العملاء</button>
+      </div>
+      <input type="text" class="search-inp" placeholder="🔍 رقم الفاتورة أو اسم العميل..." value="${window._invSrch||''}" oninput="window._invSrch=this.value;renderInvoices()">
+    </div>
+    <div class="filter-tabs">
+      <button class="ftab ${flt==='all'?'active':''}" onclick="window._invFlt='all';renderInvoices()">الكل (${cnts.all})</button>
+      <button class="ftab ${flt==='draft'?'active':''}" onclick="window._invFlt='draft';renderInvoices()">مسودة (${cnts.draft})</button>
+      <button class="ftab ${flt==='confirmed'?'active':''}" onclick="window._invFlt='confirmed';renderInvoices()">مؤكدة (${cnts.confirmed})</button>
+      <button class="ftab ${flt==='partial'?'active':''}" onclick="window._invFlt='partial';renderInvoices()">جزئي (${cnts.partial})</button>
+      <button class="ftab ${flt==='overdue'?'active':''}" onclick="window._invFlt='overdue';renderInvoices()">متأخرة (${cnts.overdue})</button>
+      <button class="ftab ${flt==='paid'?'active':''}" onclick="window._invFlt='paid';renderInvoices()">مدفوعة (${cnts.paid})</button>
+      <button class="ftab ${flt==='cancelled'?'active':''}" onclick="window._invFlt='cancelled';renderInvoices()">ملغاة (${cnts.cancelled})</button>
+    </div>
+    <div class="table-card" style="overflow-x:auto">
+      <table class="party-table">
+        <thead><tr>
+          <th>رقم الفاتورة</th><th>التاريخ</th><th>الاستحقاق</th><th>العميل</th>
+          <th>الإجمالي</th><th>المدفوع</th><th>الرصيد</th><th>نسبة السداد</th><th>الحالة</th><th>إجراء</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div id="inv-detail-panel" style="display:none"></div>
+  `;
 }
 function renderSuppliers(){
   const suppliers = DB.get('suppliers')||[];
@@ -3017,6 +3111,175 @@ function nextInvNum(key,prefix){
 // ══════════════════════════════════════════════
 // CUSTOMERS CRUD
 // ══════════════════════════════════════════════
+function viewCustomerDetail(custId){
+  const panel=document.getElementById('cust-detail-panel');
+  if(!panel) return;
+  if(panel.dataset.open===custId&&panel.style.display!=='none'){
+    panel.style.display='none';panel.dataset.open='';
+    document.querySelectorAll('.cust-row').forEach(r=>r.classList.remove('row-selected'));
+    return;
+  }
+  panel.dataset.open=custId;
+  document.querySelectorAll('.cust-row').forEach(r=>{r.classList.toggle('row-selected',r.onclick&&r.onclick.toString().includes(custId));});
+  const c=(DB.get('customers')||[]).find(x=>x.id===custId);
+  if(!c){panel.style.display='none';return;}
+  const ar=getCustAR(custId);
+  const invs=(DB.get('salesInvoices')||[]).filter(i=>i.customerId===custId);
+  const SL={draft:'مسودة',confirmed:'مؤكدة',paid:'مدفوعة',partial:'جزئي',overdue:'متأخرة',cancelled:'ملغاة'};
+  const SC={draft:'s-draft',confirmed:'s-confirmed',paid:'s-paid',partial:'s-partial',overdue:'s-overdue',cancelled:'s-cancelled'};
+  const paidTotal=invs.filter(i=>i.status==='paid').reduce((s,i)=>s+N(i.totalUSD),0);
+  const invRows=invs.slice().reverse().map(inv=>{
+    const bal=N(inv.totalUSD)-N(inv.paidAmount||0);
+    return `<tr>
+      <td style="font-weight:700;color:var(--navy)">${inv.number}</td>
+      <td>${inv.date}</td><td style="color:var(--gray-500)">${inv.dueDate||'—'}</td>
+      <td style="font-weight:700">${fmt(inv.totalUSD)}</td>
+      <td style="color:var(--green)">${fmt(inv.paidAmount||0)}</td>
+      <td class="${bal>0.01?'ar-pos':'ar-zero'}">${fmt(bal)}</td>
+      <td><span class="inv-s ${SC[inv.status]||'s-draft'}">${SL[inv.status]||inv.status}</span></td>
+      <td style="white-space:nowrap">
+        ${inv.status!=='paid'&&inv.status!=='cancelled'?`<button class="emp-action-btn" onclick="openPayInvoice('${inv.id}','sale')">💳</button>`:''}
+        <button class="emp-action-btn" onclick="editSaleInvoice('${inv.id}')">✏️</button>
+      </td>
+    </tr>`;
+  }).join('');
+  panel.style.display='block';
+  panel.className='detail-panel';
+  panel.innerHTML=`
+    <div class="detail-panel-head">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <h3 style="margin:0;font-size:18px">${c.name}</h3>
+          ${c.code?`<span class="cust-code">${c.code}</span>`:''}
+          <span class="tag ${c.active?'tag-active':'tag-inactive'}" style="font-size:11px">${c.active?'نشط':'متوقف'}</span>
+        </div>
+        <div class="detail-meta">
+          ${c.phone?`<span>📞 ${c.phone}</span>`:''}
+          ${c.email?`<span>✉️ ${c.email}</span>`:''}
+          ${c.address?`<span>📍 ${c.address}</span>`:''}
+          ${c.taxId?`<span>🏷️ الرقم الضريبي: ${c.taxId}</span>`:''}
+        </div>
+        <div style="margin-top:10px;display:flex;gap:20px;flex-wrap:wrap">
+          <div class="stat-card blue" style="padding:10px 16px;min-width:120px">
+            <div class="stat-label">إجمالي الفواتير</div>
+            <div class="stat-value" style="font-size:20px">${invs.length}</div>
+          </div>
+          <div class="stat-card red" style="padding:10px 16px;min-width:120px">
+            <div class="stat-label">الذمم المدينة</div>
+            <div class="stat-value r" style="font-size:20px">${fmt(ar)}</div>
+          </div>
+          <div class="stat-card green" style="padding:10px 16px;min-width:120px">
+            <div class="stat-label">المحصّل</div>
+            <div class="stat-value g" style="font-size:20px">${fmt(paidTotal)}</div>
+          </div>
+          ${c.creditLimit?`<div class="stat-card" style="padding:10px 16px;min-width:120px"><div class="stat-label">حد الائتمان</div><div class="stat-value" style="font-size:20px">${fmt(c.creditLimit)}</div></div>`:''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <button class="btn navy sm" onclick="openNewSaleInvForCust('${c.id}')">🧾 فاتورة جديدة</button>
+        <button class="btn ghost sm" onclick="editCustomer('${c.id}')">✏️ تعديل البيانات</button>
+        <button class="btn ghost sm" onclick="document.getElementById('cust-detail-panel').style.display='none';document.getElementById('cust-detail-panel').dataset.open=''">✕ إغلاق</button>
+      </div>
+    </div>
+    ${invs.length?`
+    <div style="font-weight:700;margin-bottom:10px;font-size:14px;color:var(--navy)">📋 سجل الفواتير (${invs.length})</div>
+    <div style="overflow-x:auto">
+      <table class="party-table">
+        <thead><tr><th>رقم الفاتورة</th><th>التاريخ</th><th>الاستحقاق</th><th>الإجمالي</th><th>المدفوع</th><th>الرصيد</th><th>الحالة</th><th>إجراء</th></tr></thead>
+        <tbody>${invRows}</tbody>
+      </table>
+    </div>`:
+    '<div style="text-align:center;padding:24px;color:var(--gray-400)">لا توجد فواتير لهذا العميل بعد.</div>'}
+    ${c.notes?`<div style="margin-top:12px;padding:10px 14px;background:var(--gray-50);border-radius:8px;font-size:13px;color:var(--gray-600)">📝 ${c.notes}</div>`:''}
+  `;
+}
+function viewInvoiceDetail(invId){
+  const panel=document.getElementById('inv-detail-panel');
+  if(!panel) return;
+  if(panel.dataset.open===invId&&panel.style.display!=='none'){
+    panel.style.display='none';panel.dataset.open='';return;
+  }
+  panel.dataset.open=invId;
+  const inv=(DB.get('salesInvoices')||[]).find(x=>x.id===invId);
+  if(!inv){panel.style.display='none';return;}
+  const SL={draft:'مسودة',confirmed:'مؤكدة',paid:'مدفوعة',partial:'جزئي',overdue:'متأخرة',cancelled:'ملغاة'};
+  const SC={draft:'s-draft',confirmed:'s-confirmed',paid:'s-paid',partial:'s-partial',overdue:'s-overdue',cancelled:'s-cancelled'};
+  const bal=N(inv.totalUSD)-N(inv.paidAmount||0);
+  const lineRows=(inv.items||[]).map(ln=>`
+    <tr>
+      <td>${ln.description||'—'}</td>
+      <td style="text-align:center">${N(ln.qty)}</td>
+      <td style="text-align:center">${ln.unit||'قطعة'}</td>
+      <td style="text-align:left;direction:ltr">${fmt(ln.unitPrice)}</td>
+      <td style="text-align:center">${ln.discount?ln.discount+'%':'—'}</td>
+      <td style="font-weight:700;text-align:left;direction:ltr;color:var(--navy)">${fmt(ln.total)}</td>
+    </tr>
+  `).join('');
+  panel.style.display='block';
+  panel.className='detail-panel';
+  panel.innerHTML=`
+    <div class="detail-panel-head">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <h3 style="margin:0;font-size:18px;color:var(--navy)">${inv.number}</h3>
+          <span class="inv-s ${SC[inv.status]||'s-draft'}" style="font-size:13px">${SL[inv.status]||inv.status}</span>
+        </div>
+        <div class="detail-meta" style="margin-top:8px">
+          <span>👤 ${inv.customerName}</span>
+          <span>📅 إصدار: ${inv.date}</span>
+          ${inv.dueDate?`<span>⏰ استحقاق: ${inv.dueDate}</span>`:''}
+          <span>💳 ${inv.paymentMethod||'آجل'}</span>
+          ${inv.notes?`<span>📝 ${inv.notes}</span>`:''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        ${inv.status!=='paid'&&inv.status!=='cancelled'?`<button class="btn navy sm" onclick="openPayInvoice('${inv.id}','sale')">💳 تحصيل</button>`:''}
+        ${inv.status==='draft'?`<button class="btn sm" style="background:var(--green);color:#fff" onclick="confirmSaleDraft('${inv.id}')">✅ تأكيد وإصدار</button>`:''}
+        <button class="btn ghost sm" onclick="editSaleInvoice('${inv.id}')">✏️ تعديل</button>
+        <button class="btn ghost sm" onclick="document.getElementById('inv-detail-panel').style.display='none';document.getElementById('inv-detail-panel').dataset.open=''">✕ إغلاق</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="inv-line-tbl">
+        <thead><tr>
+          <th style="width:40%">الوصف / المنتج</th>
+          <th style="width:8%;text-align:center">الكمية</th>
+          <th style="width:8%;text-align:center">الوحدة</th>
+          <th style="width:15%;text-align:left">سعر الوحدة</th>
+          <th style="width:10%;text-align:center">خصم %</th>
+          <th style="width:15%;text-align:left">الإجمالي</th>
+        </tr></thead>
+        <tbody>${lineRows}</tbody>
+      </table>
+    </div>
+    <div class="inv-totals-mini">
+      <div class="row"><span>المجموع الفرعي</span><span>${fmt(inv.subtotal||inv.totalUSD)}</span></div>
+      ${inv.discountAmount>0?`<div class="row"><span>خصم ${inv.discountRate}%</span><span style="color:var(--red)">− ${fmt(inv.discountAmount)}</span></div>`:''}
+      ${inv.taxAmount>0?`<div class="row"><span>ضريبة VAT ${inv.taxRate}%</span><span style="color:var(--blue)">+ ${fmt(inv.taxAmount)}</span></div>`:''}
+      <div class="row grand"><span>الإجمالي (USD)</span><span>${fmt(inv.totalUSD)}</span></div>
+      ${inv.paidAmount>0?`<div class="row"><span style="color:var(--green)">المدفوع</span><span style="color:var(--green)">${fmt(inv.paidAmount)}</span></div>`:''}
+      ${bal>0.01?`<div class="row" style="color:var(--red)"><span>الرصيد المستحق</span><span>${fmt(bal)}</span></div>`:''}
+    </div>
+  `;
+}
+function openNewSaleInvForCust(custId){
+  openNewSaleInv();
+  setTimeout(function(){
+    const sel=document.getElementById('sinv_cust');
+    if(sel){sel.value=custId;}
+  },120);
+}
+function confirmSaleDraft(invId){
+  if(!confirm('تأكيد هذه الفاتورة وإصدارها؟')) return;
+  const list=DB.get('salesInvoices')||[];
+  const inv=list.find(x=>x.id===invId);
+  if(!inv||inv.status!=='draft'){toast('الفاتورة ليست مسودة','err');return;}
+  inv.status='confirmed';
+  (inv.items||[]).forEach(function(ln){if(ln.productId)adjustStock(ln.productId,-ln.qty,'sale','فاتورة '+inv.number);});
+  DB.set('salesInvoices',list);
+  toast('✅ تم تأكيد الفاتورة: '+inv.number);
+  renderPage(curPage);
+}
 function getCustAR(custId){
   const invs=DB.get('salesInvoices')||[];
   return invs.filter(function(i){return i.customerId===custId&&i.status!=='cancelled'&&i.status!=='paid';})
