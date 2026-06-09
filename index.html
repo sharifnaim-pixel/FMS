@@ -393,6 +393,11 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 .stk-b-ok{background:#dcfce7;color:#16a34a}
 .stk-b-low{background:#fef9c3;color:#a16207}
 .stk-b-out{background:#fee2e2;color:#dc2626}
+.badge-stocked{background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.pos-prod-out{opacity:.45;filter:grayscale(.5)}
+.pos-prod-low .pos-prod-item-name::after{content:" ⚠️";font-size:10px}
+.badge-service{background:#ede9fe;color:#7c3aed;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.prod-card.service-type{border-top:3px solid #7c3aed}
 .stk-mov-in{color:var(--green);font-weight:700}
 .stk-mov-out{color:var(--red);font-weight:700}
 .stk-mov-adj{color:var(--gold);font-weight:700}
@@ -915,6 +920,15 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
         <div class="form-group"><label>السعر <span class="req">*</span></label><input type="number" id="prod_price" placeholder="0.00" min="0" step="0.01"></div>
         <div class="form-group"><label>العملة</label><select id="prod_curr"><option value="USD">دولار (USD)</option><option value="ILS">شيكل (ILS)</option><option value="EUR">يورو (EUR)</option></select></div>
         <div class="form-group"><label>وحدة القياس</label><input type="text" id="prod_unit" placeholder="مثال: قطعة، كغ، لتر..."></div>
+        <div class="form-group">
+          <label>نوع الصنف <span class="req">*</span></label>
+          <select id="prod_stocked" onchange="toggleProdStockedFields(this.value)">
+            <option value="yes">📦 مخزني (يتتبع المخزون)</option>
+            <option value="no">⚙️ خدمة / غير مخزني</option>
+          </select>
+        </div>
+        <div class="form-group" id="fg-prod-cost"><label>تكلفة الوحدة</label><input type="number" id="prod_cost" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="form-group" id="fg-prod-min"><label>الحد الأدنى للمخزون</label><input type="number" id="prod_min" placeholder="5" min="0" step="1"></div>
         <div class="form-group form-full"><label>الوصف</label><textarea id="prod_desc" placeholder="وصف المنتج..."></textarea></div>
         <div class="form-group form-full">
           <label>صورة المنتج</label>
@@ -2522,7 +2536,7 @@ function renderProducts(){
         const cat=cats.find(c=>c.id===p.categoryId);
         const priceDisplay=fmtCurr(p.price,p.currency||'USD');
         const priceUSD=(p.currency&&p.currency!=='USD')?('= '+fmt(toUSD(p.price,p.currency||'USD'))):'';
-        return `<div class="prod-card ${p.active?'':'inactive'}">
+        return `<div class="prod-card ${p.active?'':'inactive'}${p.stocked===false?' service-type':''}">
           ${p.image?`<img class="prod-card-img" src="${p.image}" alt="${p.name}">`:`<div class="prod-card-img-ph">📦</div>`}
           <div class="prod-card-head">
             <span class="prod-code">${p.code||'—'}</span>
@@ -2532,6 +2546,7 @@ function renderProducts(){
             <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">الفئة</span><span class="prod-cat-badge">${cat?cat.name:'—'}</span></div>
             <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">السعر</span><span class="prod-price">${priceDisplay}${priceUSD?' <small style="color:var(--gray-500);font-weight:400">'+priceUSD+'</small>':''}</span></div>
             <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">الوحدة</span><span style="font-weight:600">${p.unit||'-'}</span></div>
+            <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">النوع</span><span class="${p.stocked===false?'badge-service':'badge-stocked'}">${p.stocked===false?'⚙️ خدمة':'📦 مخزني'}</span></div>
             <div class="prod-info-row"><span style="color:var(--gray-500);font-size:11px">الحالة</span><span class="badge ${p.active?'active-badge':'inactive-badge'}">${p.active?'نشط':'غير نشط'}</span></div>
           </div>
           <div class="prod-card-foot">
@@ -2564,6 +2579,10 @@ function openAddProduct(){
   document.getElementById('prod_price').value='';
   document.getElementById('prod_curr').value='USD';
   document.getElementById('prod_desc').value='';
+  document.getElementById('prod_stocked').value='yes';
+  document.getElementById('prod_cost').value='';
+  document.getElementById('prod_min').value='5';
+  toggleProdStockedFields('yes');
   clearProdImg();
   fillProdCatSelect();
   openOvl('ovl-product');
@@ -2581,10 +2600,22 @@ function editProduct(id){
   document.getElementById('prod_desc').value=p.description||'';
   if(p.image){setProdImgPreview(p.image);}else{clearProdImg();}
   fillProdCatSelect(p.categoryId);
+  const stVal=p.stocked===false?'no':'yes';
+  document.getElementById('prod_stocked').value=stVal;
+  document.getElementById('prod_cost').value=p.costPrice||'';
+  document.getElementById('prod_min').value=p.minStock||'5';
+  toggleProdStockedFields(stVal);
   openOvl('ovl-product');
   setTimeout(()=>{ const el=document.getElementById('prod_curr'); if(el) el.value=p.currency||'USD'; },60);
 }
 
+function toggleProdStockedFields(val){
+  const show=val!=='no';
+  ['fg-prod-cost','fg-prod-min'].forEach(function(id){
+    const el=document.getElementById(id);
+    if(el) el.style.display=show?'':'none';
+  });
+}
 function fillProdCatSelect(selectedId=''){
   const cats=getProdCategories();
   const sel=document.getElementById('prod_cat');
@@ -2636,7 +2667,8 @@ function saveProduct(){
   if(!name||!price||price<=0||!catId){toast('يرجى إدخال الاسم والسعر والفئة','err');return;}
   const cats=getProdCategories();const cat=cats.find(c=>c.id===catId);
   const imgEl=document.getElementById('prod_img_preview');const imgData=imgEl&&imgEl.style.display!=='none'?imgEl.src:'';
-  const prodData={id:editId||uid(),code:document.getElementById('prod_code').value.trim(),name,categoryId:catId,categoryName:cat?cat.name:'',price,currency:document.getElementById('prod_curr').value||'USD',unit:document.getElementById('prod_unit').value.trim(),description:document.getElementById('prod_desc').value.trim(),image:imgData,active:true};
+  const isStocked=document.getElementById('prod_stocked').value!=='no';
+  const prodData={id:editId||uid(),code:document.getElementById('prod_code').value.trim(),name,categoryId:catId,categoryName:cat?cat.name:'',price,currency:document.getElementById('prod_curr').value||'USD',unit:document.getElementById('prod_unit').value.trim(),description:document.getElementById('prod_desc').value.trim(),image:imgData,active:true,stocked:isStocked,costPrice:isStocked?parseFloat(document.getElementById('prod_cost').value)||0:0,minStock:isStocked?parseInt(document.getElementById('prod_min').value)||5:0};
   const prods=DB.get('products')||[];
   if(editId){const i=prods.findIndex(p=>p.id===editId);if(i>=0){prods[i]={...prods[i],...prodData};}else prods.push(prodData);toast(`✅ تم تحديث المنتج: ${name}`);}
   else{prods.push(prodData);toast(`✅ تمت إضافة المنتج: ${name}`);}
@@ -2672,12 +2704,22 @@ function renderCashier(){
   const catChips='<button class="cat-chip active" id="cat-chip-all" onclick="filterPosProducts(\'\',this)">الكل ('+prods.length+')</button>'+
     cats.map(c=>`<button class="cat-chip" id="cat-chip-${c.id}" onclick="filterPosProducts('${c.id}',this)">${c.name} (${prods.filter(p=>p.categoryId===c.id).length})</button>`).join('');
 
-  const prodItems=prods.map(p=>`<div class="pos-prod-item" data-cat="${p.categoryId}" onclick="addToCart('${p.id}')">
-    ${p.image?`<img class="pos-prod-img" src="${p.image}" alt="${p.name}" loading="lazy">`:`<div class="pos-prod-img-placeholder">📦</div>`}
-    <div class="pos-prod-item-name">${p.name}</div>
-    <div class="pos-prod-item-price">${fmtCurr(p.price,p.currency||'USD')}</div>
-    <div class="pos-prod-item-unit">${p.unit||'قطعة'}</div>
-  </div>`).join('');
+  const prodItems=prods.map(p=>{
+    const stk=p.stocked===false?null:getProductStock(p.id);
+    const stkCls=stk===null?'':(stk<=0?'pos-prod-out':stk<=(p.minStock||5)?'pos-prod-low':'');
+    const stkBadge=stk===null?`<span style="font-size:10px;color:#7c3aed;font-weight:700">⚙️ خدمة</span>`:
+      stk<=0?`<span style="font-size:10px;color:var(--red);font-weight:700">نفد</span>`:
+      `<span style="font-size:10px;color:${stk<=(p.minStock||5)?'var(--gold)':'var(--green)'}">${stk} متاح</span>`;
+    return `<div class="pos-prod-item ${stkCls}" data-cat="${p.categoryId}" onclick="addToCart('${p.id}')">
+      ${p.image?`<img class="pos-prod-img" src="${p.image}" alt="${p.name}" loading="lazy">`:`<div class="pos-prod-img-placeholder">${p.stocked===false?'⚙️':'📦'}</div>`}
+      <div class="pos-prod-item-name">${p.name}</div>
+      <div class="pos-prod-item-price">${fmtCurr(p.price,p.currency||'USD')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div class="pos-prod-item-unit">${p.unit||'قطعة'}</div>
+        ${stkBadge}
+      </div>
+    </div>`;
+  }).join('');
 
   const accOpts=accs.map(a=>`<option value="${a.id}">${a.code} - ${a.name}</option>`).join('');
 
@@ -2736,10 +2778,13 @@ function renderCashier(){
 }
 
 function addToCart(productId){
-  const stk=getProductStock(productId);
-  const inCart=(CART.find(c=>c.productId===productId)||{qty:0}).qty;
-  if(stk-inCart<=0){toast('⚠️ هذا المنتج نفد من المخزون','err');return;}
-  if(stk-inCart<=3){toast('⚠️ تنبيه: المخزون المتبقي '+(stk-inCart)+' وحدة','warn');}
+  const _cartProd=(DB.get('products')||[]).find(function(x){return x.id===productId;});
+  if(!_cartProd||_cartProd.stocked!==false){
+    const stk=getProductStock(productId);
+    const inCart=(CART.find(c=>c.productId===productId)||{qty:0}).qty;
+    if(stk-inCart<=0){toast('⚠️ هذا المنتج نفد من المخزون','err');return;}
+    if(stk-inCart<=3){toast('⚠️ تنبيه: المخزون المتبقي '+(stk-inCart)+' وحدة','warn');}
+  }
 
   const prods=DB.get('products')||[];const p=prods.find(x=>x.id===productId);if(!p)return;
   const existing=CART.find(c=>c.productId===productId);
@@ -3096,16 +3141,18 @@ function renderInventory(){
   const tab=window._invStockTab||'stock';
   const prods=DB.get('products')||[];
   const active=prods.filter(p=>p.active);
+  const stocked=active.filter(p=>p.stocked!==false);
+  const services=active.filter(p=>p.stocked===false);
   const cats=getProdCategories();
   const catFlt=window._invCatFlt||'';
   const srch=(window._invStockSrch||'').trim().toLowerCase();
   const movs=DB.get('stockMovements')||[];
   // stats
-  const lowStock=active.filter(p=>{const s=getProductStock(p.id);return s>0&&s<=(p.minStock||5);});
-  const outStock=active.filter(p=>getProductStock(p.id)<=0);
-  const totalValue=active.reduce(function(s,p){return s+getProductStock(p.id)*getAvgCost(p.id);},0);
-  // filter list
-  let list=active.slice();
+  const lowStock=stocked.filter(p=>{const s=getProductStock(p.id);return s>0&&s<=(p.minStock||5);});
+  const outStock=stocked.filter(p=>getProductStock(p.id)<=0);
+  const totalValue=stocked.reduce(function(s,p){return s+getProductStock(p.id)*getAvgCost(p.id);},0);
+  // filter list (inventory tab only shows stocked products)
+  let list=stocked.slice();
   if(catFlt) list=list.filter(p=>p.categoryId===catFlt);
   if(srch) list=list.filter(p=>(p.name||'').toLowerCase().includes(srch)||(p.code||'').toLowerCase().includes(srch));
   // product rows
@@ -3179,7 +3226,7 @@ function renderInventory(){
   document.getElementById('page-inventory').innerHTML=`
     <div class="sec-title"><h2>📦 إدارة المخزون</h2><span class="pill">مراقبة المخزون</span></div>
     <div class="stats-grid">
-      <div class="stat-card blue"><div class="stat-label">المنتجات النشطة</div><div class="stat-value">${active.length}</div></div>
+      <div class="stat-card blue"><div class="stat-label">أصناف مخزنية</div><div class="stat-value">${stocked.length}</div></div>
       <div class="stat-card green"><div class="stat-label">قيمة المخزون الإجمالية</div><div class="stat-value g">${fmt(totalValue)}</div></div>
       <div class="stat-card gold"><div class="stat-label">⚠️ مخزون منخفض</div><div class="stat-value gold">${lowStock.length}</div></div>
       <div class="stat-card red"><div class="stat-label">❌ نفد المخزون</div><div class="stat-value r">${outStock.length}</div></div>
@@ -3190,6 +3237,10 @@ function renderInventory(){
       ${outStock.length?`<strong>${outStock.length} منتج نفد مخزونه تماماً</strong>`:''}
       ${outStock.length&&lowStock.length?' — ':''}
       ${lowStock.length?`<span>${lowStock.length} منتج مخزونه منخفض: ${lowStock.slice(0,3).map(p=>p.name).join('، ')}${lowStock.length>3?'...':''}</span>`:''}
+    </div>`:''}
+    ${services.length?`<div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:10px;padding:10px 16px;margin-bottom:12px;font-size:13px;color:#5b21b6;display:flex;align-items:center;gap:10px">
+      ⚙️ <strong>${services.length} صنف خدمي/غير مخزني</strong> — هذه الأصناف لا يتم تتبع مخزونها ولا تظهر في قائمة المخزون.
+      &nbsp;<button class="btn ghost sm" onclick="navTo('products',document.querySelector('[data-page=products]'))">عرض جميع المنتجات ←</button>
     </div>`:''}
     <div class="inv-tabs">
       <button class="inv-tab ${tab==='stock'?'active':''}" onclick="window._invStockTab='stock';renderInventory()">📦 مستوى المخزون (${active.length})</button>
@@ -3961,6 +4012,8 @@ function getProductStock(productId){
 }
 function adjustStock(productId,qty,type,reason,opts){
   if(!productId)return;
+  const _p=(DB.get('products')||[]).find(function(x){return x.id===productId;});
+  if(_p&&_p.stocked===false)return;
   const movs=DB.get('stockMovements')||[];
   movs.push({
     id:uid(),
