@@ -34,6 +34,34 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 .quick-btn.qb-gold{background:rgba(184,133,30,.35);border-color:rgba(232,184,75,.4)}.quick-btn.qb-gold:hover{background:rgba(184,133,30,.6)}
 .quick-btn.qb-teal{background:rgba(15,118,110,.35);border-color:rgba(20,184,166,.4)}.quick-btn.qb-teal:hover{background:rgba(15,118,110,.6)}
 @media(max-width:960px){.quick-btns{display:none}}
+/* ══ DROPDOWN NAV ══ */
+.nav-wrap{flex-wrap:nowrap;align-items:stretch;padding:0 12px}
+.nav-group{position:relative;display:inline-flex;align-items:stretch}
+.nav-group-btn{padding:0 16px;font-size:13px;font-weight:700;border:none;background:transparent;cursor:pointer;color:var(--gray-500);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:'Cairo',sans-serif;transition:.15s;display:flex;align-items:center;gap:6px;height:100%}
+.nav-group-btn:hover{color:var(--navy);background:var(--gray-50)}
+.nav-group-btn.has-active{color:var(--navy);border-bottom-color:var(--gold)}
+.nav-group-btn.dropdown-open{color:var(--navy);background:var(--gray-50)}
+.nav-caret{font-size:9px;opacity:.6;transition:transform .2s}
+.nav-group-btn.dropdown-open .nav-caret{transform:rotate(180deg)}
+.nav-dropdown{position:absolute;top:calc(100% + 2px);right:0;min-width:210px;background:#fff;border:1px solid var(--gray-200);border-radius:10px;box-shadow:0 8px 28px rgba(15,32,68,.13);z-index:200;display:none;flex-direction:column;padding:6px;overflow:hidden}
+.nav-dropdown.open{display:flex}
+.nav-dd-item{padding:10px 14px;font-size:13px;font-weight:600;border:none;background:transparent;cursor:pointer;color:var(--gray-700);font-family:'Cairo',sans-serif;border-radius:7px;text-align:right;display:flex;align-items:center;gap:9px;transition:.12s;white-space:nowrap}
+.nav-dd-item:hover{background:var(--gray-50);color:var(--navy)}
+.nav-dd-item.active{background:var(--navy);color:#fff}
+.nav-dd-item.active .soon-badge{background:rgba(255,255,255,.25);color:#fff}
+.nav-dd-sep{height:1px;background:var(--gray-100);margin:4px 0}
+.soon-badge{font-size:10px;background:var(--gold-pale);color:#b45309;border:1px solid #f0d98a;border-radius:20px;padding:1px 7px;font-weight:700;margin-right:auto}
+/* stub page */
+.stub-wrap{max-width:700px;margin:60px auto;text-align:center;padding:40px 32px;background:#fff;border-radius:16px;box-shadow:var(--shadow);border:1px solid var(--gray-100)}
+.stub-icon{font-size:60px;margin-bottom:18px}
+.stub-title{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:8px}
+.stub-desc{font-size:14px;color:var(--gray-500);margin-bottom:28px;line-height:1.8}
+.stub-features{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:right;margin-bottom:28px}
+.stub-feat{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--gray-50);border-radius:8px;border:1px solid var(--gray-100)}
+.stub-feat-icon{font-size:18px;flex-shrink:0}
+.stub-feat-text{font-size:12.5px;color:var(--gray-700);line-height:1.6}
+.stub-feat-title{font-weight:700;color:var(--navy);font-size:13px}
+.stub-ribbon{display:inline-flex;align-items:center;gap:8px;background:var(--gold-pale);border:1.5px solid #f0d98a;color:#b45309;font-size:13px;font-weight:700;padding:9px 22px;border-radius:30px}
 /* ══ SETTINGS ══ */
 .settings-wrap{max-width:780px;margin:0 auto}
 .settings-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 26px;margin-bottom:16px}
@@ -396,19 +424,78 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
   </div>
 </div>
 
-<div class="nav-wrap">
-  <button class="tab-btn active" onclick="showTab('balances',this)" data-page="balances">📊 الأرصدة</button>
-  <button class="tab-btn" onclick="showTab('accounts',this)" data-page="accounts">📒 الحسابات</button>
-  <button class="tab-btn" onclick="showTab('expenses',this)" data-page="expenses">💸 المصاريف</button>
-  <button class="tab-btn" onclick="showTab('revenues',this)" data-page="revenues">💰 الإيرادات</button>
-  <button class="tab-btn" onclick="showTab('assets',this)" data-page="assets">🏗️ الأصول</button>
-  <button class="tab-btn" onclick="showTab('hr',this)" data-page="hr">👥 إدارة الموظفين</button>
-  <button class="tab-btn" id="admin-tab" onclick="showTab('admin',this)" data-page="admin">🔐 إدارة المستخدمين</button>
-  <button class="tab-btn" onclick="showTab('summary',this)" data-page="summary">📋 الميزانية</button>
-  <button class="tab-btn" onclick="showTab('vouchers',this)" data-page="vouchers">🧾 السندات</button>
-  <button class="tab-btn" onclick="showTab('products',this)" data-page="products">📦 المنتجات</button>
-  <button class="tab-btn" onclick="showTab('cashier',this)" data-page="cashier">🛒 الكاشير</button>
-  <button class="tab-btn" onclick="showTab('settings',this)" data-page="settings">⚙️ الإعدادات</button>
+<div class="nav-wrap" id="main-nav">
+
+  <!-- ① المحاسبة -->
+  <div class="nav-group" id="ng-accounting">
+    <button class="nav-group-btn has-active" onclick="toggleNavGroup('ng-accounting')">📊 المحاسبة <span class="nav-caret">▾</span></button>
+    <div class="nav-dropdown" id="nd-accounting">
+      <button class="nav-dd-item active" onclick="navTo('balances',this)" data-page="balances">📊 الأرصدة</button>
+      <button class="nav-dd-item" onclick="navTo('accounts',this)" data-page="accounts">📒 شجرة الحسابات</button>
+      <button class="nav-dd-item" onclick="navTo('vouchers',this)" data-page="vouchers">🧾 السندات</button>
+      <button class="nav-dd-item" onclick="navTo('summary',this)" data-page="summary">📋 الميزانية العمومية</button>
+      <div class="nav-dd-sep"></div>
+      <button class="nav-dd-item" onclick="navTo('journal',this)" data-page="journal">📖 دفتر اليومية <span class="soon-badge">قريباً</span></button>
+      <button class="nav-dd-item" onclick="navTo('reports',this)" data-page="reports">📈 التقارير المالية <span class="soon-badge">قريباً</span></button>
+    </div>
+  </div>
+
+  <!-- ② الإيرادات والمصروفات -->
+  <div class="nav-group" id="ng-income">
+    <button class="nav-group-btn" onclick="toggleNavGroup('ng-income')">💸 الإيرادات والمصروفات <span class="nav-caret">▾</span></button>
+    <div class="nav-dropdown" id="nd-income">
+      <button class="nav-dd-item" onclick="navTo('revenues',this)" data-page="revenues">💰 الإيرادات</button>
+      <button class="nav-dd-item" onclick="navTo('expenses',this)" data-page="expenses">💸 المصاريف</button>
+    </div>
+  </div>
+
+  <!-- ③ المبيعات -->
+  <div class="nav-group" id="ng-sales">
+    <button class="nav-group-btn" onclick="toggleNavGroup('ng-sales')">🛒 المبيعات <span class="nav-caret">▾</span></button>
+    <div class="nav-dropdown" id="nd-sales">
+      <button class="nav-dd-item" onclick="navTo('cashier',this)" data-page="cashier">🛒 الكاشير / POS</button>
+      <button class="nav-dd-item" onclick="navTo('products',this)" data-page="products">📦 المنتجات</button>
+      <div class="nav-dd-sep"></div>
+      <button class="nav-dd-item" onclick="navTo('customers',this)" data-page="customers">👤 العملاء <span class="soon-badge">قريباً</span></button>
+      <button class="nav-dd-item" onclick="navTo('invoices',this)" data-page="invoices">🧾 فواتير المبيعات <span class="soon-badge">قريباً</span></button>
+    </div>
+  </div>
+
+  <!-- ④ المشتريات -->
+  <div class="nav-group" id="ng-purchase">
+    <button class="nav-group-btn" onclick="toggleNavGroup('ng-purchase')">📥 المشتريات <span class="nav-caret">▾</span></button>
+    <div class="nav-dropdown" id="nd-purchase">
+      <button class="nav-dd-item" onclick="navTo('suppliers',this)" data-page="suppliers">🏭 الموردون <span class="soon-badge">قريباً</span></button>
+      <button class="nav-dd-item" onclick="navTo('purchases',this)" data-page="purchases">📥 فواتير المشتريات <span class="soon-badge">قريباً</span></button>
+    </div>
+  </div>
+
+  <!-- ⑤ الأصول والمخزون -->
+  <div class="nav-group" id="ng-assets">
+    <button class="nav-group-btn" onclick="toggleNavGroup('ng-assets')">🏗️ الأصول والمخزون <span class="nav-caret">▾</span></button>
+    <div class="nav-dropdown" id="nd-assets">
+      <button class="nav-dd-item" onclick="navTo('assets',this)" data-page="assets">🏗️ الأصول الثابتة</button>
+      <button class="nav-dd-item" onclick="navTo('inventory',this)" data-page="inventory">📦 المخزون <span class="soon-badge">قريباً</span></button>
+    </div>
+  </div>
+
+  <!-- ⑥ الموارد البشرية -->
+  <div class="nav-group" id="ng-hr">
+    <button class="nav-group-btn" onclick="toggleNavGroup('ng-hr')">👥 الموارد البشرية <span class="nav-caret">▾</span></button>
+    <div class="nav-dropdown" id="nd-hr">
+      <button class="nav-dd-item" onclick="navTo('hr',this)" data-page="hr">👥 الموظفون والرواتب</button>
+    </div>
+  </div>
+
+  <!-- ⑦ الإدارة -->
+  <div class="nav-group" id="ng-admin">
+    <button class="nav-group-btn" onclick="toggleNavGroup('ng-admin')" id="admin-tab">⚙️ الإدارة <span class="nav-caret">▾</span></button>
+    <div class="nav-dropdown" id="nd-admin">
+      <button class="nav-dd-item" onclick="navTo('admin',this)" data-page="admin" id="admin-tab-item">🔐 المستخدمون والصلاحيات</button>
+      <button class="nav-dd-item" onclick="navTo('settings',this)" data-page="settings">⚙️ إعدادات النظام</button>
+    </div>
+  </div>
+
 </div>
 
 <div class="page active" id="page-balances"></div>
@@ -423,6 +510,13 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 <div class="page" id="page-settings"></div>
 <div class="page" id="page-products"></div>
 <div class="page" id="page-cashier"></div>
+<div class="page" id="page-journal"></div>
+<div class="page" id="page-reports"></div>
+<div class="page" id="page-customers"></div>
+<div class="page" id="page-invoices"></div>
+<div class="page" id="page-suppliers"></div>
+<div class="page" id="page-purchases"></div>
+<div class="page" id="page-inventory"></div>
 <div id="print-area"></div>
 
 <!-- ═══════════ MODALS ═══════════ -->
@@ -853,6 +947,13 @@ const PAGES_CONFIG = [
   {id:'products', label:'📦 المنتجات',  ops:['view','add','edit','delete']},
   {id:'cashier',  label:'🛒 الكاشير',    ops:['view','add']},
   {id:'admin',    label:'🔐 المستخدمون', ops:['view','add','edit','delete']},
+  {id:'journal',   label:'📖 دفتر اليومية',       ops:['view','add']},
+  {id:'reports',   label:'📈 التقارير المالية',    ops:['view']},
+  {id:'customers', label:'👤 العملاء',             ops:['view','add','edit','delete']},
+  {id:'invoices',  label:'🧾 فواتير المبيعات',    ops:['view','add','delete']},
+  {id:'suppliers', label:'🏭 الموردون',            ops:['view','add','edit','delete']},
+  {id:'purchases', label:'📥 المشتريات',           ops:['view','add','delete']},
+  {id:'inventory', label:'📦 المخزون',             ops:['view','add','edit','delete']},
 ];
 const OP_LABELS = {view:'عرض', add:'إضافة', edit:'تعديل', delete:'حذف'};
 
@@ -925,17 +1026,23 @@ function doLogout(){
 }
 
 function buildNavVisibility(){
-  document.querySelectorAll('.tab-btn').forEach(btn=>{
+  document.querySelectorAll('.nav-dd-item[data-page]').forEach(btn=>{
     const page=btn.getAttribute('data-page');
     if(page && !canView(page)) btn.style.display='none';
     else btn.style.display='';
+  });
+  // hide entire group if all items hidden
+  document.querySelectorAll('.nav-group').forEach(grp=>{
+    const items=grp.querySelectorAll('.nav-dd-item[data-page]');
+    const allHidden=[...items].every(b=>b.style.display==='none');
+    grp.style.display=allHidden?'none':'';
   });
 }
 
 function goAdminPanel(){
   if(!canView('admin')){ toast('ليس لديك صلاحية الوصول لهذا القسم','err'); return; }
-  const btn = document.querySelector('#admin-tab');
-  if(btn) showTab('admin', btn);
+  const btn = document.querySelector('#admin-tab-item');
+  if(btn) navTo('admin', btn);
 }
 
 function init(){
@@ -947,13 +1054,11 @@ function init(){
   if(changed) DB.set('accounts',accs);
   applySettingsUI();
   // Navigate to first visible page
-  const pages=['balances','accounts','expenses','revenues','assets','hr','summary','products','cashier'];
+  const pages=['balances','accounts','expenses','revenues','assets','hr','summary','vouchers','products','cashier','journal','reports','customers','invoices','suppliers','purchases','inventory','settings','admin'];
   const first = pages.find(p=>canView(p))||'balances';
-  const btns = document.querySelectorAll('.tab-btn');
-  const pageIdx = {balances:0,accounts:1,expenses:2,revenues:3,assets:4,hr:5,admin:6,summary:7};
-  btns.forEach(b=>b.classList.remove('active'));
-  if(btns[pageIdx[first]]) btns[pageIdx[first]].classList.add('active');
-  renderPage(first);
+  const firstBtn = document.querySelector(`.nav-dd-item[data-page="${first}"]`);
+  navTo(first, firstBtn);
+  document.addEventListener('click',function(e){if(!e.target.closest('.nav-group')){document.querySelectorAll('.nav-dropdown').forEach(d=>d.classList.remove('open'));document.querySelectorAll('.nav-group-btn').forEach(b=>b.classList.remove('dropdown-open'));}});
 }
 
 // ══════════════════════════════════════════════
@@ -1142,11 +1247,18 @@ function getMonthOptions(selectedKey=''){
 // NAVIGATION
 // ══════════════════════════════════════════════
 let curPage='balances';
-function showTab(page,btn){
+function showTab(page,btn){ navTo(page,btn); }
+function navTo(page,btn){
   if(!canView(page)){ toast('ليس لديك صلاحية الوصول لهذا القسم','err'); return; }
   curPage=page;
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  // deactivate all items
+  document.querySelectorAll('.tab-btn,.nav-dd-item').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-group-btn').forEach(b=>b.classList.remove('has-active'));
+  // activate clicked item + parent group
+  if(btn){ btn.classList.add('active'); const grp=btn.closest?.('.nav-group'); if(grp) grp.querySelector?.('.nav-group-btn')?.classList.add('has-active'); }
+  // close all dropdowns
+  document.querySelectorAll('.nav-dropdown').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.nav-group-btn').forEach(b=>b.classList.remove('dropdown-open'));
   renderPage(page);
 }
 function renderPage(page){
@@ -1157,7 +1269,7 @@ function renderPage(page){
     if(pageEl) pageEl.innerHTML=`<div class="no-access"><div class="no-access-icon">🔒</div><div class="no-access-msg">ليس لديك صلاحية الوصول</div><div class="no-access-sub">تواصل مع مدير النظام</div></div>`;
     return;
   }
-  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary,vouchers:renderVouchers,settings:renderSettings,products:renderProducts,cashier:renderCashier})[page]?.();
+  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary,vouchers:renderVouchers,settings:renderSettings,products:renderProducts,cashier:renderCashier,journal:renderJournal,reports:renderReports,customers:renderCustomers,invoices:renderInvoices,suppliers:renderSuppliers,purchases:renderPurchases,inventory:renderInventory})[page]?.();
 }
 
 // ══════════════════════════════════════════════
@@ -2375,6 +2487,34 @@ function completeSale(){
   CART=[];renderCashier();
 }
 
+
+
+// ══════════════════════════════════════════════
+// DROPDOWN NAV TOGGLE
+// ══════════════════════════════════════════════
+function toggleNavGroup(id){
+  const ng=document.getElementById(id);if(!ng)return;
+  const dd=ng.querySelector('.nav-dropdown');
+  const isOpen=dd.classList.contains('open');
+  document.querySelectorAll('.nav-dropdown').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.nav-group-btn').forEach(b=>b.classList.remove('dropdown-open'));
+  if(!isOpen){dd.classList.add('open');ng.querySelector('.nav-group-btn').classList.add('dropdown-open');}
+}
+
+// ══════════════════════════════════════════════
+// STUB PAGE RENDERER
+// ══════════════════════════════════════════════
+function renderStub(page,icon,title,desc,features){
+  const featHtml=features.map(f=>'<div class="stub-feat"><div class="stub-feat-icon">'+f[0]+'</div><div class="stub-feat-text"><div class="stub-feat-title">'+f[1]+'</div>'+f[2]+'</div></div>').join('');
+  document.getElementById('page-'+page).innerHTML='<div class="stub-wrap"><div class="stub-icon">'+icon+'</div><div class="stub-title">'+title+'</div><div class="stub-desc">'+desc+'</div><div class="stub-features">'+featHtml+'</div><div class="stub-ribbon">⏳ هذه الوحدة قيد التطوير وستكون متاحة قريباً</div></div>';
+}
+function renderJournal(){renderStub('journal','📖','دفتر اليومية','سجّل وراجع القيود المحاسبية المزدوجة لجميع العمليات المالية بالتفصيل',[['✍️','إدخال القيود','إنشاء وتعديل قيود يومية مزدوجة الطرفين'],['🔍','البحث والتصفية','البحث حسب التاريخ والحساب ونوع القيد'],['✅','الاعتماد والمراجعة','نظام موافقة متعدد المستويات للقيود'],['📤','تصدير PDF','طباعة وتصدير القيود بصيغة PDF وExcel']]);}
+function renderReports(){renderStub('reports','📈','التقارير المالية','مجموعة كاملة من القوائم والتقارير المالية المعيارية وفق المعايير المحاسبية',[['📋','قائمة الدخل','الإيرادات والمصروفات وصافي الربح'],['🏦','الميزانية العمومية','الأصول والخصوم وحقوق الملكية'],['💧','التدفق النقدي','تقرير التدفقات النقدية التشغيلية والاستثمارية'],['📊','تقارير مخصصة','تقارير قابلة للتخصيص حسب الفترة والحساب']]);}
+function renderCustomers(){renderStub('customers','👤','إدارة العملاء','قاعدة بيانات كاملة لعملائك مع تتبع المعاملات والأرصدة والمديونيات',[['➕','إضافة العملاء','بطاقة كاملة: بيانات التواصل والعنوان والمعرّف الضريبي'],['💳','الرصيد والمديونية','تتبع الأرصدة الدائنة والمبالغ المستحقة لكل عميل'],['📜','سجل المعاملات','عرض جميع الفواتير والمدفوعات لكل عميل'],['📱','الإشعارات','تنبيهات تلقائية عند اقتراب مواعيد الاستحقاق']]);}
+function renderInvoices(){renderStub('invoices','🧾','فواتير المبيعات','إصدار وإدارة فواتير المبيعات التفصيلية مع متابعة حالة التحصيل',[['📄','إصدار فاتورة','فاتورة تفصيلية متعددة البنود مع الضرائب والخصومات'],['📦','ربط بالمخزون','خصم المبيعات تلقائياً من المخزون عند إصدار الفاتورة'],['💰','حالة التحصيل','متابعة: مدفوعة / مدفوعة جزئياً / متأخرة'],['🖨️','طباعة وإرسال','طباعة PDF أو إرسال الفاتورة مباشرةً للعميل']]);}
+function renderSuppliers(){renderStub('suppliers','🏭','الموردون','إدارة كاملة لقائمة مورديك مع متابعة المشتريات والمدفوعات والعقود',[['🗂️','بطاقة المورد','بيانات الاتصال والمعرف الضريبي والحسابات البنكية'],['📊','تحليل المشتريات','مقارنة الأسعار والأداء والمشتريات عبر الزمن'],['💸','الحسابات المستحقة','تتبع المبالغ المستحقة وجدول الدفعات'],['📋','العقود والاتفاقيات','حفظ شروط التوريد والأسعار المتفق عليها']]);}
+function renderPurchases(){renderStub('purchases','📥','فواتير المشتريات','استقبال فواتير الموردين وتسجيل المشتريات وربطها بالمخزون والحسابات',[['📄','تسجيل الفاتورة','استلام فواتير الموردين وربطها بأوامر الشراء'],['📦','تحديث المخزون','إضافة الكميات المشتراة إلى المخزون تلقائياً'],['✅','الموافقة والاعتماد','سير عمل للموافقة قبل الدفع'],['💳','تسجيل المدفوعات','ربط المدفوعات بالفواتير ومتابعة الأرصدة المستحقة']]);}
+function renderInventory(){renderStub('inventory','📦','إدارة المخزون','نظام متكامل لتتبع الكميات والحركات والتنبيه عند نقص المخزون',[['📊','لوحة المخزون','عرض الكميات المتاحة لكل منتج في الوقت الفعلي'],['🔄','حركات المخزون','تسجيل الاستلام والصرف والتحويل والإتلاف'],['⚠️','تنبيهات النقص','إشعار تلقائي عند وصول الكمية لحد الطلب الأدنى'],['📑','تقارير الجرد','جرد دوري وتقارير الفروقات وتقييم قيمة المخزون']]);}
 
 function exportExcel(){
   const btn=document.getElementById('exportBtn');
