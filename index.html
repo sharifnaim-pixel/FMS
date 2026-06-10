@@ -511,6 +511,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
   </div>
   <div class="quick-btns">
     <button class="quick-btn qb-purple" onclick="showTab('cashier',document.querySelector('[data-page=cashier]'))">🛒 الكاشير</button>
+    <button class="quick-btn" style="background:rgba(184,133,30,.18);color:var(--gold-light,#e8b84b);border:1px solid rgba(184,133,30,.3)" onclick="window.open('store.html','_blank')">🛍️ المتجر</button>
     <button class="quick-btn qb-red" onclick="openOvl('ovl-expense')">💸 سند مصروفات</button>
     <button class="quick-btn qb-green" onclick="openOvl('ovl-revenue')">💰 إيراد جديد</button>
     <button class="quick-btn qb-gold" onclick="openOvl('ovl-receipt')">🧾 سند قبض</button>
@@ -569,6 +570,8 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
       <div class="nav-dd-sep"></div>
       <button class="nav-dd-item" onclick="navTo('customers',this)" data-page="customers">👤 العملاء <span class="soon-badge">قريباً</span></button>
       <button class="nav-dd-item" onclick="navTo('invoices',this)" data-page="invoices">🧾 فواتير المبيعات <span class="soon-badge">قريباً</span></button>
+      <div class="nav-dd-sep"></div>
+      <button class="nav-dd-item" onclick="navTo('store-orders',this)" data-page="store-orders">🛍️ طلبات المتجر <span id="store-new-badge" style="display:none;background:var(--red-light);color:#fff;border-radius:20px;padding:1px 7px;font-size:10px;font-weight:700;vertical-align:middle"></span></button>
     </div>
   </div>
 
@@ -607,6 +610,9 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
     </div>
   </div>
 
+  <!-- ── زر المتجر المباشر ── -->
+  <button class="nav-group-btn" onclick="window.open('store.html','_blank')" style="background:linear-gradient(135deg,var(--gold),#a06818);color:#fff;margin:6px 8px;border-radius:8px;justify-content:center;gap:8px;font-weight:700">🛍️ فتح المتجر <span style="font-size:10px;opacity:.8">↗</span></button>
+
 </div>
 
 <div class="page active" id="page-balances"></div>
@@ -628,6 +634,7 @@ body{font-family:'Cairo',sans-serif;background:#f1f5f9;color:var(--text);min-hei
 <div class="page" id="page-suppliers"></div>
 <div class="page" id="page-purchases"></div>
 <div class="page" id="page-inventory"></div>
+<div class="page" id="page-store-orders"></div>
 <div id="print-area"></div>
 
 <!-- ═══════════ MODALS ═══════════ -->
@@ -1274,7 +1281,8 @@ const PAGES_CONFIG = [
   {id:'invoices',  label:'🧾 فواتير المبيعات',    ops:['view','add','delete']},
   {id:'suppliers', label:'🏭 الموردون',            ops:['view','add','edit','delete']},
   {id:'purchases', label:'📥 المشتريات',           ops:['view','add','delete']},
-  {id:'inventory', label:'📦 المخزون',             ops:['view','add','edit','delete']},
+  {id:'inventory',     label:'📦 المخزون',             ops:['view','add','edit','delete']},
+  {id:'store-orders',  label:'🛍️ طلبات المتجر',     ops:['view','edit','delete']},
 ];
 const OP_LABELS = {view:'عرض', add:'إضافة', edit:'تعديل', delete:'حذف'};
 
@@ -1374,8 +1382,9 @@ function init(){
   CURRENCY_ACCOUNTS.forEach(ca=>{if(!accs.find(a=>a.id===ca.id||a.code===ca.code)){accs.push(ca);changed=true;}});
   if(changed) DB.set('accounts',accs);
   applySettingsUI();
+  updateStoreOrderBadge();
   // Navigate to first visible page
-  const pages=['balances','accounts','expenses','revenues','assets','hr','summary','vouchers','products','cashier','journal','reports','customers','invoices','suppliers','purchases','inventory','settings','admin'];
+  const pages=['balances','accounts','expenses','revenues','assets','hr','summary','vouchers','products','cashier','journal','reports','customers','invoices','suppliers','purchases','inventory','store-orders','settings','admin'];
   const first = pages.find(p=>canView(p))||'balances';
   const firstBtn = document.querySelector(`.nav-dd-item[data-page="${first}"]`);
   navTo(first, firstBtn);
@@ -1590,7 +1599,7 @@ function renderPage(page){
     if(pageEl) pageEl.innerHTML=`<div class="no-access"><div class="no-access-icon">🔒</div><div class="no-access-msg">ليس لديك صلاحية الوصول</div><div class="no-access-sub">تواصل مع مدير النظام</div></div>`;
     return;
   }
-  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary,vouchers:renderVouchers,settings:renderSettings,products:renderProducts,cashier:renderCashier,journal:renderJournal,reports:renderReports,customers:renderCustomers,invoices:renderInvoices,suppliers:renderSuppliers,purchases:renderPurchases,inventory:renderInventory})[page]?.();
+  ({balances:renderBalances,accounts:renderAccounts,expenses:renderExpenses,revenues:renderRevenues,assets:renderAssets,hr:renderHR,admin:renderAdmin,summary:renderSummary,vouchers:renderVouchers,settings:renderSettings,products:renderProducts,cashier:renderCashier,journal:renderJournal,reports:renderReports,customers:renderCustomers,invoices:renderInvoices,suppliers:renderSuppliers,purchases:renderPurchases,inventory:renderInventory,'store-orders':renderStoreOrders})[page]?.();
 }
 
 // ══════════════════════════════════════════════
@@ -4837,6 +4846,260 @@ function importExcel(event){
     }
   }
 })();
+
+// ══════════════════════════════════════════════
+// STORE ORDERS
+// ══════════════════════════════════════════════
+
+const STORE_STATUS_LABELS = {new:'جديد',processing:'قيد المعالجة',completed:'مكتمل',cancelled:'ملغي'};
+const STORE_STATUS_CSS    = {new:'s-confirmed',processing:'s-partial',completed:'s-paid',cancelled:'s-cancelled'};
+
+function updateStoreOrderBadge(){
+  const orders = DB.get('store_orders')||[];
+  const n = orders.filter(o=>o.status==='new').length;
+  const el = document.getElementById('store-new-badge');
+  if(el){ el.textContent=n; el.style.display=n>0?'inline':'none'; }
+}
+
+function renderStoreOrders(){
+  const orders = DB.get('store_orders')||[];
+  const flt = window._soFlt||'all';
+
+  const counts = {all:orders.length,new:0,processing:0,completed:0,cancelled:0};
+  orders.forEach(o=>{ if(counts[o.status]!==undefined) counts[o.status]++; });
+
+  let list = orders.slice().reverse();
+  if(flt!=='all') list = list.filter(o=>o.status===flt);
+
+  const newCount = counts.new;
+
+  const rows = list.length ? list.map(o=>`
+    <tr>
+      <td style="font-weight:700;color:var(--navy)">${o.orderNumber||'—'}</td>
+      <td>${o.date||''}</td>
+      <td>
+        <div style="font-weight:700">${o.customerName||'—'}</div>
+        <div style="font-size:11px;color:var(--gray-500)">${o.customerPhone||''}</div>
+      </td>
+      <td style="font-size:12px;max-width:160px;color:var(--gray-600)">${o.customerAddress||'—'}</td>
+      <td style="font-size:13px">${(o.items||[]).length} منتج</td>
+      <td style="font-weight:700">${fmt(o.total)}</td>
+      <td><span class="inv-s ${STORE_STATUS_CSS[o.status]||'s-draft'}">${STORE_STATUS_LABELS[o.status]||o.status}</span></td>
+      <td style="white-space:nowrap">
+        <button class="emp-action-btn" onclick="viewStoreOrder('${o.id}')">👁️ عرض</button>
+        ${o.status==='new'?`<button class="emp-action-btn" style="background:var(--teal-pale,#f0fdfa);color:var(--teal,#0f766e);border-color:var(--teal,#0f766e)" onclick="markStoreProcessing('${o.id}')">⏳ معالجة</button>`:''}
+        ${o.status==='new'||o.status==='processing'?`<button class="emp-action-btn" style="background:var(--green-pale);color:var(--green);border-color:var(--green)" onclick="processStoreOrder('${o.id}')">✅ إنجاز وفاتورة</button>`:''}
+        ${o.status==='new'?`<button class="emp-action-btn" style="background:var(--red-pale);color:var(--red);border-color:var(--red)" onclick="cancelStoreOrder('${o.id}')">✕ إلغاء</button>`:''}
+        ${o.invoiceNumber?`<span style="font-size:11px;color:var(--gray-500);margin-right:4px">📄 ${o.invoiceNumber}</span>`:''}
+      </td>
+    </tr>
+  `).join('') : `<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--gray-400)">لا توجد طلبات مطابقة.</td></tr>`;
+
+  document.getElementById('page-store-orders').innerHTML = `
+    <div class="sec-title">
+      <h2>🛍️ طلبات المتجر الإلكتروني</h2>
+      ${newCount>0
+        ?`<span class="pill" style="background:var(--red-pale);color:var(--red);border-color:var(--red)">${newCount} طلب جديد ●</span>`
+        :'<span class="pill">الطلبات الواردة</span>'}
+    </div>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:11px 16px;margin-bottom:16px;font-size:13px;color:#1d4ed8;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      🔗 <strong>رابط المتجر:</strong>
+      <code style="background:rgba(29,78,216,.1);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700">store.html</code>
+      <button class="btn ghost sm" style="font-size:11px;padding:4px 12px" onclick="window.open('store.html','_blank')">🛍️ فتح المتجر ←</button>
+      <button class="btn ghost sm" style="font-size:11px;padding:4px 12px;margin-right:auto" onclick="renderStoreOrders()">🔄 تحديث</button>
+    </div>
+
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+      <div class="stat-card"><div class="stat-label">إجمالي الطلبات</div><div class="stat-value">${counts.all}</div></div>
+      <div class="stat-card" style="${newCount>0?'border-color:var(--red);background:var(--red-pale)':''}"><div class="stat-label">جديدة</div><div class="stat-value" style="${newCount>0?'color:var(--red)':''}">${counts.new}</div></div>
+      <div class="stat-card" style="border-color:var(--gold);background:var(--gold-pale)"><div class="stat-label">قيد المعالجة</div><div class="stat-value" style="color:var(--gold)">${counts.processing}</div></div>
+      <div class="stat-card" style="border-color:var(--green);background:var(--green-pale)"><div class="stat-label">مكتملة</div><div class="stat-value" style="color:var(--green)">${counts.completed}</div></div>
+    </div>
+
+    <div class="filter-tabs" style="margin-bottom:14px">
+      <button class="ftab${flt==='all'?' active':''}" onclick="window._soFlt='all';renderStoreOrders()">الكل (${counts.all})</button>
+      <button class="ftab${flt==='new'?' active':''}" onclick="window._soFlt='new';renderStoreOrders()">جديد (${counts.new})</button>
+      <button class="ftab${flt==='processing'?' active':''}" onclick="window._soFlt='processing';renderStoreOrders()">قيد المعالجة (${counts.processing})</button>
+      <button class="ftab${flt==='completed'?' active':''}" onclick="window._soFlt='completed';renderStoreOrders()">مكتملة (${counts.completed})</button>
+      <button class="ftab${flt==='cancelled'?' active':''}" onclick="window._soFlt='cancelled';renderStoreOrders()">ملغاة (${counts.cancelled})</button>
+    </div>
+
+    <div class="table-card" style="overflow-x:auto">
+      <table class="party-table">
+        <thead><tr>
+          <th>رقم الطلب</th><th>التاريخ</th><th>العميل</th><th>العنوان</th>
+          <th>العناصر</th><th>الإجمالي</th><th>الحالة</th><th>إجراءات</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div id="store-order-detail"></div>
+  `;
+}
+
+function viewStoreOrder(orderId){
+  const orders = DB.get('store_orders')||[];
+  const o = orders.find(x=>x.id===orderId);
+  if(!o) return;
+
+  const payLabels = {cod:'نقداً عند الاستلام',online:'دفع إلكتروني',transfer:'تحويل بنكي'};
+  const itemRows = (o.items||[]).map(item=>`
+    <tr>
+      <td>${item.productName||'—'}</td>
+      <td style="text-align:center">${item.qty}</td>
+      <td>${item.unit||'قطعة'}</td>
+      <td>${item.currency||'USD'} ${Number(item.price||0).toFixed(2)}</td>
+      <td style="font-weight:700">${fmt(item.total)}</td>
+    </tr>
+  `).join('');
+
+  const el = document.getElementById('store-order-detail');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="table-card" style="margin-top:18px;border:2px solid var(--navy)">
+      <div style="padding:14px 18px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;border-radius:8px 8px 0 0">
+        <span style="font-weight:700;font-size:15px">📋 تفاصيل الطلب — ${o.orderNumber}</span>
+        <button onclick="document.getElementById('store-order-detail').innerHTML=''" style="background:rgba(255,255,255,.14);border:none;color:#fff;border-radius:7px;padding:4px 12px;cursor:pointer;font-size:13px;font-family:Cairo,sans-serif">✕ إغلاق</button>
+      </div>
+      <div style="padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div><span style="font-size:11px;color:var(--gray-500);font-weight:700">اسم العميل</span><div style="font-weight:700;margin-top:2px">${o.customerName||'—'}</div></div>
+        <div><span style="font-size:11px;color:var(--gray-500);font-weight:700">رقم الهاتف</span><div style="font-weight:700;margin-top:2px;direction:ltr;text-align:right">${o.customerPhone||'—'}</div></div>
+        <div style="grid-column:1/-1"><span style="font-size:11px;color:var(--gray-500);font-weight:700">العنوان</span><div style="font-weight:600;margin-top:2px">${o.customerAddress||'—'}</div></div>
+        <div><span style="font-size:11px;color:var(--gray-500);font-weight:700">طريقة الدفع</span><div style="margin-top:2px">${payLabels[o.paymentMethod]||o.paymentMethod||'—'}</div></div>
+        <div><span style="font-size:11px;color:var(--gray-500);font-weight:700">الحالة</span><div style="margin-top:4px"><span class="inv-s ${STORE_STATUS_CSS[o.status]||'s-draft'}">${STORE_STATUS_LABELS[o.status]||o.status}</span></div></div>
+        ${o.notes?`<div style="grid-column:1/-1"><span style="font-size:11px;color:var(--gray-500);font-weight:700">ملاحظات</span><div style="margin-top:2px;color:var(--gray-600)">${o.notes}</div></div>`:''}
+        ${o.invoiceNumber?`<div style="grid-column:1/-1"><span style="font-size:11px;color:var(--gray-500);font-weight:700">رقم الفاتورة</span><div style="font-weight:700;color:var(--green);margin-top:2px">📄 ${o.invoiceNumber}</div></div>`:''}
+      </div>
+      <div style="padding:0 18px 18px">
+        <div style="font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:8px;text-transform:uppercase">المنتجات المطلوبة</div>
+        <table class="party-table">
+          <thead><tr><th>المنتج</th><th>الكمية</th><th>الوحدة</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+          <tbody>${itemRows}</tbody>
+          <tfoot><tr style="background:var(--navy-pale,#f0f4ff)">
+            <td colspan="4" style="font-weight:700;text-align:left;padding:10px 14px">الإجمالي</td>
+            <td style="font-weight:900;color:var(--navy);font-size:15px">${fmt(o.total)}</td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </div>`;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function markStoreProcessing(orderId){
+  const orders = DB.get('store_orders')||[];
+  const i = orders.findIndex(o=>o.id===orderId);
+  if(i<0) return;
+  orders[i].status = 'processing';
+  DB.set('store_orders',orders);
+  updateStoreOrderBadge();
+  toast('⏳ تم تغيير الحالة إلى قيد المعالجة');
+  renderStoreOrders();
+}
+
+function cancelStoreOrder(orderId){
+  const orders = DB.get('store_orders')||[];
+  const o = orders.find(x=>x.id===orderId);
+  if(!o) return;
+  if(!confirm(`إلغاء الطلب ${o.orderNumber}؟\nلن يتم خصم أي كميات من المخزون.`)) return;
+  const i = orders.findIndex(x=>x.id===orderId);
+  orders[i].status = 'cancelled';
+  DB.set('store_orders',orders);
+  updateStoreOrderBadge();
+  toast('تم إلغاء الطلب','err');
+  renderStoreOrders();
+}
+
+function processStoreOrder(orderId){
+  const orders = DB.get('store_orders')||[];
+  const o = orders.find(x=>x.id===orderId);
+  if(!o){ toast('الطلب غير موجود','err'); return; }
+  if(o.status==='completed'){ toast('هذا الطلب مكتمل بالفعل','err'); return; }
+
+  // Stock availability check
+  const issues = [];
+  (o.items||[]).forEach(item=>{
+    if(!item.productId) return;
+    const prod=(DB.get('products')||[]).find(p=>p.id===item.productId);
+    if(!prod||prod.stocked===false) return;
+    const stk = getProductStock(item.productId);
+    if(stk < item.qty) issues.push(`${item.productName}: متوفر ${stk} من أصل ${item.qty}`);
+  });
+  if(issues.length){
+    toast('⚠️ نقص في المخزون — ' + issues.join(' | '),'err');
+    if(!confirm(`تحذير: نقص في المخزون:\n${issues.join('\n')}\n\nهل تريد المتابعة على أي حال؟`)) return;
+  }
+
+  if(!confirm(`إنجاز الطلب ${o.orderNumber} (${o.customerName})؟\n\nسيتم:\n• إنشاء فاتورة مبيعات مؤكدة\n• خصم الكميات من المخزون\n• تغيير حالة الطلب إلى "مكتمل"`)) return;
+
+  // Create or find customer
+  const customers = DB.get('customers')||[];
+  let cust = o.customerPhone ? customers.find(c=>c.phone===o.customerPhone) : null;
+  if(!cust){
+    const code = 'WEB-'+String(customers.length+1).padStart(3,'0');
+    cust = { id:uid(), name:o.customerName, phone:o.customerPhone||'',
+      address:o.customerAddress||'', code, active:true,
+      email:o.customerEmail||'', opening:0, currency:'USD', creditLimit:0,
+      notes:'عميل متجر إلكتروني — '+o.orderNumber };
+    customers.push(cust);
+    DB.set('customers',customers);
+  }
+
+  // Create sales invoice
+  const invNum = nextInvNum('salesInvoices','ORD');
+  const payLabels = {cod:'نقداً عند التسليم',online:'دفع إلكتروني',transfer:'تحويل بنكي'};
+  const invoice = {
+    id:uid(), number:invNum,
+    date:o.date, dueDate:o.date,
+    customerId:cust.id, customerName:o.customerName,
+    items:(o.items||[]).map(item=>({
+      productId:item.productId||'',
+      description:item.productName,
+      qty:item.qty, unit:item.unit||'قطعة',
+      unitPrice:N(item.priceUSD||item.price),
+      discount:0, total:N(item.total)
+    })),
+    currency:'USD',
+    subtotal:N(o.total), discountRate:0, discountAmount:0,
+    taxRate:0, taxAmount:0, total:N(o.total), totalUSD:N(o.total),
+    accountId:'', paymentMethod:payLabels[o.paymentMethod]||o.paymentMethod||'نقداً عند التسليم',
+    status:'confirmed', paidAmount:0,
+    notes:`طلب متجر إلكتروني — ${o.orderNumber}${o.customerAddress?' | '+o.customerAddress:''}${o.notes?' | '+o.notes:''}`,
+    createdAt:new Date().toISOString()
+  };
+  const salesList = DB.get('salesInvoices')||[];
+  salesList.push(invoice);
+  DB.set('salesInvoices',salesList);
+
+  // Adjust stock (reduce)
+  (o.items||[]).forEach(item=>{
+    if(item.productId){
+      adjustStock(item.productId,-item.qty,'out',`طلب متجر: ${o.orderNumber}`,
+        {sourceName:'متجر إلكتروني',sourceId:orderId});
+    }
+  });
+
+  // Update order
+  const idx = orders.findIndex(x=>x.id===orderId);
+  if(idx>=0){
+    orders[idx].status = 'completed';
+    orders[idx].invoiceId = invoice.id;
+    orders[idx].invoiceNumber = invNum;
+    DB.set('store_orders',orders);
+  }
+
+  updateStoreOrderBadge();
+  toast(`✅ فاتورة ${invNum} جاهزة — يمكن تحصيلها من صفحة المبيعات`);
+  renderStoreOrders();
+}
+
+// Listen for new orders placed from the store tab
+window.addEventListener('storage', function(e){
+  if(e.key==='taqat_store_orders'){
+    updateStoreOrderBadge();
+    if(typeof curPage!=='undefined' && curPage==='store-orders') renderStoreOrders();
+  }
+});
 </script>
 </body>
 </html>
