@@ -873,9 +873,21 @@ function toast(msg,type='info'){
   w.appendChild(el);setTimeout(()=>el.remove(),3200);
 }
 
+// ─── Product image generator (SVG data URL) ───
+function makeImg(emoji, bg1, bg2) {
+  const s = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'>`+
+    `<defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'>`+
+    `<stop offset='0%' stop-color='${bg1}'/><stop offset='100%' stop-color='${bg2}'/>`+
+    `</linearGradient></defs>`+
+    `<rect width='300' height='300' fill='url(%23g)'/>`+
+    `<text x='150' y='175' font-size='130' text-anchor='middle' `+
+    `font-family='Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif'>${emoji}</text>`+
+    `</svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+}
+
 // ─── Seed ───
 function seedDummyData(){
-  if(LSArr('products').length>0)return;
   const cats=[
     {id:'cat-food',name:'مواد غذائية'},{id:'cat-drink',name:'مشروبات'},
     {id:'cat-elec',name:'إلكترونيات'},{id:'cat-clothes',name:'ملابس وأزياء'},
@@ -886,32 +898,81 @@ function seedDummyData(){
   cats.forEach(c=>{if(!mg.find(e=>e.id===c.id))mg.push(c);});
   LSSet('productCategories',mg);
 
+  if(LSArr('products').length>0){
+    patchProductImages(); // add images to existing products that have none
+    return;
+  }
+
   const products=[
-    {id:'p-oo1',code:'F001',name:'زيت الزيتون البكر الممتاز',categoryId:'cat-food',categoryName:'مواد غذائية',price:12.50,currency:'USD',unit:'لتر',description:'زيت زيتون فلسطيني أصيل بكر ممتاز، عصر بارد طبيعي 100% من أجود الأصناف.',active:true,stocked:true,costPrice:7.50,minStock:5,label:'best',rating:4.8,reviews:124},
-    {id:'p-dt1',code:'F002',name:'تمر مجدول فاخر',categoryId:'cat-food',categoryName:'مواد غذائية',price:18.00,currency:'USD',unit:'كغ',description:'تمر مجدول طازج ممتاز، حبة كبيرة طرية وحلوة، مثالي للهدايا.',active:true,stocked:true,costPrice:10,minStock:5,label:'hot',rating:4.9,reviews:89},
-    {id:'p-za1',code:'F003',name:'خلطة زعتر فلسطيني',categoryId:'cat-food',categoryName:'مواد غذائية',price:5.50,currency:'USD',unit:'كغ',description:'زعتر بري طبيعي مع السمسم وزيت الزيتون، نكهة تراثية أصيلة.',active:true,stocked:true,costPrice:3,minStock:10,label:'new',rating:4.6,reviews:57},
-    {id:'p-hn1',code:'F004',name:'عسل سدر طبيعي',categoryId:'cat-food',categoryName:'مواد غذائية',price:22.00,currency:'USD',unit:'كغ',description:'عسل سدر طبيعي 100% من خلايا نحل محلية، غني بالفوائد الصحية.',active:true,stocked:true,costPrice:14,minStock:3,label:'best',rating:5.0,reviews:43},
-    {id:'p-cf1',code:'D001',name:'قهوة عربية مطحونة',categoryId:'cat-drink',categoryName:'مشروبات',price:8.50,currency:'USD',unit:'250 غ',description:'قهوة عربية طازجة محمصة مع الهيل، نكهة قوية وأصيلة.',active:true,stocked:true,costPrice:5,minStock:8,label:'new',rating:4.7,reviews:72},
-    {id:'p-gt1',code:'D002',name:'شاي أخضر ميرامية',categoryId:'cat-drink',categoryName:'مشروبات',price:4.50,currency:'USD',unit:'100 غ',description:'أعشاب ميرامية وشاي أخضر طبيعي مجفف، مريح للأعصاب.',active:true,stocked:true,costPrice:2.5,minStock:10,label:'',rating:4.5,reviews:38},
-    {id:'p-rb1',code:'D003',name:'عصير رمان طبيعي',categoryId:'cat-drink',categoryName:'مشروبات',price:6.00,currency:'USD',unit:'لتر',description:'عصير رمان طبيعي 100% بدون إضافات، غني بمضادات الأكسدة.',active:true,stocked:true,costPrice:3.5,minStock:6,label:'sale',origPrice:8.00,rating:4.6,reviews:51},
-    {id:'p-hp1',code:'E001',name:'سماعات لاسلكية بلوتوث',categoryId:'cat-elec',categoryName:'إلكترونيات',price:45.00,currency:'USD',unit:'قطعة',description:'بلوتوث 5.0، عزل الضجيج النشط، عمر بطارية 30 ساعة.',active:true,stocked:true,costPrice:28,minStock:3,label:'hot',rating:4.4,reviews:96},
-    {id:'p-ch1',code:'E002',name:'شاحن سريع 65W USB-C',categoryId:'cat-elec',categoryName:'إلكترونيات',price:15.00,currency:'USD',unit:'قطعة',description:'متوافق مع كافة الأجهزة، USB-C وUSB-A، حماية ذكية.',active:true,stocked:true,costPrice:8,minStock:5,label:'new',rating:4.6,reviews:63},
-    {id:'p-pb1',code:'E003',name:'باور بانك 20000mAh',categoryId:'cat-elec',categoryName:'إلكترونيات',price:28.00,currency:'USD',unit:'قطعة',description:'شحن سريع ثلاثي المنافذ، شاشة LED، سعة عالية.',active:true,stocked:true,costPrice:17,minStock:4,label:'sale',origPrice:35.00,rating:4.5,reviews:44},
-    {id:'p-sm1',code:'E004',name:'ساعة ذكية رياضية',categoryId:'cat-elec',categoryName:'إلكترونيات',price:55.00,currency:'USD',unit:'قطعة',description:'تتبع اللياقة والنوم ومعدل القلب، مقاومة للماء.',active:true,stocked:true,costPrice:35,minStock:2,label:'new',rating:4.3,reviews:29},
-    {id:'p-ts1',code:'C001',name:'تيشيرت قطن مريح',categoryId:'cat-clothes',categoryName:'ملابس وأزياء',price:14.00,currency:'USD',unit:'قطعة',description:'قطن 100% خفيف وناعم، مناسب لجميع المناسبات.',active:true,stocked:true,costPrice:8,minStock:10,label:'',rating:4.4,reviews:85},
-    {id:'p-sc1',code:'C002',name:'حجاب شيفون أنيق',categoryId:'cat-clothes',categoryName:'ملابس وأزياء',price:12.00,currency:'USD',unit:'قطعة',description:'خفيف وأنيق، ألوان وتصاميم عصرية، قماش ناعم.',active:true,stocked:true,costPrice:6,minStock:8,label:'hot',rating:4.7,reviews:118},
-    {id:'p-jk1',code:'C003',name:'جاكيت رياضي خفيف',categoryId:'cat-clothes',categoryName:'ملابس وأزياء',price:32.00,currency:'USD',unit:'قطعة',description:'مقاوم للريح، جيوب جانبية، مثالي للرياضة.',active:true,stocked:true,costPrice:19,minStock:4,label:'sale',origPrice:40.00,rating:4.5,reviews:37},
-    {id:'p-mg1',code:'H001',name:'طقم أكواب قهوة تراثي',categoryId:'cat-home',categoryName:'منزل وديكور',price:16.00,currency:'USD',unit:'طقم',description:'6 أكواب بنقوش تراثية، مثالي للضيافة والهدايا.',active:true,stocked:true,costPrice:9,minStock:4,label:'best',rating:4.8,reviews:66},
-    {id:'p-cn1',code:'H002',name:'شمعة عطرية طبيعية',categoryId:'cat-home',categoryName:'منزل وديكور',price:9.50,currency:'USD',unit:'قطعة',description:'شمع طبيعي بعطر الياسمين والعود، تحترق 40+ ساعة.',active:true,stocked:true,costPrice:5,minStock:6,label:'new',rating:4.6,reviews:41},
-    {id:'p-hc1',code:'P001',name:'كريم يدين بزيت الأرغان',categoryId:'cat-care',categoryName:'عناية شخصية',price:8.00,currency:'USD',unit:'قطعة',description:'مرطب بزيت الأرغان الطبيعي، يمتص سريعاً.',active:true,stocked:true,costPrice:4,minStock:7,label:'',rating:4.5,reviews:73},
-    {id:'p-sp1',code:'P002',name:'صابون نابلسي طبيعي',categoryId:'cat-care',categoryName:'عناية شخصية',price:5.50,currency:'USD',unit:'قطعة',description:'صابون أصيل من زيت الزيتون البكر، خالٍ من الكيماويات.',active:true,stocked:true,costPrice:2.5,minStock:10,label:'best',rating:4.9,reviews:157},
-    {id:'p-hp2',code:'P003',name:'مجموعة عناية للشعر',categoryId:'cat-care',categoryName:'عناية شخصية',price:24.00,currency:'USD',unit:'طقم',description:'شامبو + بلسم + مصل مكثف بمستخلصات طبيعية.',active:true,stocked:true,costPrice:14,minStock:3,label:'sale',origPrice:30.00,rating:4.4,reviews:28},
+    {id:'p-oo1',code:'F001',name:'زيت الزيتون البكر الممتاز',categoryId:'cat-food',categoryName:'مواد غذائية',price:12.50,currency:'USD',unit:'لتر',description:'زيت زيتون فلسطيني أصيل بكر ممتاز، عصر بارد طبيعي 100% من أجود الأصناف.',active:true,stocked:true,costPrice:7.50,minStock:5,label:'best',rating:4.8,reviews:124,
+      image:makeImg('🫙','#e8f5e9','#a5d6a7')},
+    {id:'p-dt1',code:'F002',name:'تمر مجدول فاخر',categoryId:'cat-food',categoryName:'مواد غذائية',price:18.00,currency:'USD',unit:'كغ',description:'تمر مجدول طازج ممتاز، حبة كبيرة طرية وحلوة، مثالي للهدايا.',active:true,stocked:true,costPrice:10,minStock:5,label:'hot',rating:4.9,reviews:89,
+      image:makeImg('🌴','#fff8e1','#ffe082')},
+    {id:'p-za1',code:'F003',name:'خلطة زعتر فلسطيني',categoryId:'cat-food',categoryName:'مواد غذائية',price:5.50,currency:'USD',unit:'كغ',description:'زعتر بري طبيعي مع السمسم وزيت الزيتون، نكهة تراثية أصيلة.',active:true,stocked:true,costPrice:3,minStock:10,label:'new',rating:4.6,reviews:57,
+      image:makeImg('🌿','#f1f8e9','#aed581')},
+    {id:'p-hn1',code:'F004',name:'عسل سدر طبيعي',categoryId:'cat-food',categoryName:'مواد غذائية',price:22.00,currency:'USD',unit:'كغ',description:'عسل سدر طبيعي 100% من خلايا نحل محلية، غني بالفوائد الصحية.',active:true,stocked:true,costPrice:14,minStock:3,label:'best',rating:5.0,reviews:43,
+      image:makeImg('🍯','#fff3e0','#ffcc80')},
+    {id:'p-fg1',code:'F005',name:'تين مجفف فاخر',categoryId:'cat-food',categoryName:'مواد غذائية',price:9.00,currency:'USD',unit:'كغ',description:'تين مجفف طبيعي بدون مواد حافظة، غني بالألياف والمعادن.',active:true,stocked:true,costPrice:5,minStock:8,label:'new',rating:4.7,reviews:34,
+      image:makeImg('🫐','#fce4ec','#f48fb1')},
+    {id:'p-cf1',code:'D001',name:'قهوة عربية مطحونة',categoryId:'cat-drink',categoryName:'مشروبات',price:8.50,currency:'USD',unit:'250 غ',description:'قهوة عربية طازجة محمصة مع الهيل، نكهة قوية وأصيلة.',active:true,stocked:true,costPrice:5,minStock:8,label:'new',rating:4.7,reviews:72,
+      image:makeImg('☕','#efebe9','#bcaaa4')},
+    {id:'p-gt1',code:'D002',name:'شاي أخضر ميرامية',categoryId:'cat-drink',categoryName:'مشروبات',price:4.50,currency:'USD',unit:'100 غ',description:'أعشاب ميرامية وشاي أخضر طبيعي مجفف، مريح للأعصاب.',active:true,stocked:true,costPrice:2.5,minStock:10,label:'',rating:4.5,reviews:38,
+      image:makeImg('🍵','#e8f5e9','#80cbc4')},
+    {id:'p-rb1',code:'D003',name:'عصير رمان طبيعي',categoryId:'cat-drink',categoryName:'مشروبات',price:6.00,currency:'USD',unit:'لتر',description:'عصير رمان طبيعي 100% بدون إضافات، غني بمضادات الأكسدة.',active:true,stocked:true,costPrice:3.5,minStock:6,label:'sale',origPrice:8.00,rating:4.6,reviews:51,
+      image:makeImg('🍷','#fce4ec','#ef9a9a')},
+    {id:'p-hp1',code:'E001',name:'سماعات لاسلكية بلوتوث',categoryId:'cat-elec',categoryName:'إلكترونيات',price:45.00,currency:'USD',unit:'قطعة',description:'بلوتوث 5.0، عزل الضجيج النشط، عمر بطارية 30 ساعة.',active:true,stocked:true,costPrice:28,minStock:3,label:'hot',rating:4.4,reviews:96,
+      image:makeImg('🎧','#e3f2fd','#90caf9')},
+    {id:'p-ch1',code:'E002',name:'شاحن سريع 65W USB-C',categoryId:'cat-elec',categoryName:'إلكترونيات',price:15.00,currency:'USD',unit:'قطعة',description:'متوافق مع كافة الأجهزة، USB-C وUSB-A، حماية ذكية.',active:true,stocked:true,costPrice:8,minStock:5,label:'new',rating:4.6,reviews:63,
+      image:makeImg('⚡','#fffde7','#fff176')},
+    {id:'p-pb1',code:'E003',name:'باور بانك 20000mAh',categoryId:'cat-elec',categoryName:'إلكترونيات',price:28.00,currency:'USD',unit:'قطعة',description:'شحن سريع ثلاثي المنافذ، شاشة LED، سعة عالية.',active:true,stocked:true,costPrice:17,minStock:4,label:'sale',origPrice:35.00,rating:4.5,reviews:44,
+      image:makeImg('🔋','#e0f7fa','#80deea')},
+    {id:'p-sm1',code:'E004',name:'ساعة ذكية رياضية',categoryId:'cat-elec',categoryName:'إلكترونيات',price:55.00,currency:'USD',unit:'قطعة',description:'تتبع اللياقة والنوم ومعدل القلب، مقاومة للماء.',active:true,stocked:true,costPrice:35,minStock:2,label:'new',rating:4.3,reviews:29,
+      image:makeImg('⌚','#ede7f6','#b39ddb')},
+    {id:'p-ts1',code:'C001',name:'تيشيرت قطن مريح',categoryId:'cat-clothes',categoryName:'ملابس وأزياء',price:14.00,currency:'USD',unit:'قطعة',description:'قطن 100% خفيف وناعم، مناسب لجميع المناسبات.',active:true,stocked:true,costPrice:8,minStock:10,label:'',rating:4.4,reviews:85,
+      image:makeImg('👕','#e3f2fd','#90caf9')},
+    {id:'p-sc1',code:'C002',name:'حجاب شيفون أنيق',categoryId:'cat-clothes',categoryName:'ملابس وأزياء',price:12.00,currency:'USD',unit:'قطعة',description:'خفيف وأنيق، ألوان وتصاميم عصرية، قماش ناعم.',active:true,stocked:true,costPrice:6,minStock:8,label:'hot',rating:4.7,reviews:118,
+      image:makeImg('🧣','#fce4ec','#f48fb1')},
+    {id:'p-jk1',code:'C003',name:'جاكيت رياضي خفيف',categoryId:'cat-clothes',categoryName:'ملابس وأزياء',price:32.00,currency:'USD',unit:'قطعة',description:'مقاوم للريح، جيوب جانبية، مثالي للرياضة.',active:true,stocked:true,costPrice:19,minStock:4,label:'sale',origPrice:40.00,rating:4.5,reviews:37,
+      image:makeImg('🧥','#fff3e0','#ffcc80')},
+    {id:'p-mg1',code:'H001',name:'طقم أكواب قهوة تراثي',categoryId:'cat-home',categoryName:'منزل وديكور',price:16.00,currency:'USD',unit:'طقم',description:'6 أكواب بنقوش تراثية، مثالي للضيافة والهدايا.',active:true,stocked:true,costPrice:9,minStock:4,label:'best',rating:4.8,reviews:66,
+      image:makeImg('☕','#efebe9','#d7ccc8')},
+    {id:'p-cn1',code:'H002',name:'شمعة عطرية طبيعية',categoryId:'cat-home',categoryName:'منزل وديكور',price:9.50,currency:'USD',unit:'قطعة',description:'شمع طبيعي بعطر الياسمين والعود، تحترق 40+ ساعة.',active:true,stocked:true,costPrice:5,minStock:6,label:'new',rating:4.6,reviews:41,
+      image:makeImg('🕯️','#fffde7','#fff59d')},
+    {id:'p-hc1',code:'P001',name:'كريم يدين بزيت الأرغان',categoryId:'cat-care',categoryName:'عناية شخصية',price:8.00,currency:'USD',unit:'قطعة',description:'مرطب بزيت الأرغان الطبيعي، يمتص سريعاً.',active:true,stocked:true,costPrice:4,minStock:7,label:'',rating:4.5,reviews:73,
+      image:makeImg('🧴','#fce4ec','#f8bbd0')},
+    {id:'p-sp1',code:'P002',name:'صابون نابلسي طبيعي',categoryId:'cat-care',categoryName:'عناية شخصية',price:5.50,currency:'USD',unit:'قطعة',description:'صابون أصيل من زيت الزيتون البكر، خالٍ من الكيماويات.',active:true,stocked:true,costPrice:2.5,minStock:10,label:'best',rating:4.9,reviews:157,
+      image:makeImg('🧼','#f1f8e9','#c5e1a5')},
+    {id:'p-pr1',code:'P003',name:'عطر ورد فلسطيني',categoryId:'cat-care',categoryName:'عناية شخصية',price:35.00,currency:'USD',unit:'قطعة',description:'عطر ورد طبيعي مستخلص من أجود أنواع الورود، رائحة ساحرة تدوم طويلاً.',active:true,stocked:true,costPrice:20,minStock:4,label:'new',rating:4.8,reviews:62,
+      image:makeImg('🌸','#fce4ec','#f48fb1')},
+    {id:'p-hp2',code:'P004',name:'مجموعة عناية للشعر',categoryId:'cat-care',categoryName:'عناية شخصية',price:24.00,currency:'USD',unit:'طقم',description:'شامبو + بلسم + مصل مكثف بمستخلصات طبيعية.',active:true,stocked:true,costPrice:14,minStock:3,label:'sale',origPrice:30.00,rating:4.4,reviews:28,
+      image:makeImg('💇','#ede7f6','#ce93d8')},
   ];
   LSSet('products',products);
-  const stkMap={'p-oo1':40,'p-dt1':25,'p-za1':60,'p-hn1':15,'p-cf1':35,'p-gt1':50,'p-rb1':20,'p-hp1':12,'p-ch1':30,'p-pb1':18,'p-sm1':8,'p-ts1':45,'p-sc1':38,'p-jk1':22,'p-mg1':16,'p-cn1':24,'p-hc1':32,'p-sp1':70,'p-hp2':10};
+  const stkMap={'p-oo1':40,'p-dt1':25,'p-za1':60,'p-hn1':15,'p-fg1':30,'p-cf1':35,'p-gt1':50,'p-rb1':20,'p-hp1':12,'p-ch1':30,'p-pb1':18,'p-sm1':8,'p-ts1':45,'p-sc1':38,'p-jk1':22,'p-mg1':16,'p-cn1':24,'p-hc1':32,'p-sp1':70,'p-pr1':18,'p-hp2':10};
   const moves=LSArr('stockMovements');
   products.forEach(p=>{moves.push({id:uid(),date:today(),type:'in',productId:p.id,qty:stkMap[p.id]||20,reason:'مخزون افتراضي',sourceName:'النظام',sourceId:'',unitCost:p.costPrice||0,notes:'إضافة مخزون أولي'});});
   LSSet('stockMovements',moves);
+}
+
+// ─── Patch images for existing users ───
+function patchProductImages(){
+  const prods=LSArr('products');
+  if(!prods.length)return;
+  if(!prods.some(p=>!p.image))return; // all have images already
+  const imgMap={
+    'p-oo1':makeImg('🫙','#e8f5e9','#a5d6a7'),'p-dt1':makeImg('🌴','#fff8e1','#ffe082'),
+    'p-za1':makeImg('🌿','#f1f8e9','#aed581'),'p-hn1':makeImg('🍯','#fff3e0','#ffcc80'),
+    'p-fg1':makeImg('🫐','#fce4ec','#f48fb1'),'p-cf1':makeImg('☕','#efebe9','#bcaaa4'),
+    'p-gt1':makeImg('🍵','#e8f5e9','#80cbc4'),'p-rb1':makeImg('🍷','#fce4ec','#ef9a9a'),
+    'p-hp1':makeImg('🎧','#e3f2fd','#90caf9'),'p-ch1':makeImg('⚡','#fffde7','#fff176'),
+    'p-pb1':makeImg('🔋','#e0f7fa','#80deea'),'p-sm1':makeImg('⌚','#ede7f6','#b39ddb'),
+    'p-ts1':makeImg('👕','#e3f2fd','#90caf9'),'p-sc1':makeImg('🧣','#fce4ec','#f48fb1'),
+    'p-jk1':makeImg('🧥','#fff3e0','#ffcc80'),'p-mg1':makeImg('☕','#efebe9','#d7ccc8'),
+    'p-cn1':makeImg('🕯️','#fffde7','#fff59d'),'p-hc1':makeImg('🧴','#fce4ec','#f8bbd0'),
+    'p-sp1':makeImg('🧼','#f1f8e9','#c5e1a5'),'p-pr1':makeImg('🌸','#fce4ec','#f48fb1'),
+    'p-hp2':makeImg('💇','#ede7f6','#ce93d8'),
+  };
+  LSSet('products', prods.map(p=>({...p, image: p.image || imgMap[p.id] || ''})));
 }
 
 // ─── Flash Timer ───
